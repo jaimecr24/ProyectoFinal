@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/modal.css";
 import usericon from "../../img/users.png";
@@ -17,27 +17,37 @@ export const Profile = () => {
 	});
 
 	let itemsChecked = 0;
+	let history = useHistory();
+	const linkStyle = { color: "white" };
 
 	useEffect(() => {
+		let status = 0;
 		document.getElementById("btnDel").disabled = itemsChecked < 1;
 		actions
 			.getUser()
-			.then(res => res.json())
+			.then(res => {
+				status = res.status;
+				return res.json();
+			})
 			.then(responseUser => {
-				actions
-					.getFavPlaces()
-					.then(res => res.json())
-					.then(responsePlaces => {
-						setData({
-							name: responseUser.name,
-							lastName: responseUser.last_name,
-							username: responseUser.username,
-							email: responseUser.email,
-							lastTime: new Date(store.previousLoginTime).toLocaleString(),
-							listItems: responsePlaces.items
-						});
-					})
-					.catch(error => console.error("Error:", error));
+				if (status >= 400) {
+					alert(responseUser["msg"]);
+					actions.logout();
+				} else
+					actions
+						.getFavPlaces()
+						.then(res => res.json())
+						.then(responsePlaces => {
+							setData({
+								name: responseUser.name,
+								lastName: responseUser.last_name,
+								username: responseUser.username,
+								email: responseUser.email,
+								lastTime: new Date(store.previousLoginTime).toLocaleString(),
+								listItems: responsePlaces.items
+							});
+						})
+						.catch(error => console.error("Error:", error));
 			})
 			.catch(error => console.error("Error:", error));
 	}, []);
@@ -77,6 +87,12 @@ export const Profile = () => {
 							btn.disabled = true;
 							btn.style.color = "gray";
 						}
+					} else {
+						// Show error and exit from loop
+						response = await res.json();
+						alert(response["msg"]);
+						actions.logout();
+						i = list.childElementCount; // Force exit loop
 					}
 				}
 			}
@@ -107,7 +123,9 @@ export const Profile = () => {
 
 			<div className="py-5">
 				<div className="row">
-					<div className="fs-3 col-5 offset-1">{`Lugares favoritos: ${data["listItems"].length}`}</div>
+					<div className="fs-3 col-5 offset-1">
+						{`Lugares favoritos: ${data["listItems"] ? data["listItems"].length : 0}`}
+					</div>
 					<button
 						id="btnDel"
 						className="col-2 offset-3 fs-5"
@@ -118,27 +136,43 @@ export const Profile = () => {
 				</div>
 				<div className="row mt-2">
 					<div className="col-10 offset-1" id="favList">
-						{data["listItems"].map(value => (
-							<div
-								key={value.id}
-								datakey={value.id}
-								className="row border-top border-light py-1 align-items-center">
-								<input
-									className="col-1"
-									type="checkbox"
-									style={{ width: "20px", height: "20px" }}
-									onClick={handleCheckBox}
-								/>
-								<img className="col-2" src={value.urlPhoto} />
-								<div className="col-4">{`${value.name} (${value.countryName})`}</div>
-								{
-									//<Link to={`/place/${value.id.toString()}`}></Link>
-								}
-								<div className="col-5">{value.description}</div>
-							</div>
-						))}
+						{data["listItems"]
+							? data["listItems"].map(value => (
+									<div
+										key={value.id}
+										datakey={value.id}
+										className="row border-top border-light py-1 align-items-center">
+										<input
+											className="col-1"
+											type="checkbox"
+											style={{ width: "20px", height: "20px" }}
+											onClick={handleCheckBox}
+										/>
+										<img className="col-2" src={value.urlPhoto} />
+										<div className="col-4">
+											<a style={linkStyle} href="#">
+												{value.name}
+											</a>{" "}
+											({value.countryName})
+										</div>
+										{
+											//<Link to={`/place/${value.id.toString()}`}></Link>
+										}
+										<div className="col-5">{value.description}</div>
+									</div>
+							  ))
+							: ""}
 					</div>
 				</div>
+			</div>
+			<div className="w-100 row">
+				<button
+					className="col-auto px-3 mb-3 mx-auto fs-5"
+					type="button"
+					style={{ background: "#154c79", color: "white" }}
+					onClick={() => history.goBack()}>
+					Cerrar
+				</button>
 			</div>
 		</div>
 	);
