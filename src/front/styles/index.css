@@ -1,3 +1,32 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+.title{
+    text-align: left;
+}
+
+.cards-content {
+    margin-left: 10%;
+    margin-right: 15%;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 450px;
+    overflow-y:hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.card {
+    padding: 10px;
+    margin: 10px;
+    justify-content: center;
+}
+
+
+.card-body {
+    color: white;
+}
+
+.characters{
+    width: 300px;
+}
