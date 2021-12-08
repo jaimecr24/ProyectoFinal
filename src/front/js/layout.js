@@ -43,7 +43,7 @@ const Layout = () => {
 						<Route exact path="/places">
 							<Places />
 						</Route>
-						<Route exact path="/place">
+						<Route exact path="/place/:theid">
 							<SinglePlace />
 						</Route>
 

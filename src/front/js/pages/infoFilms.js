@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
+import { useParams } from "react-router-dom";
 
 export const InfoFilms = () => {
 	const { store, actions } = useContext(Context);
+	const params = useParams();
 	useEffect(() => {
-		actions.getInfoFilms(localStorage.getItem("id"));
+		actions.getInfoFilms(params.theid);
 	}, []);
 
 	return (
@@ -70,29 +72,33 @@ export const InfoFilms = () => {
 					</div>
 					<div className="cards-content">
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							<div className="card bg-dark">
-								<img
-									src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg/1200px-Flag_of_the_United_Kingdom_%283-5%29.svg.png"
-									className="characters card-img-top mx-auto"
-									alt="..."
-								/>
-								<div className="card-body">
-									<h5
-										className="card-title text-warning"
-										style={{ textAlign: "center", paddingBottom: "40px" }}>
-										Titulo
-									</h5>
-									<a className="btn btn-primary float-start">
-										<span className="text-warning ">
-											{" "}
-											<span className="btn btn-outline-primary">Aprender más</span>
-										</span>
-									</a>
-									<button className="btn btn-outline-warning float-end">
-										<i className="fas fa-heart" />
-									</button>
-								</div>
-							</div>
+							{store.scenesByFilm
+								? store.scenesByFilm.map((item, index) => {
+										return (
+											<div className="card bg-dark" key={index}>
+												<img src="" className="characters card-img-top mx-auto" alt="..." />
+												<div className="card-body">
+													<h5
+														className="card-title text-warning"
+														style={{ textAlign: "center", paddingBottom: "40px" }}>
+														{item.country}
+													</h5>
+													<a className="btn btn-primary float-start">
+														<span className="text-warning ">
+															{" "}
+															<span className="btn btn-outline-primary">
+																Aprender más
+															</span>
+														</span>
+													</a>
+													<button className="btn btn-outline-warning float-end">
+														<i className="fas fa-heart" />
+													</button>
+												</div>
+											</div>
+										);
+								  })
+								: null}
 						</div>
 					</div>
 					<div>

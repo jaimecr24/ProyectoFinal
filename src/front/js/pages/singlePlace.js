@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
-import { useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { useParams } from "react-router-dom";
 
 export const SinglePlace = () => {
 	const { store, actions } = useContext(Context);
+	const params = useParams();
 	useEffect(() => {
-		actions.getSinglePlace(localStorage.getItem("id"));
+		actions.getSinglePlace(params.theid);
+		actions.getScenesByPlace(params.theid);
 	}, []);
+	store.singlePlace ? actions.getInfoCountries(store.singlePlace.idCountry) : null;
 
 	return (
 		<div className="container mt-3 mx-auto bg-white p-3 card rounded" style={{ width: "75%" }}>
-			{store.singlePlace ? (
+			{store.singlePlace && store.infoCountries ? (
 				<div>
 					<h2 className="text-success">{store.singlePlace.name}</h2>
 					<div className="row mx-3 px-3">
@@ -32,7 +35,7 @@ export const SinglePlace = () => {
 							</div>
 						</div>
 						<div className="col-6">
-							<p className="text-danger">{store.singlePlace.idCountry}</p>
+							<p className="text-danger">{store.infoCountries.name}</p>
 							<p className="text-dark">{store.singlePlace.description}</p>
 						</div>
 					</div>
@@ -51,24 +54,12 @@ export const SinglePlace = () => {
 					</div>
 					<div className="row mt-5 px-5">
 						<h5>Series y películas rodadas en {store.singlePlace.name}:</h5>
-						<div className="card p-3 mx-5 rounded  mb-5 w-100 mx-auto">
-							<div className="row">
-								<div className="col-4">
-									<h5 className="card-title text-success">Película</h5>
-									<img
-										className="card-img-top bg-dark row m-3"
-										src="..."
-										alt="..."
-										style={{ height: "200px" }}
-									/>
-								</div>
-								<div className="card-body col-6 ms-5">
-									<div style={{ fontSize: "10px" }}>
-										<div className="text-dark">Descripción de la escena</div>
-									</div>
-								</div>
-							</div>
-						</div>
+
+						{store.scenesByPlace
+							? store.scenesByPlace.map((value, index) => {
+									return;
+							  })
+							: "Cargando"}
 					</div>
 				</div>
 			) : null}

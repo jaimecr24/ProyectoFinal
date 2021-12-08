@@ -89,7 +89,6 @@ class Place(db.Model):
             "description": self.description,
             "countLikes": self.countLikes,
             "entryDate": self.entryDate
-
         }
     
 
@@ -127,6 +126,7 @@ class Scene(db.Model):
             "id": self.id,
             "idFilm": self.idFilm,
             "idPlace": self.idPlace,
+            "country": self.place.country.name,
             "description": self.description
         }
 

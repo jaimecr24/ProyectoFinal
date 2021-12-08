@@ -33,7 +33,7 @@ export const Countries = () => {
 												<span className="text-warning ">
 													{" "}
 													<Link
-														to="/infocountries"
+														to={"/infocountries/" + item.id}
 														onClick={() => localStorage.setItem("id", item.id)}>
 														<span className="btn btn-outline-primary">Aprender más</span>
 													</Link>
