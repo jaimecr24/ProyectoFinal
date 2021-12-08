@@ -58,7 +58,14 @@ export const SinglePlace = () => {
 
 						{store.scenesByPlace
 							? store.scenesByPlace.map((value, index) => {
-									return <Scene id={value.idFilm} description={value.description} key={index} />;
+									return (
+										<Scene
+											id={value.idFilm}
+											description={value.description}
+											title={value.title}
+											key={value.idFilm}
+										/>
+									);
 							  })
 							: "Cargando"}
 					</div>

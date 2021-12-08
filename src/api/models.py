@@ -126,6 +126,7 @@ class Scene(db.Model):
         return {
             "id": self.id,
             "idFilm": self.idFilm,
+            "title": self.film.name,
             "idPlace": self.idPlace,
             "description": self.description
         }
