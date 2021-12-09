@@ -13,7 +13,7 @@ export const Countries = () => {
 				<h1>Países</h1>
 				<span>Descubre nuestro listado de países!</span>
 			</div>
-			<div className="cards-content">
+			<div className="my-card-content">
 				{store.countries
 					? store.countries.map((item, index) => {
 							return (
@@ -21,7 +21,7 @@ export const Countries = () => {
 									className="row col-auto"
 									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
 									key={index}>
-									<div className="card bg-dark">
+									<div className="design-card bg-dark">
 										<img src={item.urlFlag} className="characters card-img-top mx-auto" alt="..." />
 										<div className="card-body">
 											<h5

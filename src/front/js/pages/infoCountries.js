@@ -27,7 +27,7 @@ export const InfoCountries = () => {
 						}}>
 						{store.infoCountries.name}
 					</h2>
-					<div className="col-md-6">
+					<div className="my-img col-md-6">
 						<img
 							className="bg-dark rounded row ms-2"
 							src={store.infoCountries.urlFlag}
@@ -61,7 +61,7 @@ export const InfoCountries = () => {
 							</h2>
 						</div>
 					</div>
-					<div className="cards-content">
+					<div className="my-card-content">
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
 							{store.scenesByFilm
 								? store.scenesByFilm.map((item, index) => {

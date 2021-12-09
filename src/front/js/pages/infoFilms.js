@@ -26,7 +26,7 @@ export const InfoFilms = () => {
 						}}>
 						{store.infoFilms.name}
 					</h2>
-					<div className="col-md-6" style={{ justifyContent: "center" }}>
+					<div className="my-img col-md-6" style={{ justifyContent: "center" }}>
 						<img
 							className="bg-dark rounded row ms-2"
 							src={store.infoFilms.urlPhoto}
@@ -60,7 +60,7 @@ export const InfoFilms = () => {
 							</h2>
 						</div>
 					</div>
-					<div className="cards-content">
+					<div className="my-card-content">
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
 							{store.scenesByFilm
 								? store.scenesByFilm.map((item, index) => {
