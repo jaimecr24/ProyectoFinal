@@ -74,6 +74,7 @@ class Place(db.Model):
     description = db.Column(db.String)
     countLikes = db.Column(db.Integer)
     entryDate = db.Column(db.Date)
+    urlPhoto = db.Column(db.String)
     country = db.relationship('Country')
 
     def __repr__(self):
@@ -88,7 +89,13 @@ class Place(db.Model):
             "longitude": self.longitude,
             "description": self.description,
             "countLikes": self.countLikes,
+<<<<<<< HEAD
             "entryDate": self.entryDate
+=======
+            "entryDate": self.entryDate,
+            "urlPhoto": self.urlPhoto
+
+>>>>>>> main
         }
     
 
@@ -115,6 +122,7 @@ class Scene(db.Model):
     idFilm = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
     idPlace = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
     description = db.Column(db.String)
+    urlPhoto = db.Column(db.String)
     film = db.relationship('Film')
     place = db.relationship('Place')
     
@@ -127,12 +135,18 @@ class Scene(db.Model):
         return {
             "id": self.id,
             "idFilm": self.idFilm,
+            "title": self.film.name,
             "idPlace": self.idPlace,
+<<<<<<< HEAD
             "country": self.place.country.name,
             "place": self.place.name,
             "movie": self.film.name,
             "picture": self.film.urlPhoto,
             "description": self.description
+=======
+            "description": self.description,
+            "urlPhoto": self.urlPhoto
+>>>>>>> main
         }
 
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { Scene } from "../component/scene.js";
 import { useParams } from "react-router-dom";
 
 export const SinglePlace = () => {
@@ -57,7 +58,14 @@ export const SinglePlace = () => {
 
 						{store.scenesByPlace
 							? store.scenesByPlace.map((value, index) => {
-									return;
+									return (
+										<Scene
+											id={value.idFilm}
+											description={value.description}
+											title={value.title}
+											key={value.idFilm}
+										/>
+									);
 							  })
 							: "Cargando"}
 					</div>
