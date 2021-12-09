@@ -89,13 +89,9 @@ class Place(db.Model):
             "longitude": self.longitude,
             "description": self.description,
             "countLikes": self.countLikes,
-<<<<<<< HEAD
-            "entryDate": self.entryDate
-=======
             "entryDate": self.entryDate,
             "urlPhoto": self.urlPhoto
 
->>>>>>> main
         }
     
 
@@ -137,16 +133,12 @@ class Scene(db.Model):
             "idFilm": self.idFilm,
             "title": self.film.name,
             "idPlace": self.idPlace,
-<<<<<<< HEAD
             "country": self.place.country.name,
             "place": self.place.name,
             "movie": self.film.name,
             "picture": self.film.urlPhoto,
-            "description": self.description
-=======
             "description": self.description,
             "urlPhoto": self.urlPhoto
->>>>>>> main
         }
 
 

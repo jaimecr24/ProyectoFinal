@@ -69,6 +69,7 @@ export const InfoFilms = () => {
 												id={item.id}
 												place={item.place}
 												country={item.country}
+												urlPhoto={item.urlPhoto}
 												key={item.id}
 											/>
 										);
