@@ -118,6 +118,8 @@ class Scene(db.Model):
     film = db.relationship('Film')
     place = db.relationship('Place')
     
+
+    
     def __repr__(self):
         return '<Scene %r>' % self.id
 
@@ -127,6 +129,9 @@ class Scene(db.Model):
             "idFilm": self.idFilm,
             "idPlace": self.idPlace,
             "country": self.place.country.name,
+            "place": self.place.name,
+            "movie": self.film.name,
+            "picture": self.film.urlPhoto,
             "description": self.description
         }
 

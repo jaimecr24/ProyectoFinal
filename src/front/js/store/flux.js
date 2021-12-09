@@ -212,10 +212,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({
 							infoCountries: data
 						});
+						return data.id;
 					})
+					.then(id => getActions().getScenesByFilm(id))
 					.catch(error => console.log("Error loading place from backend", error));
 			},
-
 			resetInfoCountries: () => {
 				setStore({
 					infoCountries: null

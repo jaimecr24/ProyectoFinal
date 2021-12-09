@@ -5,7 +5,7 @@
     text-align: left;
 }
 
-.cards-content {
+.my-content {
     margin-left: 10%;
     margin-right: 15%;
     display: flex;
@@ -16,7 +16,7 @@
     white-space: nowrap;
 }
 
-.card {
+.my-card {
     padding: 10px;
     margin: 10px;
     justify-content: center;
@@ -29,4 +29,13 @@
 
 .characters{
     width: 300px;
+}
+
+.my-img {
+    width: 50%;
+    display: block;
+    margin-left: 35%;
+    margin-right: auto;
+    border-radius: 20px;
+
 }

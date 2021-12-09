@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useContext } from "react";
 import { Context } from "../store/appContext";
 import { useParams } from "react-router-dom";
+import { Movie } from "../component/movie";
 
 export const InfoFilms = () => {
 	const { store, actions } = useContext(Context);
@@ -25,7 +26,7 @@ export const InfoFilms = () => {
 						}}>
 						{store.infoFilms.name}
 					</h2>
-					<div className="col-md-6">
+					<div className="col-md-6" style={{ justifyContent: "center" }}>
 						<img
 							className="bg-dark rounded row ms-2"
 							src={store.infoFilms.urlPhoto}
@@ -34,17 +35,6 @@ export const InfoFilms = () => {
 								minHeight: "200px"
 							}}
 						/>
-
-						<div
-							style={{
-								paddingTop: "20px",
-								textAlign: "center",
-								paddingBottom: "20px"
-							}}>
-							<button className="btn btn-outline-warning">
-								<i className="fas fa-heart" />
-							</button>
-						</div>
 					</div>
 					<div>
 						<p
@@ -66,7 +56,7 @@ export const InfoFilms = () => {
 									paddingTop: "20px"
 								}}>
 								{" "}
-								·Países donde fue grabada:{" "}
+								·Escenas grabadas en esta película:{" "}
 							</h2>
 						</div>
 					</div>
@@ -75,70 +65,15 @@ export const InfoFilms = () => {
 							{store.scenesByFilm
 								? store.scenesByFilm.map((item, index) => {
 										return (
-											<div className="card bg-dark" key={index}>
-												<img src="" className="characters card-img-top mx-auto" alt="..." />
-												<div className="card-body">
-													<h5
-														className="card-title text-warning"
-														style={{ textAlign: "center", paddingBottom: "40px" }}>
-														{item.country}
-													</h5>
-													<a className="btn btn-primary float-start">
-														<span className="text-warning ">
-															{" "}
-															<span className="btn btn-outline-primary">
-																Aprender más
-															</span>
-														</span>
-													</a>
-													<button className="btn btn-outline-warning float-end">
-														<i className="fas fa-heart" />
-													</button>
-												</div>
-											</div>
+											<Movie
+												id={item.id}
+												place={item.place}
+												country={item.country}
+												key={item.id}
+											/>
 										);
 								  })
 								: null}
-						</div>
-					</div>
-					<div>
-						<div>
-							<h2
-								style={{
-									color: "white",
-									paddingBottom: "20px",
-									paddingTop: "20px"
-								}}>
-								{" "}
-								·Sitios donde fue grabada:{" "}
-							</h2>
-						</div>
-					</div>
-					<div className="cards-content">
-						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							<div className="card bg-dark">
-								<img
-									src="https://www.civitatis.com/blog/wp-content/uploads/2021/01/escenarios-rodaje-harry-potter.jpg"
-									className="characters card-img-top mx-auto"
-									alt="..."
-								/>
-								<div className="card-body">
-									<h5
-										className="card-title text-warning"
-										style={{ textAlign: "center", paddingBottom: "40px" }}>
-										Titulo
-									</h5>
-									<a className="btn btn-primary float-start">
-										<span className="text-warning ">
-											{" "}
-											<span className="btn btn-outline-primary">Aprender más</span>
-										</span>
-									</a>
-									<button className="btn btn-outline-warning float-end">
-										<i className="fas fa-heart" />
-									</button>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>

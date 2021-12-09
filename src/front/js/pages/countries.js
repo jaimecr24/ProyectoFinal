@@ -32,9 +32,7 @@ export const Countries = () => {
 											<a className="btn btn-primary float-start">
 												<span className="text-warning ">
 													{" "}
-													<Link
-														to={"/infocountries/" + item.id}
-														onClick={() => localStorage.setItem("id", item.id)}>
+													<Link to={"/infocountries/" + item.id}>
 														<span className="btn btn-outline-primary">Aprender más</span>
 													</Link>
 												</span>
