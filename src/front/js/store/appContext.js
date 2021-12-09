@@ -32,7 +32,16 @@ const injectContext = PassedComponent => {
 			state.actions.fetchFilms();
 			state.actions.fetchCountries();
 			state.actions.getPlaces();
+
+			if (window.localStorage["store"] !== undefined) {
+				state.store = JSON.parse(localStorage.getItem("store"));
+				// state.actions.forceRender(); ??
+			} else {
+				//load data from db.
+			}
 		}, []);
+
+		useEffect(() => localStorage.setItem("store", JSON.stringify(state.store)));
 
 		// The initial value for the context is not null anymore, but the current state of this component,
 		// the context will now have a getStore, getActions and setStore functions available, because they were declared
