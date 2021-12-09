@@ -144,11 +144,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					.catch(error => console.log("Error loading place from backend", error));
 			},
-			resetSinglePlace: () => {
-				setStore({
-					singlePlace: null
-				});
-				localStorage.removeItem("id");
+			getScenesByPlace: id => {
+				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							scenesByPlace: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
 			},
 
 			fetchFilms: () => {
