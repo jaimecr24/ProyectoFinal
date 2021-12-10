@@ -147,11 +147,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					.catch(error => console.log("Error loading place from backend", error));
 			},
-			resetSinglePlace: () => {
-				setStore({
-					singlePlace: null
-				});
-				localStorage.removeItem("id");
+			getScenesByPlace: id => {
+				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							scenesByPlace: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+
+			getScenesByFilm: id => {
+				fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							scenesByFilm: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
 			},
 
 			fetchFilms: () => {
@@ -170,7 +187,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({
 							infoFilms: data
 						});
+						return data.id;
 					})
+					.then(id => getActions().getScenesByFilm(id))
 					.catch(error => console.log("Error loading place from backend", error));
 			},
 
@@ -196,10 +215,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({
 							infoCountries: data
 						});
+						return data.id;
 					})
+					.then(id => getActions().getScenesByFilm(id))
 					.catch(error => console.log("Error loading place from backend", error));
 			},
-
 			resetInfoCountries: () => {
 				setStore({
 					infoCountries: null

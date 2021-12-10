@@ -32,7 +32,9 @@ export const Places = () => {
 											</div>
 
 											<div>
-												<Link to="/place" onClick={() => localStorage.setItem("id", value.id)}>
+												<Link
+													to={"/place/" + value.id}
+													onClick={() => localStorage.setItem("placeId", value.id)}>
 													<span className="btn btn-outline-success">Ver</span>
 												</Link>
 

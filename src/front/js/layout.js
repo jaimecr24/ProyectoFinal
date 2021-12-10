@@ -43,7 +43,7 @@ const Layout = () => {
 						<Route exact path="/places">
 							<Places />
 						</Route>
-						<Route exact path="/place">
+						<Route exact path="/place/:theid">
 							<SinglePlace />
 						</Route>
 
@@ -51,14 +51,14 @@ const Layout = () => {
 							<Films />
 						</Route>
 
-						<Route exact path="/infofilms">
+						<Route exact path="/infofilms/:theid">
 							<InfoFilms />
 						</Route>
 						<Route exact path="/countries">
 							<Countries />
 						</Route>
 
-						<Route exact path="/infocountries">
+						<Route exact path="/infocountries/:theid">
 							<InfoCountries />
 						</Route>
 						<Route exact path="/demo">

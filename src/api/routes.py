@@ -204,9 +204,9 @@ def listPlaces():
         raise APIException('You need to add the country id', status_code=400)
     
     if 'id' in data:
-        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now())
+        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
     elif 'id' not in data:
-        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now())
+        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
     db.session.add(new_place)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_place.serialize()]),200
@@ -343,9 +343,9 @@ def listScenes():
         raise APIException('You need to add the film id', status_code=400)
     
     if 'id' in data:
-        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
     elif 'id' not in data:
-        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"))
+        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
     db.session.add(new_scene)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_scene.serialize()]),200
