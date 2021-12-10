@@ -46,7 +46,7 @@ class Customer(db.Model):
 class Film(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
-    director = db.Column(db.String(80), unique=True, nullable=False)
+    director = db.Column(db.String(80), unique=False, nullable=False)
     year = db.Column(db.Integer)
     description = db.Column(db.String)
     urlPhoto = db.Column(db.String)
