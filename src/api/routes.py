@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
+import json
 
 api = Blueprint('api', __name__)
 
@@ -164,13 +165,22 @@ def getPhotoPlace(place_id):
 
     return jsonify({ "count":photos.count(), "msg":"ok", "items":res }), 200
 
+#Get a list of places that match a key
+@api.route('/places/<key>', methods=['GET'])
+def browsePlace(key):
+    places = Place.query.filter(Place.name.ilike("%"+key+"%"))
+    lista = [{"id":place.id, "name":place.name} for place in places]
+    return jsonify(lista), 200
+
 
     #ALL PLACES GET
 @api.route('/places', methods=['GET', 'POST'])
 def listPlaces():
-     # GET all places
-    list_places = Place.query.all()
+    
     if request.method == 'GET':
+        body = request.get_json()
+        #Return all places
+        list_places = Place.query.all()
         return jsonify([place.serialize() for place in list_places]), 200
 
     # POST a new place

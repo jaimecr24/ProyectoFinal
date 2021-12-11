@@ -13,7 +13,7 @@ export const Films = () => {
 				<h1>Películas</h1>
 				<span>Descubre nuestro listado de peliculas!</span>
 			</div>
-			<div className="cards-content">
+			<div className="my-card-content">
 				{store.films
 					? store.films.map((item, index) => {
 							return (
@@ -21,7 +21,7 @@ export const Films = () => {
 									className="row col-auto"
 									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
 									key={index}>
-									<div className="card bg-dark">
+									<div className="design-card bg-dark">
 										<img
 											src={item.urlPhoto}
 											className="characters card-img-top mx-auto"
@@ -37,7 +37,7 @@ export const Films = () => {
 												<span className="text-warning ">
 													{" "}
 													<Link
-														to="/infofilms"
+														to={"/infofilms/" + item.id}
 														onClick={() => localStorage.setItem("id", item.id)}>
 														<span className="btn btn-outline-primary">Aprender más</span>
 													</Link>

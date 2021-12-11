@@ -1,3 +1,41 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+.title{
+    text-align: left;
+}
+
+.my-card-content {
+    margin-left: 10%;
+    margin-right: 15%;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 450px;
+    overflow-y:hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.design-card {
+    padding: 10px;
+    margin: 10px;
+    justify-content: center;
+}
+
+
+.card-body {
+    color: white;
+}
+
+.characters{
+    width: 300px;
+}
+
+.my-img {
+    width: 50%;
+    display: block;
+    margin-left: 35%;
+    margin-right: auto;
+    border-radius: 20px;
+
+}

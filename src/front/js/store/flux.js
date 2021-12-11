@@ -112,6 +112,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				return fetch(process.env.BACKEND_URL + "/api/place/" + idPlace.toString() + "/photos");
 			},
 
+			// Get the list of places that match a key (only name and id)
+			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/places/" + key),
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
@@ -156,6 +159,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.catch(error => console.log("Error loading place from backend", error));
 			},
 
+			getScenesByFilm: id => {
+				fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
+					.then(res => res.json())
+					.then(data => {
+						console.log(data);
+						setStore({
+							scenesByFilm: data
+						});
+					})
+					.catch(error => console.log("Error loading place from backend", error));
+			},
+
 			fetchFilms: () => {
 				console.log(process.env.BACKEND_URL + "/api/films");
 				fetch(process.env.BACKEND_URL + "/api/films")
@@ -172,7 +187,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({
 							infoFilms: data
 						});
+						return data.id;
 					})
+					.then(id => getActions().getScenesByFilm(id))
 					.catch(error => console.log("Error loading place from backend", error));
 			},
 
@@ -198,10 +215,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({
 							infoCountries: data
 						});
+						return data.id;
 					})
+					.then(id => getActions().getScenesByFilm(id))
 					.catch(error => console.log("Error loading place from backend", error));
 			},
-
 			resetInfoCountries: () => {
 				setStore({
 					infoCountries: null
