@@ -18,7 +18,7 @@ export const Places = () => {
 									style={{ minWidth: "350px" }}>
 									<img
 										className="card-img-top bg-dark mt-0"
-										src="..."
+										src={value.urlPhoto}
 										alt="..."
 										style={{ height: "200px" }}
 									/>
@@ -27,14 +27,10 @@ export const Places = () => {
 											<h5 className="card-title text-success text-center">{value.name}</h5>
 											<div style={{ fontSize: "10px" }}>
 												<div className="text-dark">{value.description}</div>
-
-												<div className="text-danger">Harry Potter...</div>
 											</div>
 
 											<div>
-												<Link
-													to={"/place/" + value.id}
-													onClick={() => localStorage.setItem("placeId", value.id)}>
+												<Link to={"/place/" + value.id}>
 													<span className="btn btn-outline-success">Ver</span>
 												</Link>
 

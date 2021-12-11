@@ -194,9 +194,9 @@ def listPlaces():
         raise APIException('You need to add the country id', status_code=400)
     
     if 'id' in data:
-        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
+        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"), address=data.get("address"))
     elif 'id' not in data:
-        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
+        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"), address=data.get("address"))
     db.session.add(new_place)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_place.serialize()]),200

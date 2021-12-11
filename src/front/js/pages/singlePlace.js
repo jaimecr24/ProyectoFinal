@@ -9,8 +9,8 @@ export const SinglePlace = () => {
 	useEffect(() => {
 		actions.getSinglePlace(params.theid);
 		actions.getScenesByPlace(params.theid);
+		store.singlePlace ? actions.getInfoCountries(store.singlePlace.idCountry) : null;
 	}, []);
-	store.singlePlace ? actions.getInfoCountries(store.singlePlace.idCountry) : null;
 
 	return (
 		<div className="container mt-3 mx-auto bg-white p-3 card rounded" style={{ width: "75%" }}>
@@ -20,10 +20,10 @@ export const SinglePlace = () => {
 					<div className="row mx-3 px-3">
 						<div className="row col-5 me-5">
 							<img
-								className="bg-dark rounded row ms-2"
-								src="..."
+								className="rounded row"
+								src={store.singlePlace.urlPhoto}
 								alt="..."
-								style={{ minHeight: "200px" }}
+								style={{ minHeight: "200px", objectFit: "cover" }}
 							/>
 
 							<div className="text-dark mt-1">
@@ -49,7 +49,7 @@ export const SinglePlace = () => {
 							style={{ height: "350px" }}
 						/>
 						<div className="col-6">
-							<p className="text-dark">Dirección:</p>
+							<p className="text-dark">Dirección: {store.singlePlace.address}</p>
 							<p className="text-dark">Coordenadas:</p>
 						</div>
 					</div>
@@ -63,6 +63,7 @@ export const SinglePlace = () => {
 											id={value.idFilm}
 											description={value.description}
 											title={value.title}
+											urlPhoto={value.urlPhoto}
 											key={value.idFilm}
 										/>
 									);

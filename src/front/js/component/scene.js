@@ -9,16 +9,19 @@ export const Scene = props => {
 	//}, []);
 
 	return (
-		<div className="card p-3 mx-5 rounded  mb-5 w-100 mx-auto">
-			<div className="row">
-				<div className="col-4">
-					{<h5 className="card-title text-success">{props.title}</h5>}
-					<img className="card-img-top bg-dark row m-3" src="..." alt="..." style={{ height: "200px" }} />
-				</div>
-				<div className="card-body col-6 ms-5">
-					<div style={{ fontSize: "10px" }}>
-						<div className="text-dark">{props.description}</div>
-					</div>
+		<div className="card p-3  rounded  mb-5 mx-auto" style={{ width: "45%" }}>
+			<h5 className="card-title text-success">{props.title}</h5>
+
+			<img
+				className="card-img-top bg-dark row m-1 mx-auto"
+				src={props.urlPhoto}
+				alt={props.description}
+				style={{ height: "200px", width: "90%", objectFit: "cover" }}
+			/>
+
+			<div className="card-body mx-auto">
+				<div style={{ fontSize: "10px" }}>
+					<div className="text-dark">{props.description}</div>
 				</div>
 			</div>
 		</div>
@@ -27,5 +30,6 @@ export const Scene = props => {
 Scene.propTypes = {
 	id: PropTypes.string,
 	description: PropTypes.string,
-	title: PropTypes.string
+	title: PropTypes.string,
+	urlPhoto: PropTypes.string
 };
