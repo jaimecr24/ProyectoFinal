@@ -112,6 +112,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				return fetch(process.env.BACKEND_URL + "/api/place/" + idPlace.toString() + "/photos");
 			},
 
+			// Get the list of places that match a key (only name and id)
+			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/places/" + key),
+
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
@@ -137,7 +140,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/places/" + id)
 					.then(res => res.json())
 					.then(data => {
-						console.log(data);
 						setStore({
 							singlePlace: data
 						});
@@ -148,7 +150,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
 					.then(res => res.json())
 					.then(data => {
-						console.log(data);
 						setStore({
 							scenesByPlace: data
 						});

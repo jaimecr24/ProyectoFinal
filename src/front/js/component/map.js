@@ -1,6 +1,5 @@
-import React, { useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
-
 import PropTypes from "prop-types";
 
 const Marker = () => (
@@ -30,7 +29,10 @@ const Map = props => {
 		<div style={{ width: props.width + "px", height: props.height + "px" }}>
 			<GoogleMapReact
 				bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAP_API_KEY }}
-				defaultCenter={{ lat: props.lat, lng: props.lng }}
+				center={{
+					lat: props.lat ? parseFloat(props.lat) : null,
+					lng: props.lng ? parseFloat(props.lng) : null
+				}}
 				defaultZoom={10}
 				yesIWantToUseGoogleMapApiInternals>
 				<Label name={props.name} direction={props.direction} styleLabel={style} />
@@ -40,8 +42,8 @@ const Map = props => {
 	);
 };
 Map.propTypes = {
-	lat: PropTypes.number,
-	lng: PropTypes.number,
+	lat: PropTypes.string,
+	lng: PropTypes.string,
 	width: PropTypes.string,
 	height: PropTypes.string,
 	name: PropTypes.string,
