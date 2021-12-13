@@ -116,11 +116,9 @@ def getFavPlaces():
     for elem in favPlaces:
         place = Place.query.get(elem.idPlace)
         country = Country.query.get(place.idCountry)
-        photo = PhotoPlace.query.filter_by(idPlace=elem.idPlace).first()
-        if not photo is None: photo = photo.urlPhoto
         res.append({
             "id": place.id, "name":place.name, "latitude":place.latitude, "longitude":place.longitude,
-            "description":place.description, "countryName":country.name, "urlPhoto":photo
+            "description":place.description, "countryName":country.name, "urlPhoto":place.urlPhoto
         })
     return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
 
@@ -155,18 +153,9 @@ def delFavPlace(place_id):
         db.session.commit()
         return jsonify({"msg":"ok"}), 200
 
-#Get photos of place
-@api.route('/place/<int:place_id>/photos', methods=['GET'])
-def getPhotoPlace(place_id):
-    photos = PhotoPlace.query.filter_by(idPlace=place_id)
-    res = []
-    for elem in photos:
-        res.append({ "url":elem.urlPhoto, "description":elem.description })
-
-    return jsonify({ "count":photos.count(), "msg":"ok", "items":res }), 200
 
 #Get a list of places that match a key
-@api.route('/places/<key>', methods=['GET'])
+@api.route('/browse/<key>', methods=['GET'])
 def browsePlace(key):
     places = Place.query.filter(Place.name.ilike("%"+key+"%"))
     lista = [{"id":place.id, "name":place.name} for place in places]
