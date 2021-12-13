@@ -113,7 +113,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			// Get the list of places that match a key (only name and id)
-			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/places/" + key),
+			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/browse/" + key),
 
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {

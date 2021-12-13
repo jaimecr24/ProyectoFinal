@@ -113,6 +113,7 @@ export const FormLogin = () => {
 								placeholder="Email o nombre de usuario"
 								onChange={handleChange}
 								value={data.identifier}
+								autoFocus
 							/>
 						</div>
 						<div className="input-group mb-3">
@@ -148,17 +149,12 @@ export const FormLogin = () => {
 	);
 };
 
-function isValidName(name) {
-	let regName = /^[a-zA-ZñÑ\s]+$/;
-	return regName.test(name);
-}
-
 function isValidEmail(email) {
 	let regEmail = /^[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$/;
 	return regEmail.test(email);
 }
 
 function isValidUserName(username) {
-	let regUsername = /^[a-zA-Z0-9ñÑ]+$/;
+	let regUsername = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ]+$/;
 	return regUsername.test(username);
 }

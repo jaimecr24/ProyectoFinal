@@ -1,9 +1,11 @@
 import React, { useContext, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
+	let history = useHistory();
 
 	const style = {
 		width: "200px"
@@ -27,8 +29,19 @@ export const Home = () => {
 
 	const handleSearch = e => {
 		e.preventDefault();
-		let myInput = document.getElementById("mySearch");
-		console.log(myInput.value);
+		let key = document.getElementById("mySearch").value;
+		if (key.length > 0) {
+			actions
+				.getBrowsePlace(key)
+				.then(res => res.json())
+				.then(data => {
+					if (data.length > 0) {
+						let path = "/place/" + data[0]["id"]; // Go to the first place. To do: present a list of results to user.
+						history.push({ pathname: path }); // Equivalent in js to <Link ... >
+					} else console.log("data is []");
+				})
+				.catch(error => console.log("Error in getBrowsePlace", error));
+		}
 	};
 
 	return (

@@ -15,6 +15,14 @@ export const FormSignUp = () => {
 	});
 
 	const responseStatus = { 461: "nombre de usuario ya existe", 462: "email ya existe" };
+	let regName = "[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+";
+	let regUsername = "[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ]+";
+	let regEmail = "[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\\.[a-z]{2,4}";
+
+	function isValid(str, exp) {
+		let r = new RegExp(exp);
+		return r.test(str);
+	}
 
 	const handleChange = e => {
 		setData({
@@ -28,10 +36,10 @@ export const FormSignUp = () => {
 
 		if (!data.signed) {
 			let msg = "";
-			if (!isValidName(data.firstName)) msg = "Nombre no válido\n";
-			if (!isValidName(data.lastName)) msg += "Apellido no válido\n";
-			if (!isValidUserName(data.username)) msg += "Nombre de usuario no válido\n";
-			if (!isValidEmail(data.email)) msg += "Email no válido\n";
+			if (!isValid(data.firstName, regName)) msg = "Nombre no válido\n";
+			if (!isValid(data.lastName, regName)) msg += "Apellido no válido\n";
+			if (!isValid(data.username, regUsername)) msg += "Nombre de usuario no válido\n";
+			if (!isValid(data.email, regEmail)) msg += "Email no válido\n";
 			if (data.password1.length < 6) msg += "La contraseña debe tener como mínimo 6 caracteres\n";
 			if (data.password1 !== data.password2) msg += "Error en confirmación de password";
 			if (msg !== "") {
@@ -101,7 +109,7 @@ export const FormSignUp = () => {
 							placeholder="Nombre"
 							onChange={handleChange}
 							value={data.firstName}
-							pattern="[a-zA-Z0-9ñÑ\s]+"
+							pattern={regName}
 							minLength="1"
 							autoFocus
 						/>
@@ -111,7 +119,7 @@ export const FormSignUp = () => {
 							placeholder="Apellido(s)"
 							onChange={handleChange}
 							value={data.lastName}
-							pattern="[a-zA-Z0-9ñÑ\s]+"
+							pattern={regName}
 							minLength="1"
 						/>
 						<input
@@ -120,7 +128,7 @@ export const FormSignUp = () => {
 							placeholder="Nombre de usuario"
 							onChange={handleChange}
 							value={data.username}
-							pattern="[a-zA-Z0-9ñÑ]+"
+							pattern={regUsername}
 							minLength="4"
 						/>
 						<input
@@ -129,7 +137,7 @@ export const FormSignUp = () => {
 							placeholder="Email"
 							onChange={handleChange}
 							value={data.email}
-							pattern="[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$"
+							pattern={regEmail}
 						/>
 						<input
 							type="password"
@@ -174,18 +182,3 @@ export const FormSignUp = () => {
 		</div>
 	);
 };
-
-function isValidName(name) {
-	let regName = /^[a-zA-ZñÑ\s]+$/;
-	return regName.test(name);
-}
-
-function isValidEmail(email) {
-	let regEmail = /^[a-z0-9ñÑ._%+-]+@[a-z0-9ñÑ.-]+\.[a-z]{2,4}$/;
-	return regEmail.test(email);
-}
-
-function isValidUserName(username) {
-	let regUsername = /^[a-zA-Z0-9ñÑ]+$/;
-	return regUsername.test(username);
-}

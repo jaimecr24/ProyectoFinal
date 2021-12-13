@@ -150,14 +150,11 @@ export const Profile = () => {
 										/>
 										<img className="col-2" src={value.urlPhoto} />
 										<div className="col-4">
-											<a style={linkStyle} href="#">
+											<Link to={"/place/" + value.id} style={linkStyle}>
 												{value.name}
-											</a>{" "}
-											({value.countryName})
+											</Link>
+											{" (" + value.countryName + ")"}
 										</div>
-										{
-											//<Link to={`/place/${value.id.toString()}`}></Link>
-										}
 										<div className="col-5">{value.description}</div>
 									</div>
 							  ))
