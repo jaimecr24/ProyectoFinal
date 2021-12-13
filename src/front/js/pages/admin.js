@@ -4,22 +4,126 @@ import { Context } from "../store/appContext";
 import "../../styles/modal.css";
 import iconadmin from "../../img/admin-icon.png";
 
-export const Admin = () => {
+const Users = () => {
 	const { store, actions } = useContext(Context);
-
 	const [data, setData] = useState({
-		users: [],
-		customers: [],
+		users: []
+	});
+	useEffect(() => {
+		// load users data
+		fetch(process.env.BACKEND_URL + "/api/users", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + store.activeUser.token
+			}
+		})
+			.then(res => res.json())
+			.then(users => setData({ ...data, users: users }))
+			.catch(error => console.log(error));
+	}, []);
+	return (
+		<div>
+			<div>Información de usuarios</div>
+		</div>
+	);
+};
+
+const Films = () => {
+	const { store, actions } = useContext(Context);
+	const [data, setData] = useState({
+		films: []
+	});
+	/*
+	useEffect(() => {
+		// load users data
+		fetch(process.env.BACKEND_URL + "/api/users")
+			.then(res => res.json())
+			.then(users => setData({ ...data, users: users }))
+			.catch(error => console.log(error));
+	}, []);
+	*/
+	return (
+		<div>
+			<div>Información de películas</div>
+		</div>
+	);
+};
+
+const Places = () => {
+	const { store, actions } = useContext(Context);
+	const [data, setData] = useState({
 		places: []
 	});
-
-	let history = useHistory();
-
 	useEffect(() => {
+		// load users data
 		fetch(process.env.BACKEND_URL + "/api/places")
 			.then(res => res.json())
 			.then(places => setData({ ...data, places: places }))
 			.catch(error => console.log(error));
+	}, []);
+
+	return (
+		<>
+			{data.places.length > 0 ? (
+				<table className="table text-white">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">nombre</th>
+							<th scope="col">latitud</th>
+							<th scope="col">longitud</th>
+							<th scope="col">descripción</th>
+							<th scope="col">contador de likes</th>
+						</tr>
+					</thead>
+					<tbody>
+						{data.places.map((e, i) => (
+							<tr key={i}>
+								<th scope="row">{e.id}</th>
+								<td>{e.name}</td>
+								<td>{e.latitude}</td>
+								<td>{e.longitude}</td>
+								<td>{e.description}</td>
+								<td>{e.countLikes}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			) : (
+				""
+			)}
+		</>
+	);
+};
+
+export const Admin = () => {
+	const { store, actions } = useContext(Context);
+	const [data, setData] = useState({
+		tableSelected: 0 // 0 - none, 1 - users, 2 - films, 3 - places
+	});
+	let history = useHistory();
+
+	useEffect(() => {
+		// test token validity
+		let status = 200;
+		actions
+			.getUser()
+			.then(res => {
+				status = res.status;
+				return res.json();
+			})
+			.then(responseUser => {
+				if (status >= 400) {
+					alert(responseUser["msg"]);
+					actions.logout();
+					// history.push({ pathname: "/" });
+				}
+			})
+			.catch(error => {
+				alert("Error: " + error);
+				actions.logout();
+			});
 	}, []);
 
 	return (
@@ -35,25 +139,37 @@ export const Admin = () => {
 							className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
 							id="menu">
 							<li className="nav-item">
-								<a href="#" className="nav-link align-middle px-0 text-white">
+								<a
+									href="#"
+									className="nav-link align-middle px-0 text-white"
+									onClick={() => setData({ tableSelected: 0 })}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Inicio</span>
 								</a>
 							</li>
 							<li className="nav-item">
-								<a href="#" className="nav-link align-middle px-0 text-white">
+								<a
+									href="#"
+									className="nav-link align-middle px-0 text-white"
+									onClick={() => setData({ tableSelected: 1 })}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Usuarios</span>
 								</a>
 							</li>
 							<li className="nav-item">
-								<a href="#" className="nav-link align-middle px-0 text-white">
+								<a
+									href="#"
+									className="nav-link align-middle px-0 text-white"
+									onClick={() => setData({ tableSelected: 2 })}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Películas</span>
 								</a>
 							</li>
 							<li className="nav-item">
-								<a href="#" className="nav-link align-middle px-0 text-white">
+								<a
+									href="#"
+									className="nav-link align-middle px-0 text-white"
+									onClick={() => setData({ tableSelected: 3 })}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Sitios</span>
 								</a>
@@ -135,31 +251,12 @@ export const Admin = () => {
 				</div>
 
 				<div className="col py-3">
-					{data.places.length > 0 ? (
-						<table className="table text-white">
-							<thead>
-								<tr>
-									<th scope="col">#</th>
-									<th scope="col">nombre</th>
-									<th scope="col">latitud</th>
-									<th scope="col">longitud</th>
-									<th scope="col">descripción</th>
-									<th scope="col">contador de likes</th>
-								</tr>
-							</thead>
-							<tbody>
-								{data.places.map((e, i) => (
-									<tr key={i}>
-										<th scope="row">{e.id}</th>
-										<td>{e.name}</td>
-										<td>{e.latitude}</td>
-										<td>{e.longitude}</td>
-										<td>{e.description}</td>
-										<td>{e.countLikes}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+					{data.tableSelected == 1 ? (
+						<Users />
+					) : data.tableSelected == 2 ? (
+						<Films />
+					) : data.tableSelected == 3 ? (
+						<Places />
 					) : (
 						""
 					)}

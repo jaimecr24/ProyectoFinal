@@ -14,9 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			token: "",
-			activeUserId: null,
-			previousLoginTime: null,
+			activeUser: { token: "", id: null, lastTime: null, category: false },
 			singlePlace: null,
 			infoFilms: null,
 			infoCountries: null
@@ -50,19 +48,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				});
 			},
-
-			// These functions must be called after call to login function !!
-			setPreviousLoginTime: t => setStore({ previousLoginTime: t }),
-			setActiveUserId: id => setStore({ activeUserId: id }),
-			setToken: tk => setStore({ token: tk }),
+			setActiveUser: p => setStore({ activeUser: p }),
 
 			// Logout. Reset all variables related to user
-			logout: () =>
-				setStore({
-					token: "",
-					activeUserId: null,
-					previousLoginTime: null
-				}),
+			logout: () => setStore({ activeUser: { token: "", id: null, lastTime: null, category: false } }),
 
 			// Protected: get all data from user identified by token
 			getUser: () => {
@@ -70,7 +59,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().token
+						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				});
 			},
@@ -81,7 +70,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().token
+						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				});
 			},
@@ -92,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().token
+						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				});
 			},
@@ -103,7 +92,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: "DELETE",
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().token
+						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				});
 			},

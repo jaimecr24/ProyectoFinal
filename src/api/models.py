@@ -20,7 +20,9 @@ class User(db.Model):
             "email": self.email,
             "username": self.username,
             "category": self.category,
-            "lasTime": self.lasTime
+            "lastTime": self.lastTime,
+            "name": self.customer.name,
+            "last_name": self.customer.last_name
         }
 
 class Customer(db.Model):
