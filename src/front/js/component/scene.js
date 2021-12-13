@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
+import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 export const Scene = props => {
-	const { store, actions } = useContext(Context);
-	//useEffect(() => {
-	//actions.getInfoFilms(props.id);
-	//}, []);
-
 	return (
 		<div className="card p-3  rounded  mb-5 mx-auto" style={{ width: "45%" }}>
-			<h5 className="card-title text-success">{props.title}</h5>
+			<Link to={"/infofilms/" + props.id} style={{ textDecoration: "none" }}>
+				<h5 className="card-title text-success">{props.title}</h5>
+			</Link>
 
 			<img
 				className="card-img-top bg-dark row m-1 mx-auto"

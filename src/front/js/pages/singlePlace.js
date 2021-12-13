@@ -1,27 +1,56 @@
-import React, { useEffect, useContext } from "react";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from "react";
 import { Scene } from "../component/scene.js";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const SinglePlace = () => {
-	const { store, actions } = useContext(Context);
+	const [singlePlace, setSinglePlace] = useState({});
+	const [scenesByPlace, setScenesByPlace] = useState({});
+	const [country, setCountry] = useState("");
 	const params = useParams();
+	const getSinglePlace = id => {
+		fetch(process.env.BACKEND_URL + "/api/places/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setSinglePlace(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	const getScenesByPlace = id => {
+		fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setScenesByPlace(data);
+			})
+			.catch(error => console.log("Error loading scenes from backend", error));
+	};
+	const getCountryName = id => {
+		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setCountry(data.name);
+			})
+			.catch(error => console.log("Error loading country from backend", error));
+	};
+
 	useEffect(() => {
-		actions.getSinglePlace(params.theid);
-		actions.getScenesByPlace(params.theid);
-		store.singlePlace ? actions.getInfoCountries(store.singlePlace.idCountry) : null;
+		getSinglePlace(params.theid);
+		getScenesByPlace(params.theid);
 	}, []);
+	useEffect(() => {
+		singlePlace ? getCountryName(singlePlace.idCountry) : null;
+	});
 
 	return (
 		<div className="container mt-3 mx-auto bg-white p-3 card rounded" style={{ width: "75%" }}>
-			{store.singlePlace && store.infoCountries ? (
+			{singlePlace && country ? (
 				<div>
-					<h2 className="text-success">{store.singlePlace.name}</h2>
+					<h2 className="text-success">{singlePlace.name}</h2>
 					<div className="row mx-3 px-3">
 						<div className="row col-5 me-5">
 							<img
 								className="rounded row"
-								src={store.singlePlace.urlPhoto}
+								src={singlePlace.urlPhoto}
 								alt="..."
 								style={{ minHeight: "200px", objectFit: "cover" }}
 							/>
@@ -31,17 +60,20 @@ export const SinglePlace = () => {
 									<i className="fas fa-film" />
 								</button>
 								<span>
-									<i className="fas fa-heart text-danger" /> {store.singlePlace.countLikes}
+									<i className="fas fa-heart text-danger" /> {singlePlace.countLikes}
 								</span>
 							</div>
 						</div>
 						<div className="col-6">
-							<p className="text-danger">{store.infoCountries.name}</p>
-							<p className="text-dark">{store.singlePlace.description}</p>
+							<Link to={"/infocountries/" + singlePlace.idCountry} style={{ textDecoration: "none" }}>
+								<p className="text-danger">{country}</p>
+							</Link>
+
+							<p className="text-dark">{singlePlace.description}</p>
 						</div>
 					</div>
 					<div className="row mt-5 mx-3 px-3">
-						<h5>¿Dónde encontrar {store.singlePlace.name}?</h5>
+						<h5>¿Dónde encontrar {singlePlace.name}?</h5>
 
 						<iframe
 							className="col-5 me-5"
@@ -49,27 +81,27 @@ export const SinglePlace = () => {
 							style={{ height: "350px" }}
 						/>
 						<div className="col-6">
-							<p className="text-dark">Dirección: {store.singlePlace.address}</p>
+							<p className="text-dark">Dirección: {singlePlace.address}</p>
 							<p className="text-dark">Coordenadas:</p>
 						</div>
 					</div>
-					<div className="row mt-5 px-5">
-						<h5>Series y películas rodadas en {store.singlePlace.name}:</h5>
+					{scenesByPlace.length > 0 ? (
+						<div className="row mt-5 px-5">
+							<h5>Series y películas rodadas en {singlePlace.name}:</h5>
 
-						{store.scenesByPlace
-							? store.scenesByPlace.map((value, index) => {
-									return (
-										<Scene
-											id={value.idFilm}
-											description={value.description}
-											title={value.title}
-											urlPhoto={value.urlPhoto}
-											key={value.idFilm}
-										/>
-									);
-							  })
-							: "Cargando"}
-					</div>
+							{scenesByPlace.map((value, index) => {
+								return (
+									<Scene
+										id={value.idFilm}
+										description={value.description}
+										title={value.title}
+										urlPhoto={value.urlPhoto}
+										key={value.idFilm}
+									/>
+								);
+							})}
+						</div>
+					) : null}
 				</div>
 			) : null}
 		</div>

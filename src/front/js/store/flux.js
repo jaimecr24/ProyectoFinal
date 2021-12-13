@@ -140,7 +140,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/places/" + id)
 					.then(res => res.json())
 					.then(data => {
-						console.log(data);
 						setStore({
 							singlePlace: data
 						});
@@ -151,7 +150,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
 					.then(res => res.json())
 					.then(data => {
-						console.log(data);
 						setStore({
 							scenesByPlace: data
 						});

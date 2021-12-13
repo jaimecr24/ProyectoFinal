@@ -1,16 +1,25 @@
-import React, { useContext } from "react";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export const Places = () => {
-	const { store, actions } = useContext(Context);
+	const [places, setPlaces] = useState([]);
+	const getPlaces = () => {
+		fetch(process.env.BACKEND_URL + "/api/places")
+			.then(resp => resp.json())
+			.then(data => setPlaces(data))
+			.catch(error => console.log("Error loading places from backend", error));
+	};
+
+	useEffect(() => {
+		getPlaces();
+	}, []);
 
 	return (
 		<div className="container">
 			<h2 className="text-center py-3 text-light">Sitios de rodaje</h2>
 			<div className="row d-flex  justify-content-between">
-				{store.places
-					? store.places.map((value, index) => {
+				{places
+					? places.map((value, index) => {
 							return (
 								<div
 									className="card px-0 mx-4 col rounded col-3 mb-5 py-0"
