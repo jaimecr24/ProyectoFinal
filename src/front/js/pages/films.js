@@ -36,9 +36,7 @@ export const Films = () => {
 											<a className="btn btn-primary float-start">
 												<span className="text-warning ">
 													{" "}
-													<Link
-														to={"/infofilms/" + item.id}
-														onClick={() => localStorage.setItem("id", item.id)}>
+													<Link to={"/infofilms/" + item.id}>
 														<span className="btn btn-outline-primary">Aprender más</span>
 													</Link>
 												</span>
