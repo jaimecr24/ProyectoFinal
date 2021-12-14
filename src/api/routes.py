@@ -20,6 +20,20 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+#Get data of all users in db. Token and user category true necessary
+@api.route("/users", methods=["GET"])
+@jwt_required()
+def getAllUsers():
+    # Access the identity of the current user with get_jwt_identity
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user.category:
+        return { "msg": "user has no privileges"}, 400
+
+    users = User.query.all()
+    return jsonify([user.serialize() for user in users]), 200
+
+
 #registro del usuario
 @api.route("/signup", methods=["POST"])
 def signup():
@@ -83,7 +97,7 @@ def create_token():
     if lastTime: lastTime = lastTime.isoformat()
     user.lastTime = datetime.now()
     db.session.commit()
-    return jsonify({ "message": "ok", "token": access_token, "id": user.id, "lastTime": lastTime }), 200
+    return jsonify({ "message": "ok", "token": access_token, "id": user.id, "lastTime": lastTime, "category": user.category }), 200
 
 
 #profile (protected), returns data of current user.
@@ -93,12 +107,7 @@ def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    customer = Customer.query.filter_by(idUser=current_user_id).first()
-    
-    return jsonify({
-        "id": user.id, "email": user.email, "username": user.username, "lastTime": user.lastTime, "category": user.category,
-        "name": customer.name, "last_name": customer.last_name
-        }), 200
+    return jsonify(user.serialize()), 200
 
 
 #favorite places of user (protected)
@@ -167,7 +176,6 @@ def browsePlace(key):
 def listPlaces():
     
     if request.method == 'GET':
-        body = request.get_json()
         #Return all places
         list_places = Place.query.all() 
         return jsonify([place.serialize() for place in list_places]), 200

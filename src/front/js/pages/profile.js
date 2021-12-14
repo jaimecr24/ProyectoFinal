@@ -43,7 +43,7 @@ export const Profile = () => {
 								lastName: responseUser.last_name,
 								username: responseUser.username,
 								email: responseUser.email,
-								lastTime: new Date(store.previousLoginTime).toLocaleString(),
+								lastTime: new Date(store.activeUser.lastTime).toLocaleString(),
 								listItems: responsePlaces.items
 							});
 						})
