@@ -177,7 +177,7 @@ def listPlaces():
     
     if request.method == 'GET':
         #Return all places
-        list_places = Place.query.all()
+        list_places = Place.query.all() 
         return jsonify([place.serialize() for place in list_places]), 200
 
     # POST a new place
@@ -193,17 +193,17 @@ def listPlaces():
         raise APIException(f"place with id {id} already exists", status_code=400)
     if existsCountry is None:        
         raise APIException("Country not found in data base", status_code=400)
-    if data is None:
-        raise APIException("You need to add the request body as a json object", status_code=400)
     if 'name' not in data:
         raise APIException('You need to add the name', status_code=400)
     if 'idCountry' not in data:
         raise APIException('You need to add the country id', status_code=400)
+    if data is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
     
     if 'id' in data:
-        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
+        new_place = Place(id=data.get("id"), idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"), address=data.get("address"))
     elif 'id' not in data:
-        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"))
+        new_place = Place(idCountry=data.get("idCountry"), name=data.get("name"), latitude=data.get("latitude"), longitude=data.get("longitude"), description=data.get("description"), countLikes=likes, entryDate=datetime.now(), urlPhoto=data.get("urlPhoto"), address=data.get("address"))
     db.session.add(new_place)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_place.serialize()]),200
@@ -323,7 +323,6 @@ def listScenes():
         existsScene = Scene.query.filter_by(id=id).first()
         existsPlace = Place.query.filter_by(id=data.get("idPlace")).first()
         existsFilm = Film.query.filter_by(id=data.get("idFilm")).first()
-        #likes=FavPlace.query.filter_by(idPlace=id).count()
 
     # Data validation
     if existsScene is not None:        
@@ -332,12 +331,12 @@ def listScenes():
         raise APIException("Place not found in data base", status_code=400)
     if existsFilm is None:        
         raise APIException("Film not found in data base", status_code=400)
-    if data is None:
-        raise APIException("You need to add the request body as a json object", status_code=400)
     if 'idPlace' not in data:
         raise APIException('You need to add the place id', status_code=400)
     if 'idFilm' not in data:
         raise APIException('You need to add the film id', status_code=400)
+    if data is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
     
     if 'id' in data:
         new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
