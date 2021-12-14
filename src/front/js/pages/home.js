@@ -1,11 +1,34 @@
-import React, { useContext, useState } from "react";
+
+import React, { useContext, useState, useEffect } from "react";
+
+
 import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
+import { Link } from "react-router-dom";
+import Map from "../component/map.js";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
+	const {actions } = useContext(Context);
+
+	const random = Math.floor(Math.random() * 3 + 1);
+
+	const [singlePlace, setSinglePlace] = useState({});
+
+	const getSinglePlace = id => {
+		fetch(process.env.BACKEND_URL + "/api/places/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setSinglePlace(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	useEffect(() => {
+		getSinglePlace(random);
+	}, []);
+
 	let history = useHistory();
+
 
 	const style = {
 		width: "200px"
@@ -67,11 +90,46 @@ export const Home = () => {
 					{sug ? sug.map((e, i) => <option key={i} data-value={i} value={e} />) : ""}
 				</datalist>
 			</form>
-			<iframe
-				className="mx-auto"
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26432.43434605815!2d-118.34398771265504!3d34.09374955803937!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2bf07045279bf%3A0xf67a9a6797bdfae4!2sHollywood%2C%20Los%20%C3%81ngeles%2C%20California%2C%20EE.%20UU.!5e0!3m2!1ses!2ses!4v1638286747086!5m2!1ses!2ses"
-				style={{ width: "45rem", height: "25rem" }}
-			/>
+			{singlePlace ? (
+				<div className="row">
+					<div className="card px-0 rounded offset-2 col-3 py-0" style={{ minWidth: "350px" }}>
+						<img
+							className="card-img-top mt-0"
+							src={singlePlace.urlPhoto}
+							alt="..."
+							style={{ height: "200px" }}
+						/>
+						<div className="card-body">
+							<div>
+								<h5 className="card-title text-success text-center">{singlePlace.name}</h5>
+								<div style={{ fontSize: "10px" }}>
+									<div className="text-dark">{singlePlace.description}</div>
+								</div>
+
+								<div>
+									<Link to={"/place/" + singlePlace.id}>
+										<span className="btn btn-outline-success">Ver</span>
+									</Link>
+
+									<span className="btn border rounded ms-1">
+										<i className="fas fa-film" />
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="col-6">
+						<Map
+							lat={singlePlace.latitude}
+							lng={singlePlace.longitude}
+							width="600"
+							height="350"
+							name={singlePlace.name}
+							direction={singlePlace.address}
+						/>
+					</div>
+				</div>
+			) : null}
 		</div>
 	);
 };
