@@ -4,13 +4,13 @@ import { Context } from "../store/appContext";
 import cameraImgUrl from "../../img/camera.png";
 import profileImgUrl from "../../img/profile.png";
 
-const linkStyle = { textDecoration: "none", color: "white" };
+const linkStyle = { textDecoration: "none", color: "#e0e0e2" };
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-1 text-white bg-transparent">
+		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-3  bg-transparent">
 			<div className="container">
 				<Link to="/">
 					<img src={cameraImgUrl} className="navbar-brand" style={{ width: "75px" }} />
@@ -24,7 +24,10 @@ export const Navbar = () => {
 					aria-expanded="false">
 					<span className="navbar-toggler-icon" />
 				</button>
-				<div className="collapse navbar-collapse" id="navDropdown" style={{ fontFamily: "Permanent Marker" }}>
+				<div
+					className="collapse navbar-collapse"
+					id="navDropdown"
+					style={{ fontFamily: "Playfair Display SC" }}>
 					<ul className="navbar-nav ms-auto align-items-center">
 						<li className="nav-item me-5">
 							<Link to="/films" style={linkStyle}>
@@ -49,7 +52,7 @@ export const Navbar = () => {
 								role="button"
 								data-bs-toggle="dropdown"
 								aria-expanded="false">
-								<img src={profileImgUrl} style={{ width: "70px" }} />
+								<img src={profileImgUrl} style={{ width: "60px" }} />
 							</a>
 							<ul className="dropdown-menu fs-3 bg-transparent" aria-labelledby="dropdownMenuLink">
 								{store.activeUserId ? (
