@@ -22,68 +22,81 @@ import { Countries } from "./pages/countries";
 import { InfoCountries } from "./pages/infoCountries";
 
 import { Profile } from "./pages/profile";
+import { Admin } from "./pages/admin";
 
-//create your first component
 const Layout = () => {
 	//the basename is used when your project is published in a subdirectory and not in the root of the domain
 	// you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
 	const basename = process.env.BASENAME || "";
-
 	const { store } = useContext(Context);
+
 	return (
-		<div>
-			<BrowserRouter basename={basename}>
-				<ScrollToTop>
-					<Navbar />
-					<Switch>
-						<Route exact path="/">
-							<Home />
-						</Route>
+		<BrowserRouter basename={basename}>
+			<Switch>
+				<Route path="/admin">
+					{store.activeUser.id && store.activeUser.category ? <Admin /> : <Redirect from="/admin" to="/" />}
+				</Route>
+				<Route component={Other} />
+			</Switch>
+		</BrowserRouter>
+	);
+};
 
-						<Route exact path="/places">
-							<Places />
-						</Route>
-						<Route exact path="/place/:theid">
-							<SinglePlace />
-						</Route>
+const Other = () => {
+	const { store } = useContext(Context);
 
-						<Route exact path="/films">
-							<Films />
-						</Route>
+	return (
+		<React.Fragment>
+			<ScrollToTop>
+				<Navbar />
+				<Switch>
+					<Route exact path="/">
+						<Home />
+					</Route>
 
-						<Route exact path="/infofilms/:theid">
-							<InfoFilms />
-						</Route>
-						<Route exact path="/countries">
-							<Countries />
-						</Route>
+					<Route exact path="/places">
+						<Places />
+					</Route>
+					<Route exact path="/place/:theid">
+						<SinglePlace />
+					</Route>
 
-						<Route exact path="/infocountries/:theid">
-							<InfoCountries />
-						</Route>
-						<Route exact path="/demo">
-							<Demo />
-						</Route>
-						<Route exact path="/signup">
-							<FormSignUp />
-						</Route>
-						<Route exact path="/login">
-							{store.activeUserId ? <Redirect from="/login" to="/" /> : <FormLogin />}
-						</Route>
-						<Route exact path="/profile">
-							{store.activeUserId ? <Profile /> : <Redirect from="/profile" to="/" />}
-						</Route>
-						<Route exact path="/single/:theid">
-							<Single />
-						</Route>
-						<Route>
-							<h1>Not found!</h1>
-						</Route>
-					</Switch>
-					{/* <Footer /> */}
-				</ScrollToTop>
-			</BrowserRouter>
-		</div>
+					<Route exact path="/films">
+						<Films />
+					</Route>
+
+					<Route exact path="/infofilms/:theid">
+						<InfoFilms />
+					</Route>
+					<Route exact path="/countries">
+						<Countries />
+					</Route>
+
+					<Route exact path="/infocountries/:theid">
+						<InfoCountries />
+					</Route>
+					<Route exact path="/demo">
+						<Demo />
+					</Route>
+					<Route exact path="/signup">
+						<FormSignUp />
+					</Route>
+					<Route exact path="/login">
+						{store.activeUser.id ? <Redirect from="/login" to="/" /> : <FormLogin />}
+					</Route>
+					<Route exact path="/profile">
+						{store.activeUser.id ? <Profile /> : <Redirect from="/profile" to="/" />}
+					</Route>
+					<Route exact path="/single/:theid">
+						<Single />
+					</Route>
+					<Route>
+						<h1>Not found!</h1>
+					</Route>
+				</Switch>
+				{/* <Footer /> */}
+			</ScrollToTop>
+		</React.Fragment>
 	);
 };
 

@@ -1,19 +1,39 @@
-import React, { useEffect } from "react";
-import { useContext } from "react";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Movie } from "../component/movie";
 
 export const InfoFilms = () => {
-	const { store, actions } = useContext(Context);
+	const [infoFilms, setInfoFilms] = useState({});
+	const [scenesByFilm, setScenesByFilm] = useState({});
 	const params = useParams();
+	const getInfoFilms = id => {
+		fetch(process.env.BACKEND_URL + "/api/films/" + id)
+			.then(res => res.json())
+			.then(data => {
+				console.log(data);
+				setInfoFilms(data);
+			})
+			.then(id => getActions().getScenesByFilm(id))
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	const getScenesByFilm = id => {
+		fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
+			.then(res => res.json())
+			.then(data => {
+				console.log(data);
+				setScenesByFilm(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+
 	useEffect(() => {
-		actions.getInfoFilms(params.theid);
+		getInfoFilms(params.theid);
+		getScenesByFilm(params.theid);
 	}, []);
 
 	return (
 		<div>
-			{store.infoFilms ? (
+			{infoFilms ? (
 				<div>
 					<h2
 						style={{
@@ -24,12 +44,12 @@ export const InfoFilms = () => {
 							textAlign: "center",
 							paddingBottom: "20px"
 						}}>
-						{store.infoFilms.name}
+						{infoFilms.name}
 					</h2>
 					<div className="my-img col-md-6" style={{ justifyContent: "center" }}>
 						<img
 							className="bg-dark rounded row ms-2"
-							src={store.infoFilms.urlPhoto}
+							src={infoFilms.urlPhoto}
 							alt="..."
 							style={{
 								minHeight: "200px"
@@ -44,7 +64,7 @@ export const InfoFilms = () => {
 								paddingTop: "20px",
 								textAlign: "center"
 							}}>
-							{store.infoFilms.description}
+							{infoFilms.description}
 						</p>
 					</div>
 					<div>
@@ -62,8 +82,8 @@ export const InfoFilms = () => {
 					</div>
 					<div className="my-card-content">
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							{store.scenesByFilm
-								? store.scenesByFilm.map((item, index) => {
+							{scenesByFilm.length > 0
+								? scenesByFilm.map((item, index) => {
 										return (
 											<Movie
 												id={item.id}

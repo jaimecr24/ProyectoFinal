@@ -1,20 +1,39 @@
-import React, { useEffect } from "react";
-import { useContext } from "react";
-import { Context } from "../store/appContext";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Country } from "../component/country";
 
 export const InfoCountries = () => {
-	const { store, actions } = useContext(Context);
+	const [infoCountries, setInfoCountries] = useState({});
+	const [scenesByFilm, setScenesByFilm] = useState({});
 	const params = useParams();
+	const getInfoCountries = id => {
+		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
+			.then(res => res.json())
+			.then(data => {
+				console.log(data);
+				setInfoCountries(data);
+			})
+			.then(id => getActions().getScenesByFilm(id))
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	const getScenesByFilm = id => {
+		fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
+			.then(res => res.json())
+			.then(data => {
+				console.log(data);
+				setScenesByFilm(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
 	useEffect(() => {
-		actions.getInfoCountries(params.theid);
+		getInfoCountries(params.theid);
+		getScenesByFilm(params.theid);
 	}, []);
 
 	return (
 		<div>
-			{store.infoCountries ? (
+			{infoCountries ? (
 				<div>
 					<h2
 						style={{
@@ -25,12 +44,12 @@ export const InfoCountries = () => {
 							textAlign: "center",
 							paddingBottom: "20px"
 						}}>
-						{store.infoCountries.name}
+						{infoCountries.name}
 					</h2>
 					<div className="my-img col-md-6">
 						<img
 							className="bg-dark rounded row ms-2"
-							src={store.infoCountries.urlFlag}
+							src={infoCountries.urlFlag}
 							alt="..."
 							style={{
 								height: "300px"
@@ -45,7 +64,7 @@ export const InfoCountries = () => {
 								paddingTop: "20px",
 								textAlign: "center"
 							}}>
-							{store.infoCountries.description}
+							{infoCountries.description}
 						</p>
 					</div>
 					<div>
@@ -63,8 +82,8 @@ export const InfoCountries = () => {
 					</div>
 					<div className="my-card-content">
 						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							{store.scenesByFilm
-								? store.scenesByFilm.map((item, index) => {
+							{scenesByFilm.length > 0
+								? scenesByFilm.map((item, index) => {
 										return (
 											<Country
 												id={item.idFilm}

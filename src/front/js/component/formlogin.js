@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import usericon from "../../img/users.png";
 import "../../styles/modal.css";
@@ -11,6 +11,7 @@ export const FormLogin = () => {
 		password: ""
 	});
 
+	let history = useHistory();
 	const responseStatus = { 463: "nombre de usuario no existe", 464: "email no existe", 465: "contraseña incorrecta" };
 
 	const handleChange = e => {
@@ -52,9 +53,13 @@ export const FormLogin = () => {
 					})
 					.then(json => {
 						if (json.token) {
-							actions.setToken(json.token);
-							actions.setActiveUserId(json.id);
-							actions.setPreviousLoginTime(json.lastTime);
+							actions.setActiveUser({
+								token: json.token,
+								id: json.id,
+								lastTime: json.lastTime,
+								category: json.category
+							});
+							history.goBack();
 						}
 					})
 					.catch(function(error) {

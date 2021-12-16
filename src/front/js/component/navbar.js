@@ -55,14 +55,26 @@ export const Navbar = () => {
 								<img src={profileImgUrl} style={{ width: "60px" }} />
 							</a>
 							<ul className="dropdown-menu fs-3 bg-transparent" aria-labelledby="dropdownMenuLink">
-								{store.activeUserId ? (
+								{store.activeUser.id ? (
 									<>
 										<a className="dropdown-item" href="#">
 											<Link to="/profile" style={linkStyle}>
 												Mi perfil
 											</Link>
 										</a>
-										<a className="dropdown-item" href="#" onClick={() => actions.logout()}>
+										{store.activeUser.category ? (
+											<a className="dropdown-item" href="#">
+												<Link to="/admin" style={linkStyle}>
+													Panel administración
+												</Link>
+											</a>
+										) : (
+											""
+										)}
+										<a
+											className="dropdown-item text-white"
+											href="#"
+											onClick={() => actions.logout()}>
 											Cerrar sesión
 										</a>
 									</>

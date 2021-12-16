@@ -16,9 +16,9 @@ export const Country = props => {
 				<a className="btn btn-primary float-start">
 					<span className="text-warning ">
 						{" "}
-						<span className="btn btn-outline-primary">
+						<Link to={"/infofilms/" + props.id}>
 							<span className="btn btn-outline-primary">Aprender más</span>
-						</span>
+						</Link>
 					</span>
 				</a>
 				<button className="btn btn-outline-warning float-end">
