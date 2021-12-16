@@ -76,7 +76,7 @@ export const InfoFilms = () => {
 									paddingTop: "20px"
 								}}>
 								{" "}
-								·Escenas grabadas en esta película:{" "}
+								·Sitios grabados en esta película:{" "}
 							</h2>
 						</div>
 					</div>
@@ -90,6 +90,7 @@ export const InfoFilms = () => {
 												place={item.place}
 												country={item.country}
 												urlPhoto={item.urlPhoto}
+												picture={item.picture}
 												key={item.id}
 											/>
 										);

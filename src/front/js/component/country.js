@@ -8,7 +8,7 @@ export const Country = props => {
 
 	return (
 		<div className="card bg-dark">
-			<img src={props.picture} className="characters card-img-top mx-auto" alt="..." />
+			<img src={props.filmPhoto} className="characters card-img-top mx-auto" alt="..." />
 			<div className="card-body">
 				<h5 className="card-title text-warning" style={{ textAlign: "center", paddingBottom: "40px" }}>
 					{props.movie}
@@ -32,5 +32,6 @@ export const Country = props => {
 Country.propTypes = {
 	id: PropTypes.string,
 	picture: PropTypes.string,
+	filmPhoto: PropTypes.string,
 	movie: PropTypes.string
 };

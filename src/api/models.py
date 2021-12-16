@@ -140,9 +140,10 @@ class Scene(db.Model):
             "country": self.place.country.name,
             "place": self.place.name,
             "movie": self.film.name,
-            "picture": self.film.urlPhoto,
+            "picture": self.place.urlPhoto,
             "description": self.description,
-            "urlPhoto": self.urlPhoto
+            "urlPhoto": self.urlPhoto,
+            "filmPhoto": self.film.urlPhoto
         }
 
 
