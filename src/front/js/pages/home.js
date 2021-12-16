@@ -1,15 +1,14 @@
-
 import React, { useContext, useState, useEffect } from "react";
-
 
 import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
 import Map from "../component/map.js";
+import cameraImgUrl from "../../img/camera.png";
 
 export const Home = () => {
-	const {actions } = useContext(Context);
+	const { actions } = useContext(Context);
 
 	const random = Math.floor(Math.random() * 3 + 1);
 
@@ -28,7 +27,6 @@ export const Home = () => {
 	}, []);
 
 	let history = useHistory();
-
 
 	const style = {
 		width: "200px"
@@ -69,8 +67,10 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-4">
-			<h1 className="text-white">MovTour</h1>
-			<h4 className="text-white">
+			<h1 className="" style={{ fontFamily: "IM Fell Great Primer SC", fontSize: "55px", color: "#fa9f42" }}>
+				MovTour
+			</h1>
+			<h4 className="text-white" style={{ fontFamily: "IM Fell Great Primer SC" }}>
 				“The world isnt in your books and maps, it is out there.” ― The Hobbit, J.R.R. Tolkien
 			</h4>
 			<form className="d-flex justify-content-center my-5" onSubmit={handleSearch}>
