@@ -5,10 +5,9 @@ import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
 import Map from "../component/map.js";
-import cameraImgUrl from "../../img/camera.png";
 
 export const Home = () => {
-	const { actions } = useContext(Context);
+	const { actions, store } = useContext(Context);
 
 	const random = Math.floor(Math.random() * 3 + 1);
 
@@ -111,9 +110,13 @@ export const Home = () => {
 										<span className="btn btn-outline-success">Ver</span>
 									</Link>
 
-									<span className="btn border rounded ms-1">
-										<i className="fas fa-film" />
-									</span>
+									{store.activeUser.id ? (
+										<span
+											className="btn border rounded ms-1"
+											onClick={() => actions.addFavPlace(singlePlace.id)}>
+											<i className="fas fa-film" />
+										</span>
+									) : null}
 								</div>
 							</div>
 						</div>

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 
 export const Places = () => {
+	const { actions, store } = useContext(Context);
 	const [places, setPlaces] = useState([]);
 	const getPlaces = () => {
 		fetch(process.env.BACKEND_URL + "/api/places")
@@ -43,9 +45,13 @@ export const Places = () => {
 													<span className="btn btn-outline-success">Ver</span>
 												</Link>
 
-												<span className="btn border rounded ms-1">
-													<i className="fas fa-film" />
-												</span>
+												{store.activeUser.id ? (
+													<span
+														className="btn border rounded ms-1"
+														onClick={() => actions.addFavPlace(value.id)}>
+														<i className="fas fa-film" />
+													</span>
+												) : null}
 											</div>
 										</div>
 									</div>
