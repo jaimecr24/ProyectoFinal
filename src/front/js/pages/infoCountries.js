@@ -91,6 +91,7 @@ export const InfoCountries = () => {
 												movie={item.movie}
 												picture={item.picture}
 												key={item.idFilm}
+												filmPhoto={item.filmPhoto}
 											/>
 										);
 								  })
