@@ -6,7 +6,11 @@
     on that page only (the ones not reused in other pages).
 */
 body {
-    background: url(../img/fondo.jpg);
+    /*background: url(../img/fondo.jpg);*/
+    background: #2b4162;
+    /*background: #1d1e2c;*/
+    /*background: #f7ebec;*/
     background-size: cover;
     background-attachment: fixed;
+    font-family: 'Playfair Display SC', serif;
 }
