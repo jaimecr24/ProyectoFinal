@@ -10,26 +10,20 @@ export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-3  bg-transparent">
+		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-3 bg-transparent">
 			<div className="container">
-				<Link to="/">
-					<img src={cameraImgUrl} className="navbar-brand" style={{ width: "75px" }} />
-				</Link>
-				<button
-					className="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navDropdown"
-					aria-controls="navDropdown"
-					aria-expanded="false">
-					<span className="navbar-toggler-icon" />
-				</button>
 				<div
 					className="collapse navbar-collapse"
 					id="navDropdown"
 					style={{ fontFamily: "Playfair Display SC" }}>
-					<ul className="navbar-nav ms-auto align-items-center">
-						<li className="nav-item me-5">
+					<ul className="navbar-nav mx-auto align-items-center">
+						<li className="nav-item mx-5">
+							<Link to="/">
+								<img src={cameraImgUrl} className="navbar-brand mx-5" style={{ width: "75px" }} />
+							</Link>
+						</li>
+
+						<li className="nav-item mx-5">
 							<Link to="/films" style={linkStyle}>
 								Películas
 							</Link>
@@ -44,7 +38,7 @@ export const Navbar = () => {
 								Sitios
 							</Link>
 						</li>
-						<li className="nav-item ms-5 dropdown">
+						<li className="nav-item mx-5 dropdown">
 							<a
 								className="nav-link dropdown-toggle"
 								href="#"
