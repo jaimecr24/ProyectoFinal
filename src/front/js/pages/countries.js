@@ -10,36 +10,33 @@ export const Countries = () => {
 	return (
 		<div className="container-fluid content-row">
 			<div className="title" style={{ textAlign: "center", paddingBottom: "20px" }}>
-				<h1>Países</h1>
-				<span>Descubre nuestro listado de países!</span>
+				<h1 style={{ color: "#fa9f42" }}>Países</h1>
+				<span style={{ color: "white" }}>Descubre nuestro listado de países!</span>
 			</div>
 			<div className="my-card-content">
 				{store.countries
 					? store.countries.map((item, index) => {
 							return (
 								<div
-									className="row col-auto"
+									className="infocards row col-auto"
 									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
 									key={index}>
 									<div className="design-card bg-dark">
 										<img src={item.urlFlag} className="characters card-img-top mx-auto" alt="..." />
 										<div className="card-body">
 											<h5
-												className="card-title text-warning"
-												style={{ textAlign: "center", paddingBottom: "40px" }}>
+												className="card-title"
+												style={{
+													textAlign: "center",
+													paddingBottom: "40px",
+													color: "#fa9f42"
+												}}>
 												{item.name}
 											</h5>
-											<a className="btn btn-primary float-start">
-												<span className="text-warning ">
-													{" "}
-													<Link to={"/infocountries/" + item.id}>
-														<span className="btn btn-outline-primary">Aprender más</span>
-													</Link>
-												</span>
-											</a>
-											<button className="btn btn-outline-warning float-end">
-												<i className="fas fa-heart" />
-											</button>
+
+											<Link to={"/infocountries/" + item.id}>
+												<span className="btn btn-outline">Aprender más</span>
+											</Link>
 										</div>
 									</div>
 								</div>

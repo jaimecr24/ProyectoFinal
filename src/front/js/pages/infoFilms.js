@@ -32,58 +32,35 @@ export const InfoFilms = () => {
 	}, []);
 
 	return (
-		<div>
+		<div
+			className="container mt-3 mx-auto bg-dark p-3 card rounded"
+			style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 			{infoFilms ? (
 				<div>
-					<h2
-						style={{
-							color: "white",
-							fontFamily: "Permanent Marker",
-							fontStyle: "cursive",
-							paddingBottom: "20px",
-							textAlign: "center",
-							paddingBottom: "20px"
-						}}>
+					<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
 						{infoFilms.name}
 					</h2>
-					<div className="my-img col-md-6" style={{ justifyContent: "center" }}>
-						<img
-							className="bg-dark rounded row ms-2"
-							src={infoFilms.urlPhoto}
-							alt="..."
-							style={{
-								minHeight: "200px"
-							}}
-						/>
-					</div>
-					<div>
-						<p
-							style={{
-								color: "white",
-								paddingBottom: "20px",
-								paddingTop: "20px",
-								textAlign: "center"
-							}}>
-							{infoFilms.description}
-						</p>
-					</div>
-					<div>
-						<div>
-							<h2
-								style={{
-									color: "white",
-									paddingBottom: "20px",
-									paddingTop: "20px"
-								}}>
-								{" "}
-								·Sitios grabados en esta película:{" "}
-							</h2>
+					<div className="row mx-3 px-3">
+						<div className="row col-5 me-5">
+							<img
+								className="rounded row"
+								src={infoFilms.urlPhoto}
+								alt="..."
+								style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
+							/>
+						</div>
+						<div className="col-6">
+							<p className="text-white">{infoFilms.description}</p>
 						</div>
 					</div>
-					<div className="my-card-content">
-						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							{scenesByFilm.length > 0
-								? scenesByFilm.map((item, index) => {
+					{scenesByFilm.length > 0 ? (
+						<div className="container-fluid content-row">
+							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
+								·Sitios grabados en esta película:
+							</h5>
+							<div className="my-card-content">
+								<div className="infocards row col-auto">
+									{scenesByFilm.map((item, index) => {
 										return (
 											<Movie
 												id={item.id}
@@ -94,10 +71,11 @@ export const InfoFilms = () => {
 												key={item.id}
 											/>
 										);
-								  })
-								: null}
+									})}
+								</div>
+							</div>
 						</div>
-					</div>
+					) : null}
 				</div>
 			) : null}
 		</div>
