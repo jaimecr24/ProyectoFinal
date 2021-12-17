@@ -45,17 +45,21 @@ export const SinglePlace = () => {
 	});
 
 	return (
-		<div className="container mt-3 mx-auto bg-white p-3 card rounded" style={{ width: "75%" }}>
+		<div
+			className="container mt-3 mx-auto bg-dark p-3 card rounded"
+			style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 			{singlePlace && country ? (
 				<div>
-					<h2 className="text-success">{singlePlace.name}</h2>
+					<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
+						{singlePlace.name}
+					</h2>
 					<div className="row mx-3 px-3">
 						<div className="row col-5 me-5">
 							<img
 								className="rounded row"
 								src={singlePlace.urlPhoto}
 								alt="..."
-								style={{ minHeight: "200px", objectFit: "cover" }}
+								style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
 							/>
 
 							<div className="text-dark mt-1">
@@ -74,17 +78,19 @@ export const SinglePlace = () => {
 						</div>
 						<div className="col-6">
 							<Link to={"/infocountries/" + singlePlace.idCountry} style={{ textDecoration: "none" }}>
-								<p className="text-danger">{country}</p>
+								<p className="text" style={{ color: "#fa9f42" }}>
+									{country}
+								</p>
 							</Link>
 
-							<p className="text-dark">{singlePlace.description}</p>
+							<p className="text-white">{singlePlace.description}</p>
 						</div>
 					</div>
-					<div className="row mt-5 mx-3 px-3">
+					<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
 						<h5>¿Dónde encontrar {singlePlace.name}?</h5>
 
 						<div className="row">
-							<div className="d-flex justify-content-center">
+							<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
 								{singlePlace ? (
 									<Map
 										lat={singlePlace.latitude}
@@ -100,7 +106,7 @@ export const SinglePlace = () => {
 					</div>
 					{scenesByPlace.length > 0 ? (
 						<div className="row mt-5 px-5">
-							<h5>Series y películas rodadas en {singlePlace.name}:</h5>
+							<h5 style={{ paddingBottom: "10px" }}>Series y películas rodadas en {singlePlace.name}:</h5>
 
 							{scenesByPlace.map((value, index) => {
 								return (

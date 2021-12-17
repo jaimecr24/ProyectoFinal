@@ -32,58 +32,35 @@ export const InfoCountries = () => {
 	}, []);
 
 	return (
-		<div>
+		<div
+			className="container mt-3 mx-auto bg-dark p-3 card rounded"
+			style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 			{infoCountries ? (
 				<div>
-					<h2
-						style={{
-							color: "white",
-							fontFamily: "Permanent Marker",
-							fontStyle: "cursive",
-							paddingBottom: "20px",
-							textAlign: "center",
-							paddingBottom: "20px"
-						}}>
+					<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
 						{infoCountries.name}
 					</h2>
-					<div className="my-img col-md-6">
-						<img
-							className="bg-dark rounded row ms-2"
-							src={infoCountries.urlFlag}
-							alt="..."
-							style={{
-								height: "300px"
-							}}
-						/>
-					</div>
-					<div>
-						<p
-							style={{
-								color: "white",
-								paddingBottom: "20px",
-								paddingTop: "20px",
-								textAlign: "center"
-							}}>
-							{infoCountries.description}
-						</p>
-					</div>
-					<div>
-						<div>
-							<h2
-								style={{
-									color: "white",
-									paddingBottom: "20px",
-									paddingTop: "20px"
-								}}>
-								{" "}
-								·Películas que fueron grabadas en este país:{" "}
-							</h2>
+					<div className="row mx-3 px-3">
+						<div className="row col-5 me-5">
+							<img
+								className="rounded row"
+								src={infoCountries.urlFlag}
+								alt="..."
+								style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
+							/>
+						</div>
+						<div className="col-6">
+							<p className="text-white">{infoCountries.description}</p>
 						</div>
 					</div>
-					<div className="my-card-content">
-						<div className="row col-auto" style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-							{scenesByFilm.length > 0
-								? scenesByFilm.map((item, index) => {
+					{scenesByFilm.length > 0 ? (
+						<div className="container-fluid content-row">
+							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
+								·Películas que fueron grabadas en este país:
+							</h5>
+							<div className="my-card-content">
+								<div className="infocards row col-auto">
+									{scenesByFilm.map((item, index) => {
 										return (
 											<Country
 												id={item.idFilm}
@@ -94,10 +71,11 @@ export const InfoCountries = () => {
 												filmPhoto={item.filmPhoto}
 											/>
 										);
-								  })
-								: null}
+									})}
+								</div>
+							</div>
 						</div>
-					</div>
+					) : null}
 				</div>
 			) : null}
 		</div>

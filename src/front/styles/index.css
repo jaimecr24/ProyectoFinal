@@ -14,12 +14,15 @@
     overflow-y:hidden;
     overflow-x: auto;
     white-space: nowrap;
+    border-radius: 20px;
+    
 }
 
 .design-card {
     padding: 10px;
-    margin: 10px;
+    margin: 15px;
     justify-content: center;
+    border-radius: 15px;
 }
 
 
@@ -28,7 +31,9 @@
 }
 
 .characters{
-    width: 300px;
+    align-self: center;
+    width: 330px;
+    height: 220px;
 }
 
 .my-img {
@@ -39,3 +44,24 @@
     border-radius: 20px;
 
 }
+
+.btn-outline { 
+    color: white;
+    background-color: #fa9f42; 
+    border-color: #fa9f42; 
+  } 
+
+
+
+.infocards {
+    transition: all 0.25s;
+    text-align: center;
+    border-color: #fa9f42;
+    
+}
+
+.infocards:hover{
+    transform: translateY(-15px); 
+    
+}
+
