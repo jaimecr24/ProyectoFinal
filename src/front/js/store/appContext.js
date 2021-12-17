@@ -31,8 +31,6 @@ const injectContext = PassedComponent => {
 			state.actions.getMessage(); // <---- calling this function from the flux.js actions
 			state.actions.fetchFilms();
 			state.actions.fetchCountries();
-			state.actions.getPlaces();
-
 			if (window.localStorage["store"] !== undefined) {
 				state.store = JSON.parse(localStorage.getItem("store"));
 				// state.actions.forceRender(); ??

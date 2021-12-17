@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { Scene } from "../component/scene.js";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Map from "../component/map.js";
 
 export const SinglePlace = () => {
+	const { actions, store } = useContext(Context);
 	const [singlePlace, setSinglePlace] = useState({});
 	const [scenesByPlace, setScenesByPlace] = useState({});
 	const [country, setCountry] = useState("");
@@ -61,9 +63,14 @@ export const SinglePlace = () => {
 							/>
 
 							<div className="text-dark mt-1">
-								<button className="border rounded me-1">
-									<i className="fas fa-film" />
-								</button>
+								{store.activeUser.id ? (
+									<button
+										className="border rounded me-1"
+										onClick={() => actions.addFavPlace(singlePlace.id)}>
+										<i className="fas fa-film" />
+									</button>
+								) : null}
+
 								<span>
 									<i className="fas fa-heart text-danger" /> {singlePlace.countLikes}
 								</span>
