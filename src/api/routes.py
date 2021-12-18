@@ -162,6 +162,12 @@ def delFavPlace(place_id):
         db.session.commit()
         return jsonify({"msg":"ok"}), 200
 
+#GET FAVORITES BY PLACE (not by user)
+@api.route('/favplace/<int:place_id>', methods=['GET'])
+def listFavsByPlace(place_id):    
+    list_favs_byPlace = FavPlace.query.filter_by(idPlace=place_id) 
+    return jsonify([favplace.serialize() for favplace in list_favs_byPlace]), 200
+
 
 #Get a list of places that match a key
 @api.route('/browse/<key>', methods=['GET'])

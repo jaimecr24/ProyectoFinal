@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import cameraImgUrl from "../../img/camera.png";
 import profileImgUrl from "../../img/profile.png";
+import "../../styles/home.css";
 
 const linkStyle = { textDecoration: "none", color: "#e0e0e2" };
 
@@ -10,7 +11,7 @@ export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-3 bg-transparent">
+		<nav className="navbar navbar-expand-lg navbar-dark fs-3 bg-transparent">
 			<div className="container">
 				<div
 					className="collapse navbar-collapse"
