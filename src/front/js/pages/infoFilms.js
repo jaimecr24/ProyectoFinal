@@ -59,9 +59,12 @@ export const InfoFilms = () => {
 								·Sitios grabados en esta película:
 							</h5>
 							<div className="my-card-content">
-								<div className="infocards row col-auto">
-									{scenesByFilm.map((item, index) => {
-										return (
+								{scenesByFilm.map((item, index) => {
+									return (
+										<div
+											className="infocards row col-auto"
+											key={index}
+											style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
 											<Movie
 												id={item.idPlace}
 												place={item.place}
@@ -70,9 +73,9 @@ export const InfoFilms = () => {
 												picture={item.picture}
 												key={item.idPlace}
 											/>
-										);
-									})}
-								</div>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					) : null}
