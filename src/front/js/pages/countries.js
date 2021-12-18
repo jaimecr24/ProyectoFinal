@@ -22,7 +22,12 @@ export const Countries = () => {
 									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
 									key={index}>
 									<div className="design-card bg-dark">
-										<img src={item.urlFlag} className="characters card-img-top mx-auto" alt="..." />
+										<img
+											src={item.urlFlag}
+											className="characters card-img-top mx-auto"
+											alt="..."
+											style={{ objectFit: "cover" }}
+										/>
 										<div className="card-body">
 											<h5
 												className="card-title"

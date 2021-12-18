@@ -17,42 +17,47 @@ export const Places = () => {
 	}, []);
 
 	return (
-		<div className="container">
-			<h2 className="text-center py-3 text-light">Sitios de rodaje</h2>
-			<div className="row d-flex  justify-content-between">
-				{places
-					? places.map((value, index) => {
+		<div className="container-fluid content-row">
+			<div className="title" style={{ textAlign: "center", paddingBottom: "20px" }}>
+				<h1 style={{ color: "#fa9f42" }}>Sitios de rodaje</h1>
+				<span style={{ color: "white" }}>Descubre nuestro listado de lugares de rodaje!</span>
+			</div>
+			<div className="my-card-content">
+				{store.films
+					? places.map((item, index) => {
 							return (
 								<div
-									className="card px-0 mx-4 col rounded col-3 mb-5 py-0"
-									key={index}
-									style={{ minWidth: "350px" }}>
-									<img
-										className="card-img-top mt-0"
-										src={value.urlPhoto}
-										alt="..."
-										style={{ height: "200px" }}
-									/>
-									<div className="card-body">
-										<div>
-											<h5 className="card-title text-success text-center">{value.name}</h5>
-											<div style={{ fontSize: "10px" }}>
-												<div className="text-dark">{value.description}</div>
-											</div>
+									className="infocards row col-auto"
+									style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}
+									key={index}>
+									<div className="design-card bg-dark">
+										<img
+											src={item.urlPhoto}
+											className="characters card-img-top mx-auto"
+											alt={item.name}
+											style={{ objectFit: "cover" }}
+										/>
+										<div className="card-body">
+											<h5
+												className="card-title"
+												style={{
+													textAlign: "center",
+													paddingBottom: "40px",
+													color: "#fa9f42"
+												}}>
+												{item.name}
+											</h5>
 
-											<div>
-												<Link to={"/place/" + value.id}>
-													<span className="btn btn-outline-success">Ver</span>
-												</Link>
-
-												{store.activeUser.id ? (
-													<span
-														className="btn border rounded ms-1"
-														onClick={() => actions.addFavPlace(value.id)}>
-														<i className="fas fa-film" />
-													</span>
-												) : null}
-											</div>
+											<Link to={"/place/" + item.id}>
+												<span className="btn btn-outline">Aprender más</span>
+											</Link>
+											{store.activeUser.id ? (
+												<span
+													className="btn btn-outline-danger ms-1"
+													onClick={() => actions.addFavPlace(item.id)}>
+													<i className="fas fa-heart" />
+												</span>
+											) : null}
 										</div>
 									</div>
 								</div>

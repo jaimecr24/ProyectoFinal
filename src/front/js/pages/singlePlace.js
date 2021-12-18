@@ -9,6 +9,7 @@ export const SinglePlace = () => {
 	const { actions, store } = useContext(Context);
 	const [singlePlace, setSinglePlace] = useState({});
 	const [scenesByPlace, setScenesByPlace] = useState({});
+	const [likes, setLikes] = useState(0);
 	const [country, setCountry] = useState("");
 	const params = useParams();
 	const getSinglePlace = id => {
@@ -36,13 +37,22 @@ export const SinglePlace = () => {
 			.catch(error => console.log("Error loading country from backend", error));
 	};
 
+	const countLikesPlace = id => {
+		fetch(process.env.BACKEND_URL + "/api/favplace/" + id)
+			.then(resp => resp.json())
+			.then(data => setLikes(data.length))
+			.catch(error => console.log("Error loading places from backend", error));
+	};
+
 	useEffect(() => {
 		getSinglePlace(params.theid);
 		getScenesByPlace(params.theid);
+		countLikesPlace(params.theid);
 	}, []);
 	useEffect(() => {
 		singlePlace ? getCountryName(singlePlace.idCountry) : null;
 	});
+	likes ? console.log(likes) : null;
 
 	return (
 		<div
@@ -62,18 +72,16 @@ export const SinglePlace = () => {
 								style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
 							/>
 
-							<div className="text-dark mt-1">
+							<div className="text-white mt-1">
 								{store.activeUser.id ? (
-									<button
-										className="border rounded me-1"
-										onClick={() => actions.addFavPlace(singlePlace.id)}>
-										<i className="fas fa-film" />
-									</button>
+									<span
+										className="btn btn-outline-danger me-2"
+										onClick={() => actions.addFavPlace(item.id)}>
+										<i className="fas fa-heart" />
+									</span>
 								) : null}
 
-								<span>
-									<i className="fas fa-heart text-danger" /> {singlePlace.countLikes}
-								</span>
+								<span>Likes: {likes ? likes : 0}</span>
 							</div>
 						</div>
 						<div className="col-6">

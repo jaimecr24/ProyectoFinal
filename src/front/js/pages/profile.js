@@ -104,7 +104,9 @@ export const Profile = () => {
 	}
 
 	return (
-		<div className="container bg-success text-white mt-4 pt-5">
+		<div
+			className="container bg-dark design-card text-white mt-4 pt-5 profile mx-auto"
+			style={{ border: "1px solid #fa9f42" }}>
 			<div className="fs-2 ps-3">{`Bienvenido, ${data.username}`}</div>
 			<div className="row">
 				<div className="col-5 offset-1">
@@ -129,7 +131,7 @@ export const Profile = () => {
 					<button
 						id="btnDel"
 						className="col-2 offset-3 fs-5"
-						style={{ background: "#154c79", color: "lightgray" }}
+						style={{ background: "#fa9f42", color: "lightgray" }}
 						onClick={handleDeleteFav}>
 						Eliminar
 					</button>
@@ -166,7 +168,7 @@ export const Profile = () => {
 				<button
 					className="col-auto px-3 mb-3 mx-auto fs-5"
 					type="button"
-					style={{ background: "#154c79", color: "white" }}
+					style={{ background: "#fa9f42", color: "white" }}
 					onClick={() => history.goBack()}>
 					Cerrar
 				</button>
