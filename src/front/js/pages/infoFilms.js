@@ -63,12 +63,12 @@ export const InfoFilms = () => {
 									{scenesByFilm.map((item, index) => {
 										return (
 											<Movie
-												id={item.id}
+												id={item.idPlace}
 												place={item.place}
 												country={item.country}
 												urlPhoto={item.urlPhoto}
 												picture={item.picture}
-												key={item.id}
+												key={item.idPlace}
 											/>
 										);
 									})}
