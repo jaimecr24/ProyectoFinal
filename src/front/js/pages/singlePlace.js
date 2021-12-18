@@ -76,7 +76,7 @@ export const SinglePlace = () => {
 								{store.activeUser.id ? (
 									<span
 										className="btn btn-outline-danger me-2"
-										onClick={() => actions.addFavPlace(item.id)}>
+										onClick={() => actions.addFavPlace(singlePlace.id)}>
 										<i className="fas fa-heart" />
 									</span>
 								) : null}
