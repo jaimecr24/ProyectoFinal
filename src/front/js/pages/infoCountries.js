@@ -5,7 +5,7 @@ import { Country } from "../component/country";
 
 export const InfoCountries = () => {
 	const [infoCountries, setInfoCountries] = useState({});
-	const [scenesByFilm, setScenesByFilm] = useState({});
+	const [scenesByPlace, setScenesByPlace] = useState({});
 	const params = useParams();
 	const getInfoCountries = id => {
 		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
@@ -17,18 +17,18 @@ export const InfoCountries = () => {
 			.then(id => getActions().getScenesByFilm(id))
 			.catch(error => console.log("Error loading place from backend", error));
 	};
-	const getScenesByFilm = id => {
-		fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
+	const getScenesByPlace = id => {
+		fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
 			.then(res => res.json())
 			.then(data => {
 				console.log(data);
-				setScenesByFilm(data);
+				setScenesByPlace(data);
 			})
 			.catch(error => console.log("Error loading place from backend", error));
 	};
 	useEffect(() => {
 		getInfoCountries(params.theid);
-		getScenesByFilm(params.theid);
+		getScenesByPlace(params.theid);
 	}, []);
 
 	return (
@@ -53,15 +53,18 @@ export const InfoCountries = () => {
 							<p className="text-white">{infoCountries.description}</p>
 						</div>
 					</div>
-					{scenesByFilm.length > 0 ? (
+					{scenesByPlace.length > 0 ? (
 						<div className="container-fluid content-row">
 							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
 								·Películas que fueron grabadas en este país:
 							</h5>
 							<div className="my-card-content">
-								<div className="infocards row col-auto">
-									{scenesByFilm.map((item, index) => {
-										return (
+								{scenesByPlace.map((item, index) => {
+									return (
+										<div
+											className="infocards row col-auto"
+											key={index}
+											style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
 											<Country
 												id={item.idFilm}
 												description={item.description}
@@ -70,9 +73,9 @@ export const InfoCountries = () => {
 												key={item.idFilm}
 												filmPhoto={item.filmPhoto}
 											/>
-										);
-									})}
-								</div>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					) : null}
