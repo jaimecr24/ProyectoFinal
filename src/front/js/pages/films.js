@@ -26,6 +26,7 @@ export const Films = () => {
 											src={item.urlPhoto}
 											className="characters card-img-top mx-auto"
 											alt="..."
+											style={{ objectFit: "cover" }}
 										/>
 										<div className="card-body">
 											<h5

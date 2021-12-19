@@ -22,7 +22,8 @@ const Map = props => {
 		position: "absolute",
 		left: -props.width / 2 + 10,
 		top: -props.height / 2 + 10,
-		textAlign: "left"
+		textAlign: "left",
+		color: "black"
 	};
 	console.log(style.left);
 	return (
