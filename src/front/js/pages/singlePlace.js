@@ -4,6 +4,7 @@ import { Scene } from "../component/scene.js";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Map from "../component/map.js";
+import Comments from "../component/Comments.js";
 
 export const SinglePlace = () => {
 	const { actions, store } = useContext(Context);
@@ -129,6 +130,9 @@ export const SinglePlace = () => {
 							})}
 						</div>
 					) : null}
+					<div>
+						<Comments commentsUrl="http://localhost:3000/comments" currentUserId="1" />
+					</div>
 				</div>
 			) : null}
 		</div>
