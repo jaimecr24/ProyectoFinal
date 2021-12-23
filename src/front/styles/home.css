@@ -5,3 +5,17 @@
     one more css for each page that will contain the selected used 
     on that page only (the ones not reused in other pages).
 */
+body {
+    background: #2b4162;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Playfair Display SC', serif;
+}
+
+.profile {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dropdown-item:hover{
+    background: #fa9f42;
+              }
