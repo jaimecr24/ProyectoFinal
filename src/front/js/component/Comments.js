@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import CommentForm from "./CommentForm";
 import Comment from "./Comment";
 import React from "react";
@@ -10,8 +10,10 @@ import {
 	updateComment as updateCommentApi,
 	deleteComment as deleteCommentApi
 } from "../pages/api";
+import { Context } from "../store/appContext";
 
-const Comments = ({ commentsUrl, currentUserId }) => {
+const Comments = ({ commentsUrl, currentUserId, place }) => {
+	const { actions } = useContext(Context);
 	const [backendComments, setBackendComments] = useState([]);
 	const [activeComment, setActiveComment] = useState(null);
 	const rootComments = backendComments.filter(backendComment => backendComment.parentId === null);
@@ -20,8 +22,9 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 			.filter(backendComment => backendComment.parentId === commentId)
 			.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 	const addComment = (text, parentId) => {
-		createCommentApi(text, parentId).then(comment => {
+		actions.addComment(text, place).then(comment => {
 			setBackendComments([comment, ...backendComments]);
+			console.log(comment);
 			setActiveComment(null);
 		});
 	};
@@ -50,8 +53,8 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 	};
 
 	useEffect(() => {
-		getCommentsApi().then(data => {
-			setBackendComments(data);
+		actions.getComments(place).then(data => {
+			setBackendComments(data.items);
 		});
 	}, []);
 
@@ -83,5 +86,6 @@ export default Comments;
 
 Comments.propTypes = {
 	commentsUrl: PropTypes.string,
-	currentUserId: PropTypes.string
+	currentUserId: PropTypes.string,
+	place: PropTypes.string
 };

@@ -130,9 +130,16 @@ export const SinglePlace = () => {
 							})}
 						</div>
 					) : null}
-					<div>
-						<Comments commentsUrl="http://localhost:3000/comments" currentUserId="1" />
-					</div>
+
+					{store.activeUser.id ? (
+						<div>
+							<Comments
+								commentsUrl="http://localhost:3000/comments"
+								currentUserId="1"
+								place={params.theid}
+							/>
+						</div>
+					) : null}
 				</div>
 			) : null}
 		</div>

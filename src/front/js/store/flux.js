@@ -227,6 +227,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+
+			getComments: place => {
+				return fetch(process.env.BACKEND_URL + `/api/comments?place=${place}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				}).then(res => res.json());
+			},
+			addComment: (body, idPlace) => {
+				return fetch(process.env.BACKEND_URL + "/api/comments", {
+					method: "POST",
+					body: JSON.stringify({
+						body: body,
+						idPlace: idPlace
+					}),
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				}).then(res => res.json());
 			}
 		}
 	};
