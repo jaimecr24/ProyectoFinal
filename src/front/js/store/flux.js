@@ -238,11 +238,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}).then(res => res.json());
 			},
-			addComment: (body, idPlace) => {
+			addComment: (body, idPlace, parentId) => {
 				return fetch(process.env.BACKEND_URL + "/api/comments", {
 					method: "POST",
 					body: JSON.stringify({
 						body: body,
+						parentId: parentId,
 						idPlace: idPlace
 					}),
 					headers: {
@@ -250,6 +251,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				}).then(res => res.json());
+			},
+			deleteComment: idComment => {
+				return fetch(process.env.BACKEND_URL + "/api/comments-removed/" + idComment, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				});
 			}
 		}
 	};

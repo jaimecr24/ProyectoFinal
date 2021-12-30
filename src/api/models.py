@@ -174,6 +174,7 @@ class Comment(db.Model):
     time = db.Column(db.Date)
     user = db.relationship('User')
     place = db.relationship('Place')
+    parentId = db.Column(db.Integer,nullable=True)
     
     def __repr__(self):
         return '<Comment %r>' % self.id
@@ -183,7 +184,7 @@ class Comment(db.Model):
             "id": self.id,
             "username": self.user.username,
             "userId": self.idUser,
-            "parentId": None,
+            "parentId": self.parentId,
             "createdAt": self.time,
             "idPlace": self.idPlace,
             "body": self.body,

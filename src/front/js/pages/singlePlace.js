@@ -135,7 +135,7 @@ export const SinglePlace = () => {
 						<div>
 							<Comments
 								commentsUrl="http://localhost:3000/comments"
-								currentUserId="1"
+								currentUserId={store.activeUser.id}
 								place={params.theid}
 							/>
 						</div>
