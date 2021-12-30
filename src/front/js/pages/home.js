@@ -1,6 +1,4 @@
-
 import React, { useContext, useState, useEffect } from "react";
-
 
 import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
@@ -9,7 +7,7 @@ import { Link } from "react-router-dom";
 import Map from "../component/map.js";
 
 export const Home = () => {
-	const {actions } = useContext(Context);
+	const { actions } = useContext(Context);
 
 	const random = Math.floor(Math.random() * 3 + 1);
 
@@ -28,7 +26,6 @@ export const Home = () => {
 	}, []);
 
 	let history = useHistory();
-
 
 	const style = {
 		width: "200px"
