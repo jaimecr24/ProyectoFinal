@@ -9,7 +9,27 @@ import Map from "../component/map.js";
 export const Home = () => {
   const { actions, store } = useContext(Context);
   const [placesLenght, setPlacesLenght] = useState(null);
+  const [filmsLenght, setFilmsLenght] = useState(null);
   const [singlePlace, setSinglePlace] = useState({});
+  const [singleFilm, setSingleFilm] = useState({});
+  const [markerPositions, setMarkerPositions] = useState(null);
+  const getPlaces = () => {
+    fetch(process.env.BACKEND_URL + "/api/places")
+      .then((resp) => resp.json())
+      .then((data) => setMarkerPositions(actions.getMarkerPositions(data)))
+      .catch((error) =>
+        console.log("Error loading places from backend", error)
+      );
+  };
+
+  const getFilmsLenght = () => {
+    fetch(process.env.BACKEND_URL + "/api/films")
+      .then((resp) => resp.json())
+      .then((data) => setFilmsLenght(data.length))
+      .catch((error) =>
+        console.log("Error loading places from backend", error)
+      );
+  };
 
   const getSinglePlace = (id) => {
     fetch(process.env.BACKEND_URL + "/api/places/" + id)
@@ -20,29 +40,45 @@ export const Home = () => {
       .catch((error) => console.log("Error loading place from backend", error));
   };
 
-  const countPlaces = () => {
-    fetch(process.env.BACKEND_URL + "/api/places")
-      .then((resp) => resp.json())
-      .then((data) => setPlacesLenght(data.length))
-      .catch((error) =>
-        console.log("Error loading places from backend", error)
-      );
+  const getSingleFilm = (id) => {
+    fetch(process.env.BACKEND_URL + "/api/films/" + id)
+      .then((res) => res.json())
+      .then((data) => {
+        setSingleFilm(data);
+      })
+      .catch((error) => console.log("Error loading place from backend", error));
   };
 
   const getRandom = (max) => {
     const rand = 1 + Math.floor(Math.random() * max);
-    console.log(rand);
     return rand;
   };
 
   useEffect(() => {
-    countPlaces();
-    placesLenght ? getSinglePlace(getRandom(placesLenght)) : null;
+    getPlaces();
+    getFilmsLenght();
   }, []);
+  useEffect(
+    () => {
+      markerPositions ? setPlacesLenght(markerPositions.length) : "";
+      markerPositions ? console.log(markerPositions.shift()) : null;
+    },
+    [markerPositions]
+  );
 
-  useEffect(() => {
-    placesLenght ? getSinglePlace(getRandom(placesLenght)) : null;
-  }, [placesLenght]);
+  useEffect(
+    () => {
+      placesLenght ? getSinglePlace(getRandom(placesLenght)) : null;
+    },
+    [placesLenght]
+  );
+
+  useEffect(
+    () => {
+      filmsLenght ? getSingleFilm(getRandom(filmsLenght)) : null;
+    },
+    [filmsLenght]
+  );
 
   let history = useHistory();
 
@@ -129,13 +165,17 @@ export const Home = () => {
             : ""}
         </datalist>
       </form>
+
       {singlePlace ? (
         <div className="row mt-0">
           <div
             className="card design-card bg-dark w-75 mx-auto d-flex flex-row mt-0"
             style={{ borderColor: "#fa9f42" }}
           >
-            <div className="card ms-1 me-5 border-0">
+            <div className="card border-0 col-6 bg-dark">
+              <div>
+                <h3 className="text-light">Sitio de rodaje recomendado:</h3>
+              </div>
               <img
                 src={singlePlace.urlPhoto}
                 className="characters card-img-top mx-auto"
@@ -167,15 +207,63 @@ export const Home = () => {
                 ) : null}
               </div>
             </div>
-            <div className="card">
-              <Map
-                lat={singlePlace.latitude}
-                lng={singlePlace.longitude}
-                width="600"
-                height="350"
-                name={singlePlace.name}
-                direction={singlePlace.address}
+
+            <div className="card border-0 col-6 bg-dark">
+              <div>
+                <h3 className="text-light">Película recomendada:</h3>
+              </div>
+              <img
+                src={singleFilm.urlPhoto}
+                className="characters card-img-top mx-auto"
+                alt={singleFilm.name}
+                style={{ objectFit: "cover" }}
               />
+              <div className="card-body bg-dark">
+                <h5
+                  className="card-title"
+                  style={{
+                    textAlign: "center",
+                    paddingBottom: "25px",
+                    color: "#fa9f42",
+                  }}
+                >
+                  {singleFilm.name}
+                </h5>
+
+                <Link to={"/infofilms/" + singleFilm.id}>
+                  <span className="btn btn-outline">Aprender más</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      <br />
+      {markerPositions && markerPositions.length > 0 ? (
+        <div className="row mt-0">
+          <div>
+            <div
+              className="card design-card bg-dark w-75 mx-auto  mt-0"
+              style={{ borderColor: "#fa9f42" }}
+            >
+              <div>
+                <h3 className="text-light bg-dark no-border">
+                  Explora todos nuestros sitios de rodaje:
+                </h3>
+              </div>
+
+              <div className="card mx-auto">
+                {markerPositions ? (
+                  <Map
+                    markers={markerPositions}
+                    zoom={2}
+                    width="950"
+                    height="600"
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </div>
         </div>
