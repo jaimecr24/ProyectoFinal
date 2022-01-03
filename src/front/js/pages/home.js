@@ -46,7 +46,8 @@ export const Home = () => {
 	};
 
 	const getRandom = max => {
-		const rand = 1 + Math.floor(Math.random() * max);
+		let rand = Math.floor(Math.random() * max);
+		rand == 0 ? rand++ : null;
 		return rand;
 	};
 
