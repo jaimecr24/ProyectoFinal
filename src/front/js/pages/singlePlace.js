@@ -108,16 +108,11 @@ export const SinglePlace = () => {
 
 						<div className="row">
 							<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-								{singlePlace ? (
-									<Map
-										lat={singlePlace.latitude}
-										lng={singlePlace.longitude}
-										width="800"
-										height="350"
-										name={singlePlace.name}
-										direction={singlePlace.address}
-									/>
-								) : null}
+								{singlePlace && markerPositions ? (
+									<Map markers={markerPositions} zoom={10} width="800" height="350" />
+								) : (
+									""
+								)}
 							</div>
 						</div>
 					</div>
