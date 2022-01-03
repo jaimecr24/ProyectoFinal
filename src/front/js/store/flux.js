@@ -229,6 +229,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 
+			getComments: place => {
+				return fetch(process.env.BACKEND_URL + `/api/comments?place=${place}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				}).then(res => res.json());
+			},
+			addComment: (body, idPlace, parentId) => {
+				return fetch(process.env.BACKEND_URL + "/api/comments", {
+					method: "POST",
+					body: JSON.stringify({
+						body: body,
+						parentId: parentId,
+						idPlace: idPlace
+					}),
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				}).then(res => res.json());
+			},
+			deleteComment: idComment => {
+				return fetch(process.env.BACKEND_URL + "/api/comments-removed/" + idComment, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + getStore().activeUser.token
+					}
+				});
+			},
 			getMarkerPositions: places => {
 				let markerPositions = [{}];
 
