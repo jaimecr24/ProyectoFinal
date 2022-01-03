@@ -9,7 +9,7 @@ export const Scene = props => {
 	};
 
 	return (
-		<div className="design-card border border bg-dark p-3  mb-5 mx-auto" style={{ width: "45%" }}>
+		<div className="infocards design-card border border bg-dark p-3  mb-5 mx-auto" style={{ width: "45%" }}>
 			<Link to={"/infofilms/" + props.id} style={{ textDecoration: "none" }}>
 				<h5 className="card-title" style={{ color: "#fa9f42" }}>
 					{props.title}

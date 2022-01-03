@@ -75,10 +75,10 @@
 			]
 		]
 	},
-	"dependencies": {		
+	"dependencies": {
 		"@googlemaps/markerclusterer": "^1.0.19",
 		"@googlemaps/react-wrapper": "^1.1.19",
-		"bootstrap": "^5.1.1",		
+		"bootstrap": "^5.1.1",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",

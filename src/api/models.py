@@ -172,10 +172,11 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     idUser = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     idPlace = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
-    description = db.Column(db.String)
+    body = db.Column(db.String)
     time = db.Column(db.Date)
     user = db.relationship('User')
     place = db.relationship('Place')
+    parentId = db.Column(db.Integer,nullable=True)
     
     def __repr__(self):
         return '<Comment %r>' % self.id
@@ -183,11 +184,14 @@ class Comment(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "idUser": self.idUser,
+            "username": self.user.username,
+            "userId": self.idUser,
+            "parentId": self.parentId,
+            "createdAt": self.time,
             "idPlace": self.idPlace,
-            "description": self.description,
-            "time": self.time
+            "body": self.body,
         }
+
 
 
 class PhotoPlace(db.Model):

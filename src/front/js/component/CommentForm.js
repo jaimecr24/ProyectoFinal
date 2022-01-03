@@ -260,39 +260,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						Authorization: "Bearer " + getStore().activeUser.token
 					}
 				});
-			},
-			getMarkerPositions: places => {
-				let markerPositions = [{}];
-
-				places.map(place =>
-					markerPositions.push({
-						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
-						content:
-							"<img class='w-50'  src = '" +
-							place.urlPhoto +
-							"'/>" +
-							"<p><b>" +
-							place.name +
-							"</b></p><p>" +
-							place.address +
-							"</p>" +
-							"<a href='/place/" +
-							place.id +
-							"'>Ver más</a>"
-					})
-				);
-
-				return markerPositions;
-			},
-			getSingleMarkerPosition: place => {
-				let markerPositions = [
-					{
-						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
-						content: "<p><b>" + place.name + "</b></p><p>" + place.address + "</p>"
-					}
-				];
-
-				return markerPositions;
 			}
 		}
 	};
