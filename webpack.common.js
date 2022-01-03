@@ -17,7 +17,7 @@ module.exports = {
         {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
-          use: ['babel-loader']
+          use: ['babel-loader', 'eslint-loader']
         },
         {
           test: /\.(css|scss)$/, use: [{
@@ -39,6 +39,14 @@ module.exports = {
     extensions: ['*', '.js']
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      Popper: 'popper.js',
+      jQuery: 'jquery',
+      // In case you imported plugins individually, you must also require them here:
+      Util: "exports-loader?Util!bootstrap/js/dist/util",
+      Dropdown: "exports-loader?Dropdown!bootstrap/js/dist/dropdown"
+    }),
     new HtmlWebpackPlugin({
         favicon: '4geeks.ico',
         template: 'template.html'
