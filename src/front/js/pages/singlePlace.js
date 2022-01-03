@@ -12,6 +12,7 @@ export const SinglePlace = () => {
 	const [scenesByPlace, setScenesByPlace] = useState({});
 	const [likes, setLikes] = useState(0);
 	const [country, setCountry] = useState("");
+	const [markerPositions, setMarkerPositions] = useState([]);
 	const params = useParams();
 	const getSinglePlace = id => {
 		fetch(process.env.BACKEND_URL + "/api/places/" + id)
@@ -49,10 +50,17 @@ export const SinglePlace = () => {
 		getSinglePlace(params.theid);
 		getScenesByPlace(params.theid);
 		countLikesPlace(params.theid);
+		singlePlace ? setMarkerPositions(actions.getSingleMarkerPosition(singlePlace)) : null;
 	}, []);
-	useEffect(() => {
-		singlePlace ? getCountryName(singlePlace.idCountry) : null;
-	});
+
+	useEffect(
+		() => {
+			singlePlace ? setMarkerPositions(actions.getSingleMarkerPosition(singlePlace)) : null;
+			singlePlace ? getCountryName(singlePlace.idCountry) : null;
+		},
+		[singlePlace]
+	);
+
 	likes ? console.log(likes) : null;
 
 	return (
@@ -100,16 +108,11 @@ export const SinglePlace = () => {
 
 						<div className="row">
 							<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-								{singlePlace ? (
-									<Map
-										lat={singlePlace.latitude}
-										lng={singlePlace.longitude}
-										width="800"
-										height="350"
-										name={singlePlace.name}
-										direction={singlePlace.address}
-									/>
-								) : null}
+								{singlePlace && markerPositions ? (
+									<Map markers={markerPositions} zoom={10} width="800" height="350" />
+								) : (
+									""
+								)}
 							</div>
 						</div>
 					</div>
