@@ -345,9 +345,9 @@ def listScenes():
         raise APIException("You need to add the request body as a json object", status_code=400)
     
     if 'id' in data:
-        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
+        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"), spoiler=data.get("spoiler"))
     elif 'id' not in data:
-        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
+        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"), spoiler=data.get("spoiler"))
     db.session.add(new_scene)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_scene.serialize()]),200
