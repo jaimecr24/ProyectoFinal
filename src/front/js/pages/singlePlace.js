@@ -12,6 +12,7 @@ export const SinglePlace = () => {
 	const [scenesByPlace, setScenesByPlace] = useState({});
 	const [likes, setLikes] = useState(0);
 	const [country, setCountry] = useState("");
+	const [markerPositions, setMarkerPositions] = useState([]);
 	const params = useParams();
 	const getSinglePlace = id => {
 		fetch(process.env.BACKEND_URL + "/api/places/" + id)
@@ -49,10 +50,17 @@ export const SinglePlace = () => {
 		getSinglePlace(params.theid);
 		getScenesByPlace(params.theid);
 		countLikesPlace(params.theid);
+		singlePlace ? setMarkerPositions(actions.getSingleMarkerPosition(singlePlace)) : null;
 	}, []);
-	useEffect(() => {
-		singlePlace ? getCountryName(singlePlace.idCountry) : null;
-	});
+
+	useEffect(
+		() => {
+			singlePlace ? setMarkerPositions(actions.getSingleMarkerPosition(singlePlace)) : null;
+			singlePlace ? getCountryName(singlePlace.idCountry) : null;
+		},
+		[singlePlace]
+	);
+
 	likes ? console.log(likes) : null;
 
 	return (
