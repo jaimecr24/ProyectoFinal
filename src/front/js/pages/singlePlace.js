@@ -128,6 +128,7 @@ export const SinglePlace = () => {
 										title={value.title}
 										urlPhoto={value.urlPhoto}
 										key={value.idFilm}
+										spoiler={value.spoiler}
 									/>
 								);
 							})}

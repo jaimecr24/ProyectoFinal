@@ -123,6 +123,7 @@ class Scene(db.Model):
     idPlace = db.Column(db.Integer, db.ForeignKey('place.id'), nullable=False)
     description = db.Column(db.String)
     urlPhoto = db.Column(db.String)
+    spoiler = db.Column(db.Boolean(), unique=False) #true = spoiler
     film = db.relationship('Film')
     place = db.relationship('Place')
     
@@ -143,7 +144,8 @@ class Scene(db.Model):
             "picture": self.place.urlPhoto,
             "description": self.description,
             "urlPhoto": self.urlPhoto,
-            "filmPhoto": self.film.urlPhoto
+            "filmPhoto": self.film.urlPhoto,
+            "spoiler": self.spoiler
         }
 
 
