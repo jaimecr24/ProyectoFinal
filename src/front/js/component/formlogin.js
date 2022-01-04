@@ -82,7 +82,7 @@ export const FormLogin = () => {
 	};
 
 	return (
-		<div className="custom-modal" style={{ paddingTop: "10rem" }}>
+		<div className="custom-modal profile" style={{ paddingTop: "10rem" }}>
 			<div className="custom-modal-content mx-auto" style={{ width: "50rem" }}>
 				<div className="header d-flex flex-row">
 					<h3 className="text-white mx-auto my-3">Iniciar sesión</h3>
@@ -90,7 +90,7 @@ export const FormLogin = () => {
 						<button
 							className="ms-auto mb-5 border-0 px-2"
 							type="button"
-							style={{ color: "white", background: "blue" }}>
+							style={{ color: "white", background: "#fa9f42" }}>
 							X
 						</button>
 					</Link>
@@ -100,7 +100,6 @@ export const FormLogin = () => {
 					<div
 						id="errorLogin"
 						style={{
-							background: "#ffeeee",
 							color: "#cc3350",
 							marginBottom: "1rem",
 							display: "none"
@@ -109,7 +108,9 @@ export const FormLogin = () => {
 					</div>
 					<form id="formLogin" className="w-75 mt-3" onSubmit={handleSubmit}>
 						<div className="input-group mb-3">
-							<span className="input-group-text border-0" style={{ background: "blue", color: "white" }}>
+							<span
+								className="input-group-text border-0"
+								style={{ background: "#fa9f42", color: "white" }}>
 								<i className="fas fa-user" />
 							</span>
 							<input
@@ -122,7 +123,9 @@ export const FormLogin = () => {
 							/>
 						</div>
 						<div className="input-group mb-3">
-							<span className="input-group-text border-0" style={{ background: "blue", color: "white" }}>
+							<span
+								className="input-group-text border-0"
+								style={{ background: "#fa9f42", color: "white" }}>
 								<i className="fas fa-lock" />
 							</span>
 							<input
@@ -137,14 +140,17 @@ export const FormLogin = () => {
 						<button
 							type="submit"
 							className="btn w-50 fs-5 text-white mt-3"
-							style={{ background: "blue" }}
+							style={{ background: "#fa9f42" }}
 							onClick={handleSubmit}>
 							ENTRAR
 						</button>
 					</form>
 					<div className="mt-5 fs-5 text-white">¿Todavía no se ha registrado?</div>
 					<Link to="/signup">
-						<button type="button" className="btn w-50 fs-5 text-white my-4" style={{ background: "blue" }}>
+						<button
+							type="button"
+							className="btn w-50 fs-5 text-white my-4"
+							style={{ background: "#fa9f42" }}>
 							REGISTRARSE AHORA
 						</button>
 					</Link>

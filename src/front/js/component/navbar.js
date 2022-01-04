@@ -3,30 +3,28 @@ import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import cameraImgUrl from "../../img/camera.png";
 import profileImgUrl from "../../img/profile.png";
+import "../../styles/home.css";
 
-const linkStyle = { textDecoration: "none", color: "white" };
+const linkStyle = { textDecoration: "none", color: "#e0e0e2" };
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-light bg-light fs-1 text-white bg-transparent">
+		<nav className="navbar navbar-expand-lg navbar-dark fs-3 bg-transparent">
 			<div className="container">
-				<Link to="/">
-					<img src={cameraImgUrl} className="navbar-brand" style={{ width: "75px" }} />
-				</Link>
-				<button
-					className="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navDropdown"
-					aria-controls="navDropdown"
-					aria-expanded="false">
-					<span className="navbar-toggler-icon" />
-				</button>
-				<div className="collapse navbar-collapse" id="navDropdown" style={{ fontFamily: "Permanent Marker" }}>
-					<ul className="navbar-nav ms-auto align-items-center">
-						<li className="nav-item me-5">
+				<div
+					className="collapse navbar-collapse"
+					id="navDropdown"
+					style={{ fontFamily: "Playfair Display SC" }}>
+					<ul className="navbar-nav mx-auto align-items-center">
+						<li className="nav-item mx-5">
+							<Link to="/">
+								<img src={cameraImgUrl} className="navbar-brand mx-5" style={{ width: "75px" }} />
+							</Link>
+						</li>
+
+						<li className="nav-item mx-5">
 							<Link to="/films" style={linkStyle}>
 								Películas
 							</Link>
@@ -41,7 +39,7 @@ export const Navbar = () => {
 								Sitios
 							</Link>
 						</li>
-						<li className="nav-item ms-5 dropdown">
+						<li className="nav-item mx-5 dropdown">
 							<a
 								className="nav-link dropdown-toggle"
 								href="#"
@@ -49,7 +47,7 @@ export const Navbar = () => {
 								role="button"
 								data-bs-toggle="dropdown"
 								aria-expanded="false">
-								<img src={profileImgUrl} style={{ width: "70px" }} />
+								<img src={profileImgUrl} style={{ width: "60px" }} />
 							</a>
 							<ul className="dropdown-menu fs-3 bg-transparent" aria-labelledby="dropdownMenuLink">
 								{store.activeUser.id ? (

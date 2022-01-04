@@ -78,7 +78,7 @@ export const FormSignUp = () => {
 	};
 
 	return (
-		<div className="custom-modal" style={{ paddingTop: "10rem" }}>
+		<div className="custom-modal profile" style={{ paddingTop: "10rem" }}>
 			<div className="custom-modal-content mx-auto" style={{ width: "50rem" }}>
 				<div className="header d-flex flex-row">
 					<h3 className="text-white mx-auto my-3">Nuevo usuario</h3>
@@ -86,7 +86,7 @@ export const FormSignUp = () => {
 						<button
 							className="ms-auto mb-5 border-0 px-2"
 							type="button"
-							style={{ color: "white", background: "blue" }}>
+							style={{ color: "white", background: "#fa9f42" }}>
 							X
 						</button>
 					</Link>
@@ -96,7 +96,6 @@ export const FormSignUp = () => {
 						<div
 							id="errorReg"
 							style={{
-								background: "#ffeeee",
 								color: "#cc3350",
 								marginBottom: "1rem",
 								display: "none"
@@ -163,7 +162,7 @@ export const FormSignUp = () => {
 									type="submit"
 									id="btnReg"
 									className="btn w-50 fs-5 text-white mt-3 mb-5"
-									style={{ background: "blue" }}>
+									style={{ background: "#fa9f42" }}>
 									INICIAR SESIÓN
 								</button>
 							</Link>
@@ -172,7 +171,7 @@ export const FormSignUp = () => {
 								type="submit"
 								id="btnReg"
 								className="btn w-50 fs-5 text-white mt-3 mb-5"
-								style={{ background: "blue" }}>
+								style={{ background: "#fa9f42" }}>
 								REGISTRO
 							</button>
 						)}

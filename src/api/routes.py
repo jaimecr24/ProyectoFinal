@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy import func
-from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace
+from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace, Comment
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 import json
@@ -180,6 +180,7 @@ def getFavPlaces():
     return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
 
 
+
 #Add/Delete a single place in favorites of user
 @api.route("/favorite/<int:place_id>", methods=['DELETE','POST'])
 @jwt_required()
@@ -209,6 +210,12 @@ def delFavPlace(place_id):
         db.session.delete(favPlace)
         db.session.commit()
         return jsonify({"msg":"ok"}), 200
+
+#GET FAVORITES BY PLACE (not by user)
+@api.route('/favplace/<int:place_id>', methods=['GET'])
+def listFavsByPlace(place_id):    
+    list_favs_byPlace = FavPlace.query.filter_by(idPlace=place_id) 
+    return jsonify([favplace.serialize() for favplace in list_favs_byPlace]), 200
 
 
 #Get a list of places that match a key
@@ -387,9 +394,9 @@ def listScenes():
         raise APIException("You need to add the request body as a json object", status_code=400)
     
     if 'id' in data:
-        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
+        new_scene = Scene(id=data.get("id"), idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"), spoiler=data.get("spoiler"))
     elif 'id' not in data:
-        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"))
+        new_scene = Scene(idPlace=data.get("idPlace"), idFilm=data.get("idFilm"), description=data.get("description"), urlPhoto=data.get("urlPhoto"), spoiler=data.get("spoiler"))
     db.session.add(new_scene)
     db.session.commit()
     return jsonify([{'message': 'added ok'}, new_scene.serialize()]),200
@@ -428,3 +435,57 @@ def getScene(scene_id):
         db.session.delete(scene)
         db.session.commit()
         return jsonify({'message': f'scene with id {scene_id} deleted'}), 200
+
+@api.route("/comments", methods=["GET"])
+@jwt_required()
+def getComments():
+    
+    current_user_id = get_jwt_identity()
+    place = request.args.get("place")
+    comments = Comment.query.filter_by(idPlace=place)
+    if comments is None:
+        return jsonify({"count":0, "msg":"ok", "items":[]})
+        
+    res = []
+    for elem in comments:
+        
+        res.append(elem.serialize())
+    return jsonify({"count":comments.count(), "msg":"ok", "items":res}), 200
+    
+@api.route('/comments', methods=['POST'])
+@jwt_required()
+def add_comments():
+
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    # POST a new comment
+    comment_to_add = request.json
+
+    # Data validation
+    if comment_to_add is None:
+        raise APIException("You need to add the request body as a json object", status_code=400)
+    # if 'name' not in comment_to_add:
+    #     raise APIException('You need to add the name', status_code=400)
+    
+    new_comment = Comment( time=datetime.now().date(), idPlace=comment_to_add["idPlace"], body=comment_to_add["body"], idUser=user.id, parentId=comment_to_add.get("parentId") )
+    # new_comment = Comment(parentId=comment_to_add.get("parentId"), createdAt=datetime.now().date(), idPlace=comment_to_add["idPlace"], body=comment_to_add["body"], userId=user.id, username=user.username )
+    db.session.add(new_comment)
+    db.session.commit()
+    return jsonify(new_comment.serialize()), 200
+
+
+@api.route('/comments-removed/<int:comments_id>', methods=['POST'])
+@jwt_required()
+def delete_comments(comments_id):
+
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    comments = Comment.query.filter_by(id=comments_id, idUser= user.id).first()
+
+    if comments: 
+        db.session.delete(comments)
+        db.session.commit()
+
+        return jsonify("Comment deleted"), 200
+    raise APIException("You need to add the comment as a json object", status_code=400)
