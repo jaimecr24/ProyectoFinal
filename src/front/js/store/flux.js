@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			activeUser: { token: "", id: null, lastTime: null, category: false },
+			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] },
 			singlePlace: null,
 			infoFilms: null,
 			infoCountries: null

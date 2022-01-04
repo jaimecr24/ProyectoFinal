@@ -53,18 +53,27 @@ export const FormLogin = () => {
 					})
 					.then(json => {
 						if (json.token) {
-							actions.setActiveUser({
-								token: json.token,
-								id: json.id,
-								lastTime: json.lastTime,
-								category: json.category
-							});
-							history.goBack();
+							fetch(process.env.BACKEND_URL + "/api/favorites", {
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+									Authorization: "Bearer " + json.token
+								}
+							})
+								.then(res => res.json())
+								.then(myfav => {
+									actions.setActiveUser({
+										token: json.token,
+										id: json.id,
+										lastTime: json.lastTime,
+										category: json.category,
+										listFav: myfav.items.map(e => e.id) // only the id of the favorite place.
+									});
+									history.goBack();
+								});
 						}
 					})
-					.catch(function(error) {
-						ShowMessage(error.message);
-					});
+					.catch(error => ShowMessage(error.message));
 			}
 		}
 		if (msg !== "") {
