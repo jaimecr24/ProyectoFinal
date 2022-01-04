@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Country } from "../component/country";
+import { FilmCountry } from "../component/filmCountry";
 
 export const InfoCountries = () => {
 	const [infoCountries, setInfoCountries] = useState({});
-	const [scenesByPlace, setScenesByPlace] = useState({});
+	const [filmsByCountry, setFilmsByCountry] = useState({});
 	const params = useParams();
 	const getInfoCountries = id => {
 		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
@@ -14,21 +14,21 @@ export const InfoCountries = () => {
 				console.log(data);
 				setInfoCountries(data);
 			})
-			.then(id => getActions().getScenesByFilm(id))
+			.then(() => getActions().getFilmsByFilm(id))
 			.catch(error => console.log("Error loading place from backend", error));
 	};
-	const getScenesByPlace = id => {
-		fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
+	const getFilmsByCountry = id => {
+		fetch(process.env.BACKEND_URL + "/api/films/country/" + id)
 			.then(res => res.json())
 			.then(data => {
 				console.log(data);
-				setScenesByPlace(data);
+				setFilmsByCountry(data);
 			})
 			.catch(error => console.log("Error loading place from backend", error));
 	};
 	useEffect(() => {
 		getInfoCountries(params.theid);
-		getScenesByPlace(params.theid);
+		getFilmsByCountry(params.theid);
 	}, []);
 
 	return (
@@ -53,25 +53,23 @@ export const InfoCountries = () => {
 							<p className="text-white">{infoCountries.description}</p>
 						</div>
 					</div>
-					{scenesByPlace.length > 0 ? (
+					{filmsByCountry.length > 0 ? (
 						<div className="container-fluid content-row">
 							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
 								·Películas que fueron grabadas en este país:
 							</h5>
 							<div className="my-card-content">
-								{scenesByPlace.map((item, index) => {
+								{filmsByCountry.map((item, index) => {
 									return (
 										<div
 											className="infocards row col-auto"
 											key={index}
 											style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
-											<Country
-												id={item.idFilm}
-												description={item.description}
-												movie={item.movie}
-												picture={item.picture}
+											<FilmCountry
+												id={item.id}
+												movie={item.name}
 												key={item.idFilm}
-												filmPhoto={item.filmPhoto}
+												filmPhoto={item.urlPhoto}
 											/>
 										</div>
 									);
