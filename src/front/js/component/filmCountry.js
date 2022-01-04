@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export const Country = props => {
+export const FilmCountry = props => {
 	const { store, actions } = useContext(Context);
 
 	return (
@@ -22,9 +22,8 @@ export const Country = props => {
 	);
 };
 
-Country.propTypes = {
+FilmCountry.propTypes = {
 	id: PropTypes.string,
-	picture: PropTypes.string,
 	filmPhoto: PropTypes.string,
 	movie: PropTypes.string
 };

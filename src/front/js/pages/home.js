@@ -223,7 +223,7 @@ export const Home = () => {
 
 							<div className="card mx-auto">
 								{markerPositions ? (
-									<Map markers={markerPositions} zoom={2} width="950" height="600" />
+									<Map markers={markerPositions} zoom={2} width="900" height="600" />
 								) : (
 									""
 								)}

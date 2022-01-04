@@ -126,9 +126,7 @@ class Scene(db.Model):
     spoiler = db.Column(db.Boolean(), unique=False) #true = spoiler
     film = db.relationship('Film')
     place = db.relationship('Place')
-    
 
-    
     def __repr__(self):
         return '<Scene %r>' % self.id
 
@@ -145,7 +143,8 @@ class Scene(db.Model):
             "description": self.description,
             "urlPhoto": self.urlPhoto,
             "filmPhoto": self.film.urlPhoto,
-            "spoiler": self.spoiler
+            "spoiler": self.spoiler,
+            "idCountry": self.place.idCountry
         }
 
 
