@@ -5,13 +5,38 @@ import "../../styles/modal.css";
 import iconadmin from "../../img/admin-icon.png";
 
 const Users = () => {
+	const usersPage = 10; // Number of rows per page
 	const { store, actions } = useContext(Context);
 	const [data, setData] = useState({
-		users: []
+		name: "",
+		last_name: "",
+		username: "",
+		email: "",
+		isAdmin: false,
+		users: [],
+		limInf: 0,
+		limSup: usersPage,
+		totalPages: 0,
+		currentPage: 0
 	});
+	// values when a row is in edit mode:
+	const [inEditMode, setInEditMode] = useState({ status: false, rowKey: null });
+
 	useEffect(() => {
-		// load users data
-		fetch(process.env.BACKEND_URL + "/api/users", {
+		// load number of users and first page
+		fetch(process.env.BACKEND_URL + "/api/users/count")
+			.then(res => res.json())
+			.then(res => {
+				data.totalPages = Math.floor(res.count / usersPage) + 1;
+				data.currentPage = 1;
+				loadData();
+			})
+			.catch(error => alert(error));
+	}, []);
+
+	const loadData = () => {
+		// load n rows of data between data.limInf and data.limSup
+		fetch(`${process.env.BACKEND_URL}/api/users/${data.limInf}/${data.limSup}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -21,8 +46,85 @@ const Users = () => {
 			.then(res => res.json())
 			.then(users => setData({ ...data, users: users }))
 			.catch(error => console.log(error));
-	}, []);
+	};
 
+	const handleChange = e => {
+		// changes of data in edit mode
+		setData({ ...data, [e.target.name]: e.target.value });
+	};
+
+	const handleChangeCheckBox = e => {
+		// specific for checkbox admin
+		setData({ ...data, [e.target.name]: e.target.checked });
+	};
+
+	const handleEdit = item => {
+		// enter in edit mode
+		setInEditMode({ status: true, rowKey: item.id });
+		setData({
+			...data,
+			name: item.name,
+			last_name: item.last_name,
+			username: item.username,
+			email: item.email,
+			isAdmin: item.category
+		});
+	};
+
+	const handleCancel = () => {
+		// discard changes and exit from edit mode
+		setInEditMode({ status: false, rowKey: null });
+		setData({ ...data, name: "", last_name: "", username: "", email: "" });
+	};
+
+	const handleSave = () => {
+		// save changes and exit from edit mode
+		fetch(process.env.BACKEND_URL + "/api/user/" + inEditMode.rowKey.toString(), {
+			method: "PUT",
+			body: JSON.stringify({
+				name: data.name,
+				last_name: data.last_name,
+				username: data.username,
+				email: data.email,
+				category: data.isAdmin
+			}),
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + store.activeUser.token
+			}
+		})
+			.then(res => res.json())
+			.then(json => {
+				handleCancel();
+				loadData();
+			})
+			.catch(error => alert(error));
+	};
+
+	const handleDelete = item => {
+		// delete user
+		if (confirm(`¿Eliminar usuario ${item.username}?`)) {
+			fetch(process.env.BACKEND_URL + "/api/user/" + item.id.toString(), {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + store.activeUser.token
+				}
+			})
+				.then(res => res.json())
+				.then(json => loadData())
+				.catch(error => alert(error));
+		}
+	};
+
+	const gotoPage = n => {
+		data.currentPage = n;
+		data.limInf = usersPage * (n - 1);
+		data.limSup = data.limInf + usersPage;
+		loadData();
+	};
+
+	// For show data in each row
 	const datastyle = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
 	return (
 		<>
@@ -45,16 +147,83 @@ const Users = () => {
 							<th scope="col" width="15%">
 								username
 							</th>
+							<th scope="col" width="5%">
+								admin
+							</th>
+							<th scope="col" width="10%" />
 						</tr>
 					</thead>
 					<tbody>
-						{data.users.map((e, i) => (
-							<tr key={i}>
+						{data.users.map(e => (
+							<tr key={e.id}>
 								<th scope="row">{e.id}</th>
-								<td style={datastyle}>{e.name}</td>
-								<td style={datastyle}>{e.last_name}</td>
-								<td style={datastyle}>{e.email}</td>
-								<td style={datastyle}>{e.username}</td>
+								<td style={datastyle}>
+									{inEditMode.status && inEditMode.rowKey === e.id ? (
+										<input name="name" value={data.name} onChange={handleChange} />
+									) : (
+										e.name
+									)}
+								</td>
+								<td style={datastyle}>
+									{inEditMode.status && inEditMode.rowKey === e.id ? (
+										<input name="last_name" value={data.last_name} onChange={handleChange} />
+									) : (
+										e.last_name
+									)}
+								</td>
+								<td style={datastyle}>
+									{inEditMode.status && inEditMode.rowKey === e.id ? (
+										<input name="email" value={data.email} onChange={handleChange} />
+									) : (
+										e.email
+									)}
+								</td>
+								<td style={datastyle}>
+									{inEditMode.status && inEditMode.rowKey === e.id ? (
+										<input name="username" value={data.username} onChange={handleChange} />
+									) : (
+										e.username
+									)}
+								</td>
+								<td style={datastyle}>
+									<input
+										type="checkbox"
+										checked={
+											inEditMode.status && inEditMode.rowKey === e.id ? data.isAdmin : e.category
+										}
+										disabled={!inEditMode.status || inEditMode.rowKey !== e.id}
+										style={{ width: "16px", height: "16px" }}
+										name="isAdmin"
+										onChange={handleChangeCheckBox}
+									/>
+								</td>
+								<td style={datastyle}>
+									{inEditMode && inEditMode.rowKey === e.id ? (
+										<>
+											<button className="btn-success" onClick={handleSave}>
+												Guardar
+											</button>
+											<button className="btn-secondary ms-1" onClick={handleCancel}>
+												Cancelar
+											</button>
+										</>
+									) : (
+										<>
+											<button
+												className={`btn-primary ${store.activeUser.id == e.id ? "d-none" : ""}`}
+												onClick={() => handleEdit(e)}>
+												Editar
+											</button>
+											<button
+												className={`btn-danger ms-1 ${
+													store.activeUser.id == e.id ? "d-none" : ""
+												}`}
+												onClick={() => handleDelete(e)}>
+												Eliminar
+											</button>
+										</>
+									)}
+								</td>
 							</tr>
 						))}
 					</tbody>
@@ -62,6 +231,30 @@ const Users = () => {
 			) : (
 				""
 			)}
+			<button onClick={() => gotoPage(1)} disabled={data.currentPage === 1}>
+				{"<<"}
+			</button>{" "}
+			<button onClick={() => gotoPage(data.currentPage - 1)} disabled={data.currentPage === 1}>
+				{"<"}
+			</button>{" "}
+			<button onClick={() => gotoPage(data.currentPage + 1)} disabled={data.currentPage === data.totalPages}>
+				{">"}
+			</button>{" "}
+			<button onClick={() => gotoPage(data.totalPages)} disabled={data.currentPage === data.totalPages}>
+				{">>"}
+			</button>{" "}
+			<span className="text-warning fw-bold">{`Página ${data.currentPage} de ${data.totalPages}`}</span>
+			<span className="text-warning fw-bold"> | Ir a la página: </span>
+			<input
+				type="number"
+				defaultValue={1}
+				min="1"
+				max={data.totalPages.toString()}
+				onChange={e => {
+					const page = e.target.value ? Number(e.target.value) : 1;
+					if (page > 0 && page <= data.totalPages) gotoPage(page);
+				}}
+			/>
 		</>
 	);
 };
@@ -319,27 +512,9 @@ export const Admin = () => {
 							</a>
 							<ul className="dropdown-menu dropdown-menu-dark text-small shadow">
 								<li>
-									<a className="dropdown-item" href="#">
-										New project...
-									</a>
-								</li>
-								<li>
-									<a className="dropdown-item" href="#">
-										Settings
-									</a>
-								</li>
-								<li>
-									<a className="dropdown-item" href="#">
-										Profile
-									</a>
-								</li>
-								<li>
-									<hr className="dropdown-divider" />
-								</li>
-								<li>
-									<a className="dropdown-item" href="#">
-										Sign out
-									</a>
+									<Link to="/" className="dropdown-item">
+										Salir
+									</Link>
 								</li>
 							</ul>
 						</div>
@@ -366,40 +541,8 @@ export const Admin = () => {
 
 const ShowFile = () => {
 	const [data, setData] = useState("");
-
-	function later(delay) {
-		return new Promise(function(resolve) {
-			setTimeout(resolve, delay);
-		});
-	}
-
-	// Prueba de lectura síncrona de ficheros por fragmentos
-	const readFile = async e => {
-		let file = e.target.files[0];
-		let index = 0;
-		let inc = 200;
-		let isDone = false;
-		let str = "";
-		try {
-			while (!isDone) {
-				let p = new Promise((resolve, reject) => {
-					let fr = new FileReader();
-					fr.onload = () => resolve(fr.result);
-					fr.onerror = reject;
-					let b = file.slice(index, index + inc);
-					fr.readAsText(b); // read inc characters
-				});
-				let res = await p;
-				str = str.concat(res);
-				setData(str);
-				await later(200);
-				isDone = !confirm("continuar ?");
-				index += inc;
-			}
-			str = "";
-		} catch {
-			console.log("Error");
-		}
+	useEffect(() => {
+		alert("ready to download data...");
 		// Prueba de descarga en json de la información de lugares
 		fetch(process.env.BACKEND_URL + "/api/places")
 			.then(resp => resp.json())
@@ -412,6 +555,21 @@ const ShowFile = () => {
 				//Falta eliminar el elemento
 			})
 			.catch(error => console.log("Error loading places from backend", error));
+	}, []);
+
+	// Prueba de lectura síncrona de ficheros por fragmentos
+	const readFile = async e => {
+		let file = e.target.files[0];
+
+		alert("ready to load data...");
+		// Prueba de carga de fichero en json con la info de lugares
+		let myfile = new FileReader();
+		myfile.onload = function(e) {
+			let content = e.target.result;
+			let mydata = JSON.parse(content);
+			setData(content);
+		};
+		myfile.readAsText(file);
 	};
 
 	return (
