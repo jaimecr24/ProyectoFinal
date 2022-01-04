@@ -3,6 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from sqlalchemy import func
 from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene, PhotoPlace, Comment
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
@@ -20,6 +21,11 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@api.route("/users/count", methods=["GET"])
+def countUsers():
+    rows = db.session.query(func.count(User.id)).scalar()
+    return { "msg": "ok", "count": rows }, 200
+
 #Get data of all users in db. Token and user category true necessary
 @api.route("/users", methods=["GET"])
 @jwt_required()
@@ -28,11 +34,53 @@ def getAllUsers():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     if not user.category:
-        return { "msg": "user has no privileges"}, 400
+        return { "msg": "access denied"}, 400
 
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
 
+@api.route("/users/<int:limitInf>/<int:limitSup>", methods=["GET"])
+@jwt_required()
+def getNUsers(limitInf, limitSup):
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user.category:
+        return { "msg": "access denied"}, 400
+    #load only a subset of rows    
+    users = User.query[limitInf:limitSup]
+    return jsonify([user.serialize() for user in users]), 200
+
+#Get/Put/Delete data of a single user
+@api.route("/user/<int:user_id>", methods=["GET", "PUT", "DELETE"])
+@jwt_required()
+def singleUser(user_id):
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id) # The user who makes the request must be an admin user.
+    if not user.category:
+        return { "msg": "access denied"}, 400
+
+    user = User.query.get(user_id)
+    if user is None: return { "msg": "id not exists"}, 400
+    if request.method == "GET":
+        return jsonify(user.serialize())
+    elif request.method == "PUT":
+        body = request.json
+        if body is None: return {"msg":"The request body is null"}, 400
+        if 'email' in body: user.email = body.get("email")
+        if 'username' in body: user.username = body.get("username")
+        if 'category' in body: user.category = body.get("category")
+        if 'name' in body or 'last_name' in body:
+            customer = Customer.query.filter_by(idUser=user_id).first()
+            if 'name' in body: customer.name = body.get("name")
+            if 'last_name' in body: customer.last_name = body.get("last_name")
+        db.session.commit()
+        return {"msg":"user updated"}, 200
+    else:
+        customer = Customer.query.filter_by(idUser=user_id).first()
+        db.session.delete(customer)
+        db.session.delete(user)
+        db.session.commit()
+        return {"msg":"user deleted"}, 200
 
 #registro del usuario
 @api.route("/signup", methods=["POST"])
