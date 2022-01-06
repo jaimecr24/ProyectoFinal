@@ -51,7 +51,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setActiveUser: p => setStore({ activeUser: p }),
 
 			// Logout. Reset all variables related to user
-			logout: () => setStore({ activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] } }),
+			logout: () =>
+				setStore({ activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] } }),
 
 			// Protected: get all data from user identified by token
 			getUser: () => {
@@ -262,7 +263,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 			getMarkerPositions: places => {
-				let markerPositions = [{}];
+				let markerPositions = [];
 
 				places.map(place =>
 					markerPositions.push({
@@ -274,7 +275,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"<p><b>" +
 							place.name +
 							"</b></p><p>" +
-							place.address +
+							(place.address ? place.address : "") +
 							"</p>" +
 							"<a href='/place/" +
 							place.id +
