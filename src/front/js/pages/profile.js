@@ -3,6 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/modal.css";
 import usericon from "../../img/users.png";
+import Map from "../component/map.js";
 
 export const Profile = () => {
 	const { store, actions } = useContext(Context);
@@ -15,6 +16,7 @@ export const Profile = () => {
 		lastTime: null,
 		listItems: []
 	});
+	const [markerPositions, setMarkerPositions] = useState(null);
 
 	let itemsChecked = 0;
 	let history = useHistory();
@@ -47,10 +49,18 @@ export const Profile = () => {
 								listItems: responsePlaces.items
 							});
 						})
+
 						.catch(error => console.error("Error:", error));
 			})
 			.catch(error => console.error("Error:", error));
 	}, []);
+
+	useEffect(
+		() => {
+			setMarkerPositions(actions.getMarkerPositions(data["listItems"]));
+		},
+		[data["listItems"]]
+	);
 
 	const handleCheckBox = e => {
 		// Disable btnDel if itemsChecked<1 or enable it if itemsChecked>=1
@@ -163,6 +173,26 @@ export const Profile = () => {
 							: ""}
 					</div>
 				</div>
+
+				{markerPositions && markerPositions.length > 0 ? (
+					<div>
+						<div className="card bg-dark w-100 mx-auto mt-5 border-0">
+							<div>
+								<h3 className="text-light bg-dark text-center">
+									Encuentra todos tus sitios favoritos:
+								</h3>
+							</div>
+
+							<div className=" mx-auto">
+								{markerPositions ? (
+									<Map markers={markerPositions} zoom={2} width="900" height="600" />
+								) : (
+									""
+								)}
+							</div>
+						</div>
+					</div>
+				) : null}
 			</div>
 			<div className="w-100 row">
 				<button
