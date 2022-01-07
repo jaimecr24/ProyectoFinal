@@ -51,7 +51,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setActiveUser: p => setStore({ activeUser: p }),
 
 			// Logout. Reset all variables related to user
-			logout: () => setStore({ activeUser: { token: "", id: null, lastTime: null, category: false } }),
+			logout: () =>
+				setStore({ activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] } }),
 
 			// Protected: get all data from user identified by token
 			getUser: () => {
