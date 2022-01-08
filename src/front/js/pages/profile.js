@@ -14,118 +14,115 @@ export const Profile = () => {
 		username: "",
 		email: "",
 		lastTime: null,
-		listItems: []
+		listItems: [],
+		markerPositions: []
 	});
-	const [markerPositions, setMarkerPositions] = useState(null);
 
-	let itemsChecked = 0;
 	let history = useHistory();
 	const linkStyle = { color: "white" };
+	const dataStyle = {
+		height: "20px",
+		background: "rgba(255, 255, 255, 0.9)",
+		color: "black",
+		padding: "5px",
+		borderRadius: "5px"
+	};
 
 	useEffect(() => {
 		let status = 0;
-		document.getElementById("btnDel").disabled = itemsChecked < 1;
 		actions
 			.getUser()
 			.then(res => {
 				status = res.status;
 				return res.json();
 			})
-			.then(responseUser => {
+			.then(user => {
 				if (status >= 400) {
-					alert(responseUser["msg"]);
+					alert(user["msg"]);
 					actions.logout();
-				} else
-					actions
-						.getFavPlaces()
-						.then(res => res.json())
-						.then(responsePlaces => {
-							setData({
-								name: responseUser.name,
-								lastName: responseUser.last_name,
-								username: responseUser.username,
-								email: responseUser.email,
-								lastTime: new Date(store.activeUser.lastTime).toLocaleString(),
-								listItems: responsePlaces.items
-							});
-						})
-
-						.catch(error => console.error("Error:", error));
+				} else loadFavPlaces(user);
 			})
 			.catch(error => console.error("Error:", error));
 	}, []);
 
-	useEffect(
-		() => {
-			setMarkerPositions(actions.getMarkerPositions(data["listItems"]));
-		},
-		[data["listItems"]]
-	);
+	const loadFavPlaces = user => {
+		actions
+			.getFavPlaces()
+			.then(res => res.json())
+			.then(responsePlaces => {
+				setData({
+					name: user.name,
+					lastName: user.last_name,
+					username: user.username,
+					email: user.email,
+					lastTime: new Date(store.activeUser.lastTime).toLocaleString(),
+					listItems: responsePlaces.items,
+					markerPositions: actions.getMarkerPositions(responsePlaces.items)
+				});
+			})
+			.catch(error => console.error("Error:", error));
+	};
 
-	const handleCheckBox = e => {
-		// Disable btnDel if itemsChecked<1 or enable it if itemsChecked>=1
-		let btn = document.getElementById("btnDel");
-		if (e.target.checked) {
-			itemsChecked++;
-			if (itemsChecked == 1) {
-				btn.disabled = false;
-				btn.style.color = "white";
+	const handleDelete = async e => {
+		let id = parseInt(e.target.getAttribute("datakey"));
+		try {
+			let res = await actions.delFavPlace(id);
+			if (res.ok) {
+				loadFavPlaces({
+					name: data.name,
+					last_name: data.lastName,
+					username: data.username,
+					email: data.email
+				});
+			} else {
+				let response = await res.json();
+				alert(response["msg"]);
+				actions.logout();
 			}
-		} else {
-			itemsChecked--;
-			if (itemsChecked == 0) {
-				btn.disabled = true;
-				btn.style.color = "gray";
-			}
+		} catch (error) {
+			alert(error);
 		}
 	};
 
-	async function handleDeleteFav(e) {
-		let btn = document.getElementById("btnDel");
-		let list = document.getElementById("favList");
-		let newlistitems = data.listItems;
-		try {
-			for (let i = 0; i < list.childElementCount; i++) {
-				if (list.childNodes[i].firstChild.checked) {
-					let id = parseInt(list.childNodes[i].getAttribute("datakey"));
-					let res = await actions.delFavPlace(id); // await to wait promise is completed.
-					//let resj = await res.json();  ---- Here not necessary -----
-					if (res.ok) {
-						newlistitems = newlistitems.filter(e => e["id"] != id);
-						itemsChecked--;
-						if (itemsChecked == 0) {
-							btn.disabled = true;
-							btn.style.color = "gray";
-						}
-					} else {
-						// Show error and exit from loop
-						response = await res.json();
-						alert(response["msg"]);
-						actions.logout();
-						i = list.childElementCount; // Force exit loop
-					}
-				}
-			}
-			// Finally we update the listItems in data to render new list of favorites.
-			setData({ ...data, listItems: newlistitems });
-		} catch (error) {
-			console.log("Error: ", error);
-		}
-	}
-
 	return (
-		<div
-			className="container bg-dark design-card text-white mt-4 pt-5 profile mx-auto"
-			style={{ border: "1px solid #fa9f42" }}>
-			<div className="fs-2 ps-3">{`Bienvenido, ${data.username}`}</div>
+		<div className="container bg-dark text-white mt-4 mx-auto p-0" style={{ border: "1px solid #fa9f42" }}>
+			<button
+				type="button"
+				className="btn btn-warning float-end m-0 rounded-0 profile"
+				onClick={() => history.goBack()}>
+				X
+			</button>
+			<div className="fs-2 ps-4 mt-5">
+				<span>{`Bienvenido, ${data.username}`}</span>
+			</div>
 			<div className="row">
 				<div className="col-5 offset-1">
 					<div className="mt-4">
 						<div className="fs-3 border-bottom border-light pb-1">Tus datos</div>
-						<div className="mt-3">{`Nombre: ${data.name}`}</div>
-						<div className="mt-2">{`Apellidos: ${data.lastName}`}</div>
-						<div className="mt-2">{`Email: ${data.email}`}</div>
-						<div className="mt-2">{`Último inicio de sesión: ${data.lastTime}`}</div>
+						<div className="mt-3 fs-5">
+							Nombre:{" "}
+							<span className="profile" style={dataStyle}>
+								{data.name}
+							</span>
+						</div>
+						<div className="mt-2 fs-5">
+							Apellidos:{" "}
+							<span className="profile" style={dataStyle}>
+								{data.lastName}
+							</span>
+						</div>
+						<div className="mt-2 fs-5">
+							E-mail:{" "}
+							<span className="profile" style={dataStyle}>
+								{data.email}
+							</span>
+						</div>
+						<div className="mt-2 fs-5">
+							Última visita:{" "}
+							<span className="profile" style={dataStyle}>
+								{data.lastTime}
+							</span>
+						</div>
 					</div>
 				</div>
 				<div className="col-5 mt-5 align-items-center" align="center">
@@ -134,17 +131,8 @@ export const Profile = () => {
 			</div>
 
 			<div className="py-5">
-				<div className="row">
-					<div className="fs-3 col-5 offset-1">
-						{`Lugares favoritos: ${data["listItems"] ? data["listItems"].length : 0}`}
-					</div>
-					<button
-						id="btnDel"
-						className="col-2 offset-3 fs-5"
-						style={{ background: "#fa9f42", color: "lightgray" }}
-						onClick={handleDeleteFav}>
-						Eliminar
-					</button>
+				<div className="fs-3 col-5 offset-1">
+					{`Tus lugares favoritos: ${data["listItems"] ? data["listItems"].length : 0}`}
 				</div>
 				<div className="row mt-2">
 					<div className="col-10 offset-1" id="favList">
@@ -154,54 +142,35 @@ export const Profile = () => {
 										key={value.id}
 										datakey={value.id}
 										className="row border-top border-light py-1 align-items-center">
-										<input
-											className="col-1"
-											type="checkbox"
-											style={{ width: "20px", height: "20px" }}
-											onClick={handleCheckBox}
-										/>
-										<img className="col-2" src={value.urlPhoto} />
-										<div className="col-4">
+										<button
+											datakey={value.id}
+											className="col-1 bg-danger text-white fs-5 p-0"
+											style={{ width: "35px", height: "32px" }}
+											onClick={handleDelete}>
+											X
+										</button>
+										<img className="col-3" src={value.urlPhoto} />
+										<div className="col-3 fs-5">
 											<Link to={"/place/" + value.id} style={linkStyle}>
 												{value.name}
 											</Link>
 											{" (" + value.countryName + ")"}
 										</div>
-										<div className="col-5">{value.description}</div>
+										<div className="col profile">{value.description}</div>
 									</div>
 							  ))
 							: ""}
 					</div>
 				</div>
 
-				{markerPositions && markerPositions.length > 0 ? (
-					<div>
-						<div className="card bg-dark w-100 mx-auto mt-5 border-0">
-							<div>
-								<h3 className="text-light bg-dark text-center">
-									Encuentra todos tus sitios favoritos:
-								</h3>
-							</div>
-
-							<div className=" mx-auto">
-								{markerPositions ? (
-									<Map markers={markerPositions} zoom={2} width="900" height="600" />
-								) : (
-									""
-								)}
-							</div>
+				{data.markerPositions.length > 0 ? (
+					<div className="mt-5">
+						<h3 className="text-light text-center">Encuentra todos tus sitios favoritos:</h3>
+						<div className="mt-5 bg-danger mx-auto" style={{ width: "900px" }}>
+							<Map markers={data.markerPositions} zoom={2} width="900" height="600" />
 						</div>
 					</div>
 				) : null}
-			</div>
-			<div className="w-100 row">
-				<button
-					className="col-auto px-3 mb-3 mx-auto fs-5"
-					type="button"
-					style={{ background: "#fa9f42", color: "white" }}
-					onClick={() => history.goBack()}>
-					Cerrar
-				</button>
 			</div>
 		</div>
 	);

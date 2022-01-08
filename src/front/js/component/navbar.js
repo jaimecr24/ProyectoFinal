@@ -49,7 +49,10 @@ export const Navbar = () => {
 								aria-expanded="false">
 								<img src={profileImgUrl} style={{ width: "60px" }} />
 							</a>
-							<ul className="dropdown-menu fs-3 bg-transparent" aria-labelledby="dropdownMenuLink">
+							<ul
+								className="dropdown-menu fs-3 border border-warning"
+								style={{ background: "rgba(43, 65, 98, 0.8)" }}
+								aria-labelledby="dropdownMenuLink">
 								{store.activeUser.id ? (
 									<>
 										<a className="dropdown-item" href="#">
@@ -67,8 +70,9 @@ export const Navbar = () => {
 											""
 										)}
 										<a
-											className="dropdown-item text-white"
+											className="dropdown-item"
 											href="#"
+											style={linkStyle}
 											onClick={() => actions.logout()}>
 											Cerrar sesión
 										</a>

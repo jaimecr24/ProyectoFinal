@@ -1,22 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
 			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] },
 			singlePlace: null,
-			infoFilms: null,
 			infoCountries: null
 		},
 		actions: {
@@ -105,95 +91,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Get the list of places that match a key (only name and id)
 			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/browse/" + key),
 
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+			// Get the list of all places in db.
+			getPlaces: () => fetch(process.env.BACKEND_URL + "/api/places"),
 
-			getMessage: () => {
-				// fetching data from the backend
-				fetch(process.env.BACKEND_URL + "/api/hello")
-					.then(resp => resp.json())
-					.then(data => setStore({ message: data.message }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
-			getPlaces: () => {
-				// fetching data from the backend
-				console.log(process.env.BACKEND_URL + "/api/places");
-				//fetch(process.env.BACKEND_URL + "api/places")
-				fetch(process.env.BACKEND_URL + "/api/places")
-					.then(resp => resp.json())
-					.then(data => setStore({ places: data }))
-					.catch(error => console.log("Error loading places from backend", error));
-			},
-			getSinglePlace: id => {
-				fetch(process.env.BACKEND_URL + "/api/places/" + id)
-					.then(res => res.json())
-					.then(data => {
-						setStore({
-							singlePlace: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
-			getScenesByPlace: id => {
-				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
-					.then(res => res.json())
-					.then(data => {
-						setStore({
-							scenesByPlace: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get data of a single place.
+			getSinglePlace: id => fetch(process.env.BACKEND_URL + "/api/places/" + id),
 
-			getScenesByFilm: id => {
-				fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							scenesByFilm: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get the list of scenes filmmed on a single place.
+			getScenesByPlace: id => fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id),
 
-			fetchFilms: () => {
-				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch(process.env.BACKEND_URL + "/api/films")
-					.then(resp => resp.json())
-					.then(data => setStore({ films: data }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
+			// Get the scenes of a single film.
+			getScenesByFilm: id => fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id),
 
-			getInfoFilms: id => {
-				fetch(process.env.BACKEND_URL + "/api/films/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							infoFilms: data
-						});
-						return data.id;
-					})
-					.then(id => getActions().getScenesByFilm(id))
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get all films in db.
+			fetchFilms: () => fetch(process.env.BACKEND_URL + "/api/films"),
 
-			resetInfoFilms: () => {
-				setStore({
-					infoFilms: null
-				});
-				localStorage.removeItem("id");
-			},
-			fetchCountries: () => {
-				console.log(process.env.BACKEND_URL + "/api/countries");
-				fetch(process.env.BACKEND_URL + "/api/countries")
-					.then(resp => resp.json())
-					.then(data => setStore({ countries: data }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
+			// Get the info of a single film.
+			getInfoFilm: id => fetch(process.env.BACKEND_URL + "/api/films/" + id),
+
+			// Get all countries in db.
+			fetchCountries: () => fetch(process.env.BACKEND_URL + "/api/countries"),
 
 			getInfoCountries: id => {
 				fetch(process.env.BACKEND_URL + "/api/countries/" + id)
@@ -213,21 +130,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					infoCountries: null
 				});
 				localStorage.removeItem("id");
-			},
-
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
 			},
 
 			getComments: place => {

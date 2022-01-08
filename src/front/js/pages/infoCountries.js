@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { FilmCountry } from "../component/filmCountry";
 
 export const InfoCountries = () => {
@@ -10,20 +9,14 @@ export const InfoCountries = () => {
 	const getInfoCountries = id => {
 		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
 			.then(res => res.json())
-			.then(data => {
-				console.log(data);
-				setInfoCountries(data);
-			})
+			.then(data => setInfoCountries(data))
 			.then(() => getActions().getFilmsByFilm(id))
 			.catch(error => console.log("Error loading place from backend", error));
 	};
 	const getFilmsByCountry = id => {
 		fetch(process.env.BACKEND_URL + "/api/films/country/" + id)
 			.then(res => res.json())
-			.then(data => {
-				console.log(data);
-				setFilmsByCountry(data);
-			})
+			.then(data => setFilmsByCountry(data))
 			.catch(error => console.log("Error loading place from backend", error));
 	};
 	useEffect(() => {

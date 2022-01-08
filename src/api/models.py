@@ -94,8 +94,8 @@ class Place(db.Model):
             "description": self.description,
             "countLikes": self.countLikes,
             "entryDate": self.entryDate,
-            "urlPhoto": self.urlPhoto
-
+            "urlPhoto": self.urlPhoto,
+            "countryName": self.country.name
         }
     
 
