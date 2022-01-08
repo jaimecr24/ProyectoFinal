@@ -118,6 +118,7 @@ const Users = () => {
 	};
 
 	const gotoPage = n => {
+		if (inEditMode.status) handleCancel();
 		data.currentPage = n;
 		data.limInf = usersPage * (n - 1);
 		data.limSup = data.limInf + usersPage;
@@ -132,9 +133,6 @@ const Users = () => {
 				<table className="table text-white" style={{ tableLayout: "fixed" }}>
 					<thead>
 						<tr>
-							<th scope="col" width="5%">
-								#
-							</th>
 							<th scope="col" width="15%">
 								nombre
 							</th>
@@ -150,13 +148,12 @@ const Users = () => {
 							<th scope="col" width="5%">
 								admin
 							</th>
-							<th scope="col" width="10%" />
+							<th scope="col" width="12%" />
 						</tr>
 					</thead>
 					<tbody>
 						{data.users.map(e => (
 							<tr key={e.id}>
-								<th scope="row">{e.id}</th>
 								<td style={datastyle}>
 									{inEditMode.status && inEditMode.rowKey === e.id ? (
 										<input name="name" value={data.name} onChange={handleChange} />
@@ -260,7 +257,6 @@ const Users = () => {
 };
 
 const Films = () => {
-	const { store, actions } = useContext(Context);
 	const [data, setData] = useState({
 		films: []
 	});
@@ -269,7 +265,7 @@ const Films = () => {
 		fetch(process.env.BACKEND_URL + "/api/films")
 			.then(res => res.json())
 			.then(films => setData({ ...data, films: films }))
-			.catch(error => console.log(error));
+			.catch(error => alert(error));
 	}, []);
 
 	const datastyle = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
@@ -279,9 +275,6 @@ const Films = () => {
 				<table className="table text-white" style={{ tableLayout: "fixed" }}>
 					<thead>
 						<tr>
-							<th scope="col" width="5%">
-								#
-							</th>
 							<th scope="col" width="25%">
 								título
 							</th>
@@ -291,20 +284,15 @@ const Films = () => {
 							<th scope="col" width="5%">
 								año
 							</th>
-							<th scope="col" width="15%">
-								urlPhoto
-							</th>
 							<th scope="col">descripción</th>
 						</tr>
 					</thead>
 					<tbody>
 						{data.films.map((e, i) => (
 							<tr key={i}>
-								<th scope="row">{e.id}</th>
 								<td style={datastyle}>{e.name}</td>
 								<td style={datastyle}>{e.director}</td>
 								<td style={datastyle}>{e.year}</td>
-								<td style={datastyle}>{e.urlPhoto}</td>
 								<td style={datastyle}>{e.description}</td>
 							</tr>
 						))}
@@ -337,9 +325,6 @@ const Places = () => {
 				<table className="table text-white" style={{ tableLayout: "fixed" }}>
 					<thead>
 						<tr>
-							<th scope="col" width="5%">
-								#
-							</th>
 							<th scope="col" width="20%">
 								nombre
 							</th>
@@ -361,7 +346,6 @@ const Places = () => {
 					<tbody>
 						{data.places.map((e, i) => (
 							<tr key={i}>
-								<th scope="row">{e.id}</th>
 								<td style={datastyle}>{e.name}</td>
 								<td style={datastyle}>{e.latitude}</td>
 								<td style={datastyle}>{e.longitude}</td>
@@ -382,7 +366,7 @@ const Places = () => {
 export const Admin = () => {
 	const { store, actions } = useContext(Context);
 	const [data, setData] = useState({
-		tableSelected: 0 // 0 - none, 1 - users, 2 - films, 3 - places, 7 - import file
+		tableSelected: 0 // 0 - none, 1 - users, 2 - films, 3 - places, 7 - download, 8 - load file
 	});
 	let history = useHistory();
 
@@ -407,6 +391,27 @@ export const Admin = () => {
 				actions.logout();
 			});
 	}, []);
+
+	const downloadData = () => {
+		if (confirm("¿Descargar datos?")) {
+			fetch(process.env.BACKEND_URL + "/api/backup", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + store.activeUser.token
+				}
+			})
+				.then(resp => resp.json())
+				.then(data => {
+					const bblob = new Blob([JSON.stringify(data)]);
+					let pp = document.createElement("a");
+					pp.setAttribute("href", URL.createObjectURL(bblob));
+					pp.setAttribute("download", "data.json");
+					pp.click();
+				})
+				.catch(error => console.log("Error loading data from backend", error));
+		}
+	};
 
 	return (
 		<div className="container-fluid">
@@ -460,42 +465,18 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									//onClick={() => setData({ tableSelected: 3 })}
-								>
+									onClick={() => setData({ tableSelected: 7 })}>
 									<i className="fs-4 bi-house" />{" "}
-									<span className="ms-1 d-none d-sm-inline">Países</span>
+									<span className="ms-1 d-none d-sm-inline">Descargar datos</span>
 								</a>
-							</li>
-							<li>
-								<a
-									href="#submenu1"
-									data-bs-toggle="collapse"
-									className="nav-link px-0 align-middle text-white">
-									<i className="fs-4 bi-speedometer2" />{" "}
-									<span className="ms-1 d-none d-sm-inline">Fotos</span>{" "}
-								</a>
-								<ul className="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-									<li className="w-100">
-										<a href="#" className="nav-link px-0 text-white">
-											{" "}
-											<span className="d-none d-sm-inline">De películas</span>{" "}
-										</a>
-									</li>
-									<li>
-										<a href="#" className="nav-link px-0 text-white">
-											{" "}
-											<span className="d-none d-sm-inline">De escenas</span>{" "}
-										</a>
-									</li>
-								</ul>
 							</li>
 							<li className="nav-item">
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 7 })}>
+									onClick={() => setData({ tableSelected: 8 })}>
 									<i className="fs-4 bi-house" />{" "}
-									<span className="ms-1 d-none d-sm-inline">Importar datos</span>
+									<span className="ms-1 d-none d-sm-inline">Cargar datos</span>
 								</a>
 							</li>
 						</ul>
@@ -523,13 +504,15 @@ export const Admin = () => {
 
 				<div className="col py-3">
 					{data.tableSelected == 1 ? (
-						<Users />
+						<Users params={{ rows: ["id", "name", "lastName"] }} />
 					) : data.tableSelected == 2 ? (
 						<Films />
 					) : data.tableSelected == 3 ? (
 						<Places />
 					) : data.tableSelected == 7 ? (
-						<ShowFile />
+						downloadData()
+					) : data.tableSelected == 8 ? (
+						<LoadFile />
 					) : (
 						""
 					)}
@@ -539,43 +522,35 @@ export const Admin = () => {
 	);
 };
 
-const ShowFile = () => {
-	const [data, setData] = useState("");
-	useEffect(() => {
-		alert("ready to download data...");
-		// Prueba de descarga en json de la información de lugares
-		fetch(process.env.BACKEND_URL + "/api/places")
-			.then(resp => resp.json())
-			.then(places => {
-				const bblob = new Blob([JSON.stringify(places)]);
-				let pp = document.createElement("a");
-				pp.setAttribute("href", URL.createObjectURL(bblob));
-				pp.setAttribute("download", "dataplaces.json");
-				pp.click();
-				//Falta eliminar el elemento
-			})
-			.catch(error => console.log("Error loading places from backend", error));
-	}, []);
+const LoadFile = () => {
+	const { store, actions } = useContext(Context);
 
-	// Prueba de lectura síncrona de ficheros por fragmentos
 	const readFile = async e => {
 		let file = e.target.files[0];
 
-		alert("ready to load data...");
-		// Prueba de carga de fichero en json con la info de lugares
-		let myfile = new FileReader();
-		myfile.onload = function(e) {
-			let content = e.target.result;
-			let mydata = JSON.parse(content);
-			setData(content);
-		};
-		myfile.readAsText(file);
+		if (confirm("Todos los datos anteriores serán eliminados. ¿Cargar nuevos datos?")) {
+			// Load json file
+			let myfile = new FileReader();
+			myfile.onload = function(e) {
+				let content = e.target.result;
+				fetch(process.env.BACKEND_URL + "/api/backup", {
+					method: "POST",
+					body: content,
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer " + store.activeUser.token
+					}
+				})
+					.then(resp => resp.json())
+					.then(data => {
+						alert(data["msg"]);
+						actions.logout();
+					})
+					.catch(error => console.log("Error writing data on backend", error));
+			};
+			myfile.readAsText(file);
+		}
 	};
 
-	return (
-		<>
-			<input type="file" id="file-input" onChange={readFile} />
-			<textarea className="w-100 h-75 text-black bg-white" value={data} />
-		</>
-	);
+	return <input type="file" id="file-input" onChange={readFile} />;
 };

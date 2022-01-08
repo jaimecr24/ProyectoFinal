@@ -21,6 +21,93 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+#backup and restore all data of db.
+@api.route("/backup", methods=["GET","POST"])
+@jwt_required()
+def backup():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user.category:
+        return { "msg": "access denied"}, 400
+    if request.method == "GET":
+        users = User.query.all()
+        customers = Customer.query.all()
+        countries = Country.query.all()
+        films = Film.query.all()
+        places = Place.query.all()
+        scenes = Scene.query.all()
+        favPlaces = FavPlace.query.all()
+        comments = Comment.query.all()
+        return jsonify({
+            "users": [{ "id": user.id, "email": user.email, "password": user.password, "username": user.username, "category": user.category, "lastTime": user.lastTime } for user in users],
+            "customers": [customer.serialize() for customer in customers],
+            "countries": [country.serialize() for country in countries],
+            "films": [film.serialize() for film in films],
+            "places": [place.serialize() for place in places],
+            "scenes": [{"id":scene.id, "idFilm":scene.idFilm, "idPlace":scene.idPlace, "description":scene.description, "urlPhoto":scene.urlPhoto, "spoiler":scene.spoiler } for scene in scenes],
+            "favPlaces": [favplace.serialize() for favplace in favPlaces],
+            "comments": [{"id":comment.id, "idUser":comment.idUser, "idPlace":comment.idPlace, "body":comment.body, "time":comment.time, "parentId":comment.parentId } for comment in comments]
+            }),200
+    else:
+        body = request.json
+        if body is None: return {"msg":"The request body is null"} , 400
+        if not 'users' in body: return {"msg":"missing info of users in body"}, 400
+        if not 'customers' in body: return {"msg":"missing info of customers in body"}, 400
+        if not 'countries' in body: return {"msg":"missing info of countries in body"}, 400
+        if not 'films' in body: return {"msg":"missing info of films in body"}, 400
+        if not 'places' in body: return {"msg":"missing info of places in body"}, 400
+        if not 'scenes' in body: return {"msg":"missing info of scenes in body"}, 400
+        if not 'favPlaces' in body: return {"msg":"missing info of favPlaces in body"}, 400
+        if not 'comments' in body: return {"msg":"missing info of comments in body"}, 400
+
+        #delete all previous data
+        db.session.query(FavPlace).delete() 
+        db.session.query(Comment).delete()
+        db.session.query(Customer).delete()
+        db.session.query(User).delete()
+        db.session.query(Scene).delete()
+        db.session.query(Film).delete()
+        db.session.query(Place).delete()
+        db.session.query(Country).delete()
+        db.session.commit()
+        print("all tables deleted")
+        #insert new data
+        users = body.get("users")
+        for user in users:
+            newuser = User(id=user.get("id"),email=user.get("email"),password=user.get("password"),username=user.get("username"),category=user.get("category"),lastTime=user.get("lastTime"))
+            db.session.add(newuser)
+        customers = body.get("customers")
+        for customer in customers:
+            newcustomer = Customer(id=customer.get('id'),idUser=customer.get('idUser'),name=customer.get('name'),last_name=customer.get('last_name'))
+            db.session.add(newcustomer)
+        countries = body.get("countries")
+        for country in countries:
+            newcountry = Country(id=country.get('id'),name=country.get('name'),urlFlag=country.get('urlFlag'),description=country.get('description'))
+            db.session.add(newcountry)
+        places = body.get("places")
+        for place in places:
+            newplace = Place(id=place.get('id'), idCountry=place.get('idCountry'), name=place.get('name'), latitude=place.get('latitude'), longitude=place.get('longitude'), address=place.get('address'), description=place.get('description'), countLikes=place.get('countLikes'), entryDate=place.get('entryDate'), urlPhoto=place.get('urlPhoto'))
+            db.session.add(newplace)
+        films = body.get("films")
+        for film in films:
+            newfilm = Film(id=film.get('id'), name=film.get('name'), director=film.get('director'), year=film.get('year'), description=film.get('description'), urlPhoto=film.get('urlPhoto'))
+            db.session.add(newfilm)
+        scenes = body.get("scenes")
+        for scene in scenes:
+            newscene = Scene(id=scene.get('id'), idFilm=scene.get('idFilm'), idPlace=scene.get('idPlace'), description=scene.get('description'), urlPhoto=scene.get('urlPhoto'), spoiler=scene.get('spoiler'))
+            db.session.add(newscene)
+        favPlaces = body.get("favPlaces")
+        for favPlace in favPlaces:
+            newfavPlace = FavPlace(id=favPlace.get('id'), idUser=favPlace.get('idUser'), idPlace=favPlace.get('idPlace'))
+            db.session.add(newfavPlace)
+        comments = body.get("comments")
+        for comment in comments:
+            newcomment = Comment(id=comment.get('id'), idUser=comment.get('idUser'), idPlace=comment.get('idPlace'), body=comment.get('body'), time=comment.get('time'), parentId=comment.get('parentId'))
+            db.session.add(newcomment)
+        db.session.commit()
+        
+        return jsonify({"msg": "data loaded ok"}), 200
+
 @api.route("/users/count", methods=["GET"])
 def countUsers():
     rows = db.session.query(func.count(User.id)).scalar()
