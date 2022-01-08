@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { useParams } from "react-router-dom";
 import { Movie } from "../component/movie";
+import Map from "../component/map.js";
 
 export const InfoFilms = () => {
+	const { actions } = useContext(Context);
 	const [infoFilms, setInfoFilms] = useState({});
 	const [scenesByFilm, setScenesByFilm] = useState({});
+	const [markerPositions, setMarkerPositions] = useState(null);
 	const params = useParams();
 	const getInfoFilms = id => {
 		fetch(process.env.BACKEND_URL + "/api/films/" + id)
 			.then(res => res.json())
 			.then(data => {
-				console.log(data);
 				setInfoFilms(data);
 			})
 			.then(id => getActions().getScenesByFilm(id))
@@ -20,8 +23,15 @@ export const InfoFilms = () => {
 		fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
 			.then(res => res.json())
 			.then(data => {
-				console.log(data);
 				setScenesByFilm(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	const getPlacesByFilm = id => {
+		fetch(process.env.BACKEND_URL + "/api/places/film/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setMarkerPositions(actions.getMarkerPositions(data));
 			})
 			.catch(error => console.log("Error loading place from backend", error));
 	};
@@ -29,7 +39,15 @@ export const InfoFilms = () => {
 	useEffect(() => {
 		getInfoFilms(params.theid);
 		getScenesByFilm(params.theid);
+		getPlacesByFilm(params.theid);
 	}, []);
+
+	useEffect(
+		() => {
+			markerPositions ? console.log(markerPositions) : null;
+		},
+		[markerPositions]
+	);
 
 	return (
 		<div
@@ -79,6 +97,19 @@ export const InfoFilms = () => {
 							</div>
 						</div>
 					) : null}
+					{markerPositions && markerPositions.length > 0 ? (
+						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
+							<h5>Encuentra todos los sitios en los que se ha rodado {infoFilms.name}:</h5>
+
+							<div className="row">
+								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
+									<Map markers={markerPositions} zoom={2} width="800" height="500" />
+								</div>
+							</div>
+						</div>
+					) : (
+						""
+					)}
 				</div>
 			) : null}
 		</div>
