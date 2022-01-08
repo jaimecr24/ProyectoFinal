@@ -263,7 +263,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 			getMarkerPositions: places => {
-				let markerPositions = [{}];
+				let markerPositions = [];
 
 				places.map(place =>
 					markerPositions.push({
@@ -275,7 +275,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"<p><b>" +
 							place.name +
 							"</b></p><p>" +
-							place.address +
+							(place.address ? place.address : "") +
 							"</p>" +
 							"<a href='/place/" +
 							place.id +

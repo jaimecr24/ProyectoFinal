@@ -58,7 +58,6 @@ export const Home = () => {
 	useEffect(
 		() => {
 			markerPositions ? setPlacesLenght(markerPositions.length) : "";
-			markerPositions ? console.log(markerPositions.shift()) : null;
 		},
 		[markerPositions]
 	);
@@ -214,11 +213,9 @@ export const Home = () => {
 			{markerPositions && markerPositions.length > 0 ? (
 				<div className="row mt-0">
 					<div>
-						<div className="card design-card bg-dark w-75 mx-auto  mt-0" style={{ borderColor: "#fa9f42" }}>
+						<div className="card design-card bg-dark w-75 mx-auto mt-0" style={{ borderColor: "#fa9f42" }}>
 							<div>
-								<h3 className="text-light bg-dark no-border">
-									Explora todos nuestros sitios de rodaje:
-								</h3>
+								<h3 className="text-light bg-dark">Explora todos nuestros sitios de rodaje:</h3>
 							</div>
 
 							<div className="card mx-auto">
