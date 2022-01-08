@@ -257,7 +257,6 @@ const Users = () => {
 };
 
 const Films = () => {
-	const { store, actions } = useContext(Context);
 	const [data, setData] = useState({
 		films: []
 	});
@@ -394,23 +393,24 @@ export const Admin = () => {
 	}, []);
 
 	const downloadData = () => {
-		alert("accept to download data...");
-		fetch(process.env.BACKEND_URL + "/api/backup", {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + store.activeUser.token
-			}
-		})
-			.then(resp => resp.json())
-			.then(data => {
-				const bblob = new Blob([JSON.stringify(data)]);
-				let pp = document.createElement("a");
-				pp.setAttribute("href", URL.createObjectURL(bblob));
-				pp.setAttribute("download", "data.json");
-				pp.click();
+		if (confirm("¿Descargar datos?")) {
+			fetch(process.env.BACKEND_URL + "/api/backup", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + store.activeUser.token
+				}
 			})
-			.catch(error => console.log("Error loading data from backend", error));
+				.then(resp => resp.json())
+				.then(data => {
+					const bblob = new Blob([JSON.stringify(data)]);
+					let pp = document.createElement("a");
+					pp.setAttribute("href", URL.createObjectURL(bblob));
+					pp.setAttribute("download", "data.json");
+					pp.click();
+				})
+				.catch(error => console.log("Error loading data from backend", error));
+		}
 	};
 
 	return (
