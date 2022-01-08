@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Context } from "../store/appContext";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { FilmCountry } from "../component/filmCountry";
+import Map from "../component/map.js";
 
 export const InfoCountries = () => {
+	const { actions } = useContext(Context);
 	const [infoCountries, setInfoCountries] = useState({});
 	const [filmsByCountry, setFilmsByCountry] = useState({});
+	const [markerPositions, setMarkerPositions] = useState(null);
 	const params = useParams();
 	const getInfoCountries = id => {
 		fetch(process.env.BACKEND_URL + "/api/countries/" + id)
 			.then(res => res.json())
 			.then(data => {
-				console.log(data);
 				setInfoCountries(data);
 			})
 			.then(() => getActions().getFilmsByFilm(id))
@@ -21,14 +23,22 @@ export const InfoCountries = () => {
 		fetch(process.env.BACKEND_URL + "/api/films/country/" + id)
 			.then(res => res.json())
 			.then(data => {
-				console.log(data);
 				setFilmsByCountry(data);
+			})
+			.catch(error => console.log("Error loading place from backend", error));
+	};
+	const getPlacesByCountry = id => {
+		fetch(process.env.BACKEND_URL + "/api/places/country/" + id)
+			.then(res => res.json())
+			.then(data => {
+				setMarkerPositions(actions.getMarkerPositions(data));
 			})
 			.catch(error => console.log("Error loading place from backend", error));
 	};
 	useEffect(() => {
 		getInfoCountries(params.theid);
 		getFilmsByCountry(params.theid);
+		getPlacesByCountry(params.theid);
 	}, []);
 
 	return (
@@ -77,6 +87,19 @@ export const InfoCountries = () => {
 							</div>
 						</div>
 					) : null}
+					{markerPositions && markerPositions.length > 0 ? (
+						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
+							<h5>Encuentra todos los sitios de rodaje en {infoCountries.name}:</h5>
+
+							<div className="row">
+								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
+									<Map markers={markerPositions} zoom={5} width="800" height="500" />
+								</div>
+							</div>
+						</div>
+					) : (
+						""
+					)}
 				</div>
 			) : null}
 		</div>
