@@ -13,7 +13,8 @@ export const SinglePlace = () => {
 	const [data, setData] = useState({
 		place: null,
 		scenes: [],
-		markerPositions: []
+		markerPositions: [],
+		liked: false //Used for show the symbol heart as liked or not liked.
 	});
 
 	useEffect(() => {
@@ -31,13 +32,31 @@ export const SinglePlace = () => {
 						setData({
 							place: myplace,
 							scenes: myscenes,
-							markerPositions: actions.getSingleMarkerPosition(myplace)
+							markerPositions: actions.getSingleMarkerPosition(myplace),
+							liked: store.activeUser.id ? store.activeUser.listFav.includes(myplace.id) : false
 						})
 					)
 					.catch(error => alert("Error loading scenes from backend: " + error));
 			})
 			.catch(error => alert("Error loading place from backend: " + error));
 	}, []);
+
+	const handleLike = () => {
+		let prevCount = data.place.countLikes;
+		let sum = 0;
+		if (data.liked) {
+			actions.delFavPlace(data.place.id);
+			sum = -1;
+		} else {
+			actions.addFavPlace(data.place.id);
+			sum = +1;
+		}
+		setData({
+			...data,
+			liked: !data.liked,
+			place: { ...data.place, countLikes: prevCount + sum }
+		});
+	};
 
 	return (
 		<div
@@ -58,10 +77,8 @@ export const SinglePlace = () => {
 							/>
 							<div className="text-white mt-1">
 								{store.activeUser.id ? (
-									<span
-										className="btn btn-outline-danger me-2"
-										onClick={() => actions.addFavPlace(data.place.id)}>
-										<i className="fas fa-heart" />
+									<span className="btn btn-outline-danger me-2" onClick={handleLike}>
+										{data.liked ? <i className="fas fa-heart" /> : <i className="far fa-heart" />}
 									</span>
 								) : (
 									""

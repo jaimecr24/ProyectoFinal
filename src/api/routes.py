@@ -8,6 +8,7 @@ from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 import json
+import random
 
 api = Blueprint('api', __name__)
 
@@ -112,6 +113,13 @@ def backup():
 def countUsers():
     rows = db.session.query(func.count(User.id)).scalar()
     return { "msg": "ok", "count": rows }, 200
+
+@api.route("films/random", methods=["GET"])
+def randomFilm():
+    numFilms = db.session.query(func.count(Film.id)).scalar()
+    rnd = random.randint(0,numFilms-1)
+    myfilm = Film.query[rnd]
+    return jsonify(myfilm.serialize()), 200
 
 #Get data of all users in db. Token and user category true necessary
 @api.route("/users", methods=["GET"])

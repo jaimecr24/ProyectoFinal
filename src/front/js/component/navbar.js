@@ -18,7 +18,7 @@ export const Navbar = () => {
 					id="navDropdown"
 					style={{ fontFamily: "Playfair Display SC" }}>
 					<ul className="navbar-nav mx-auto align-items-center">
-						<li className="nav-item mx-5">
+						<li className="nav-item me-5">
 							<Link to="/">
 								<img src={cameraImgUrl} className="navbar-brand mx-5" style={{ width: "75px" }} />
 							</Link>
@@ -39,7 +39,7 @@ export const Navbar = () => {
 								Sitios
 							</Link>
 						</li>
-						<li className="nav-item mx-5 dropdown">
+						<li className="nav-item ms-5 dropdown">
 							<a
 								className="nav-link dropdown-toggle"
 								href="#"

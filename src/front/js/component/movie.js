@@ -6,6 +6,11 @@ import PropTypes from "prop-types";
 export const Movie = props => {
 	const { store, actions } = useContext(Context);
 
+	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
+	const handleLike = idPlace => {
+		isLiked(idPlace) ? actions.delFavPlace(idPlace) : actions.addFavPlace(idPlace);
+	};
+
 	return (
 		<div className="design-card border border bg-dark" style={{ borderColor: "#fa9f42" }}>
 			<img src={props.picture} className="characters card-img-top mx-auto" alt="..." />
@@ -13,10 +18,14 @@ export const Movie = props => {
 				<h5 className="card-title" style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
 					{props.place}, {props.country}
 				</h5>
-
 				<Link to={"/place/" + props.id}>
 					<span className="btn btn-outline">Aprender más</span>
 				</Link>
+				{store.activeUser.id ? (
+					<span className="btn btn-outline-danger ms-1" onClick={() => handleLike(props.id)}>
+						{isLiked(props.id) ? <i className="fas fa-heart" /> : <i className="far fa-heart" />}
+					</span>
+				) : null}
 			</div>
 		</div>
 	);

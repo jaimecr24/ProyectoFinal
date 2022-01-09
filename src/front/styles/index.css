@@ -7,15 +7,14 @@
 
 .my-card-content {
     margin-left: 10%;
-    margin-right: 15%;
+    margin-right: 10%;
     display: flex;
     flex-wrap: nowrap;
-    height: 450px;
+    height: 530px;
     overflow-y:hidden;
     overflow-x: auto;
     white-space: nowrap;
     border-radius: 20px;
-    
 }
 
 
@@ -41,7 +40,6 @@
     border-radius: 15px;
 }
 
-
 .card-body {
     color: white;
 }
@@ -49,7 +47,7 @@
 .characters{
     align-self: center;
     width: 330px;
-    height: 220px;
+    height: 300px;
 }
 
 .my-img {

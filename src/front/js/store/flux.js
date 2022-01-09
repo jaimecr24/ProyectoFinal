@@ -62,26 +62,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
-			// Protected: add a single place in favorites of user
+			// Protected: add a single place in favorites of user.
+			// Updates listFav of activeUser in store and CountLikes of place in backend.
 			addFavPlace: idPlace => {
-				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
+				fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: "Bearer " + getStore().activeUser.token
 					}
-				});
+				})
+					.then(res => res.json())
+					.then(res => {
+						let aux = getStore().activeUser;
+						if (!aux.listFav.includes(idPlace)) {
+							aux.listFav.push(idPlace);
+							setStore({ activeUser: aux });
+						}
+					})
+					.catch(error => alert("Error adding favorite place: " + error));
 			},
 
 			// Protected: delete a single place in favorites of user
-			delFavPlace: idPlace => {
-				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
-					method: "DELETE",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().activeUser.token
-					}
-				});
+			// Updates listFav of activeUser in store and CountLikes of place in backend
+			delFavPlace: async idPlace => {
+				try {
+					const res = await fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: "Bearer " + getStore().activeUser.token
+						}
+					});
+					const res_1 = await res.json();
+					let aux = getStore().activeUser;
+					aux.listFav = aux.listFav.filter(e => e !== idPlace);
+					setStore({ activeUser: aux });
+					return res_1;
+				} catch (error) {
+					return alert("Error removing favorite place: " + error);
+				}
 			},
 
 			getPlacePhotos: idPlace => {
@@ -103,28 +123,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Get the scenes of a single film.
 			getScenesByFilm: id => fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id),
 
-			// Get all films in db.
+			// Get all films.
 			fetchFilms: () => fetch(process.env.BACKEND_URL + "/api/films"),
 
 			// Get the info of a single film.
 			getInfoFilm: id => fetch(process.env.BACKEND_URL + "/api/films/" + id),
 
-			// Get all countries in db.
+			// Get a random film.
+			getRandomFilm: () => fetch(process.env.BACKEND_URL + "/api/films/random"),
+
+			// Get all countries.
 			fetchCountries: () => fetch(process.env.BACKEND_URL + "/api/countries"),
 
-			getInfoCountries: id => {
-				fetch(process.env.BACKEND_URL + "/api/countries/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							infoCountries: data
-						});
-						return data.id;
-					})
-					.then(id => getActions().getScenesByFilm(id))
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get info of a single country.
+			getInfoCountries: id => fetch(process.env.BACKEND_URL + "/api/countries/" + id),
+
+			// Get list of films filmmed on a country
+			getFilmsByCountry: id => fetch(process.env.BACKEND_URL + "/api/films/country/" + id),
+
 			resetInfoCountries: () => {
 				setStore({
 					infoCountries: null
@@ -141,6 +157,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}).then(res => res.json());
 			},
+
 			addComment: (body, idPlace, parentId) => {
 				return fetch(process.env.BACKEND_URL + "/api/comments", {
 					method: "POST",
@@ -155,6 +172,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}).then(res => res.json());
 			},
+
 			deleteComment: idComment => {
 				return fetch(process.env.BACKEND_URL + "/api/comments-removed/" + idComment, {
 					method: "POST",
@@ -164,11 +182,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				});
 			},
-			getMarkerPositions: places => {
-				let markerPositions = [];
 
-				places.map(place =>
-					markerPositions.push({
+			getMarkerPositions: places =>
+				places.map(place => {
+					return {
 						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
 						content:
 							"<img class='w-50'  src = '" +
@@ -182,20 +199,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"<a href='/place/" +
 							place.id +
 							"'>Ver más</a>"
-					})
-				);
+					};
+				}),
 
-				return markerPositions;
-			},
 			getSingleMarkerPosition: place => {
-				let markerPositions = [
+				return [
 					{
 						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
 						content: "<p><b>" + place.name + "</b></p><p>" + place.address + "</p>"
 					}
 				];
-
-				return markerPositions;
 			}
 		}
 	};

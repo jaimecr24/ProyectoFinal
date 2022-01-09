@@ -13,10 +13,10 @@ export const Profile = () => {
 		lastName: "",
 		username: "",
 		email: "",
-		lastTime: null,
-		listItems: [],
-		markerPositions: []
+		lastTime: null
 	});
+
+	const [fav, setFav] = useState({ places: [], markerPositions: [] });
 
 	let history = useHistory();
 	const linkStyle = { color: "white" };
@@ -30,6 +30,7 @@ export const Profile = () => {
 
 	useEffect(() => {
 		let status = 0;
+		//load user data
 		actions
 			.getUser()
 			.then(res => {
@@ -40,48 +41,49 @@ export const Profile = () => {
 				if (status >= 400) {
 					alert(user["msg"]);
 					actions.logout();
-				} else loadFavPlaces(user);
+				} else {
+					// load favorites data
+					actions
+						.getFavPlaces()
+						.then(res => res.json())
+						.then(places => {
+							setData({
+								name: user.name,
+								lastName: user.last_name,
+								username: user.username,
+								email: user.email,
+								lastTime: new Date(store.activeUser.lastTime).toLocaleString()
+							});
+							setFav({
+								places: places.items,
+								markerPositions: actions.getMarkerPositions(places.items)
+							});
+						})
+						.catch(error => alert("Error loading places: " + error));
+				}
 			})
-			.catch(error => console.error("Error:", error));
+			.catch(error => console.error("Error loading users: ", error));
 	}, []);
 
-	const loadFavPlaces = user => {
+	const loadPlaces = () => {
 		actions
 			.getFavPlaces()
 			.then(res => res.json())
-			.then(responsePlaces => {
-				setData({
-					name: user.name,
-					lastName: user.last_name,
-					username: user.username,
-					email: user.email,
-					lastTime: new Date(store.activeUser.lastTime).toLocaleString(),
-					listItems: responsePlaces.items,
-					markerPositions: actions.getMarkerPositions(responsePlaces.items)
-				});
-			})
-			.catch(error => console.error("Error:", error));
+			.then(places =>
+				setFav({
+					places: places.items,
+					markerPositions: actions.getMarkerPositions(places.items)
+				})
+			)
+			.catch(error => alert("Error loading places: " + error));
 	};
 
 	const handleDelete = async e => {
 		let id = parseInt(e.target.getAttribute("datakey"));
-		try {
-			let res = await actions.delFavPlace(id);
-			if (res.ok) {
-				loadFavPlaces({
-					name: data.name,
-					last_name: data.lastName,
-					username: data.username,
-					email: data.email
-				});
-			} else {
-				let response = await res.json();
-				alert(response["msg"]);
-				actions.logout();
-			}
-		} catch (error) {
-			alert(error);
-		}
+		// If we don't wait for delFavPlace, the call to loadPlaces don't show the changes.
+		// For this delFavPlace is implemented as an async func in flux.js
+		let res = await actions.delFavPlace(id);
+		loadPlaces();
 	};
 
 	return (
@@ -100,20 +102,20 @@ export const Profile = () => {
 					<div className="mt-4">
 						<div className="fs-3 border-bottom border-light pb-1">Tus datos</div>
 						<div className="mt-3 fs-5">
-							Nombre:{" "}
-							<span className="profile" style={dataStyle}>
+							<span className="me-3">Nombre:</span>
+							<span className="profile ms-5" style={dataStyle}>
 								{data.name}
 							</span>
 						</div>
 						<div className="mt-2 fs-5">
-							Apellidos:{" "}
-							<span className="profile" style={dataStyle}>
+							<span className="me-3">Apellidos:</span>
+							<span className="profile ms-4" style={dataStyle}>
 								{data.lastName}
 							</span>
 						</div>
 						<div className="mt-2 fs-5">
-							E-mail:{" "}
-							<span className="profile" style={dataStyle}>
+							<span className="me-4">E-mail:</span>
+							<span className="profile ms-5" style={dataStyle}>
 								{data.email}
 							</span>
 						</div>
@@ -131,13 +133,11 @@ export const Profile = () => {
 			</div>
 
 			<div className="py-5">
-				<div className="fs-3 col-5 offset-1">
-					{`Tus lugares favoritos: ${data["listItems"] ? data["listItems"].length : 0}`}
-				</div>
+				<div className="fs-3 col-5 offset-1">Tus lugares favoritos:</div>
 				<div className="row mt-2">
 					<div className="col-10 offset-1" id="favList">
-						{data["listItems"]
-							? data["listItems"].map(value => (
+						{fav.places.length > 0
+							? fav.places.map(value => (
 									<div
 										key={value.id}
 										datakey={value.id}
@@ -163,11 +163,11 @@ export const Profile = () => {
 					</div>
 				</div>
 
-				{data.markerPositions.length > 0 ? (
+				{fav.markerPositions.length > 0 ? (
 					<div className="mt-5">
 						<h3 className="text-light text-center">Encuentra todos tus sitios favoritos:</h3>
 						<div className="mt-5 bg-danger mx-auto" style={{ width: "900px" }}>
-							<Map markers={data.markerPositions} zoom={2} width="900" height="600" />
+							<Map markers={fav.markerPositions} zoom={2} width="900" height="600" />
 						</div>
 					</div>
 				) : null}

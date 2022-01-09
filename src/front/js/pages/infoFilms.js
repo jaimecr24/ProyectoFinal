@@ -60,7 +60,7 @@ export const InfoFilms = () => {
 					{scenesByFilm.length > 0 ? (
 						<div className="container-fluid content-row">
 							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
-								·Sitios donde se ha grabados esta película:
+								·Sitios donde se ha grabado esta película:
 							</h5>
 							<div className="my-card-content">
 								{scenesByFilm.map((item, index) => {

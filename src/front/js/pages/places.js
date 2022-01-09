@@ -14,6 +14,11 @@ export const Places = () => {
 			.catch(error => console.log("Error loading places from backend", error));
 	}, []);
 
+	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
+	const handleLike = idPlace => {
+		isLiked(idPlace) ? actions.delFavPlace(idPlace) : actions.addFavPlace(idPlace);
+	};
+
 	return (
 		<div className="container-fluid content-row">
 			<div className="title" style={{ textAlign: "center", paddingBottom: "20px" }}>
@@ -51,8 +56,12 @@ export const Places = () => {
 									{store.activeUser.id ? (
 										<span
 											className="btn btn-outline-danger ms-1"
-											onClick={() => actions.addFavPlace(item.id)}>
-											<i className="fas fa-heart" />
+											onClick={() => handleLike(item.id)}>
+											{isLiked(item.id) ? (
+												<i className="fas fa-heart" />
+											) : (
+												<i className="far fa-heart" />
+											)}
 										</span>
 									) : null}
 								</div>
