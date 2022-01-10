@@ -44,7 +44,7 @@ def backup():
             "customers": [customer.serialize() for customer in customers],
             "countries": [country.serialize() for country in countries],
             "films": [film.serialize() for film in films],
-            "places": [{"id":place.id, "idCountry":place.idCountry, "name":place.name, "latitude":place.latitude, "longitude":place.longitude, "description":place.description, "counterLikes":place.counterLikes, "entryDate":place.entryDate, "urlPhoto":place.urlPhoto} for place in places],
+            "places": [{"id":place.id, "idCountry":place.idCountry, "name":place.name, "latitude":place.latitude, "longitude":place.longitude, "description":place.description, "countLikes":place.countLikes, "entryDate":place.entryDate, "urlPhoto":place.urlPhoto} for place in places],
             "scenes": [{"id":scene.id, "idFilm":scene.idFilm, "idPlace":scene.idPlace, "description":scene.description, "urlPhoto":scene.urlPhoto, "spoiler":scene.spoiler } for scene in scenes],
             "favPlaces": [favplace.serialize() for favplace in favPlaces],
             "comments": [{"id":comment.id, "idUser":comment.idUser, "idPlace":comment.idPlace, "body":comment.body, "time":comment.time, "parentId":comment.parentId } for comment in comments]
