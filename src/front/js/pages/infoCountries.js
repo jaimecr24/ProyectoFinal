@@ -2,12 +2,15 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { FilmCountry } from "../component/filmCountry";
+import Map from "../component/map.js";
 
 export const InfoCountries = () => {
+
 	const params = useParams();
 	const { actions } = useContext(Context);
 
 	const [data, setData] = useState({ infoCountry: null, films: [] });
+	const [markerPositions, setMarkerPositions] = useState([]);
 
 	useEffect(() => {
 		// Get info of country
@@ -21,6 +24,12 @@ export const InfoCountries = () => {
 					.then(res => res.json())
 					.then(myfilms => setData({ infoCountry: mycountry, films: myfilms }))
 					.catch(error => alert("Error loading films from backend: " + error));
+				// Get info of places of country where a film is filmmed.
+				actions
+					.getPlacesByCountry(params.theid)
+					.then(res => res.json())
+					.then(data => setMarkerPositions(actions.getMarkerPostions(data)))
+					.catch(error => alert("Error loading places from backend: " + error));
 			})
 			.catch(error => alert("Error loading country from backend: " + error));
 	}, []);
@@ -68,6 +77,17 @@ export const InfoCountries = () => {
 										</div>
 									);
 								})}
+							</div>
+						</div>
+					) : null}
+					{markerPositions.length > 0 ? (
+						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
+							<h5>Encuentra todos los sitios de rodaje en {data.infoCountry.name}:</h5>
+
+							<div className="row">
+								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
+									<Map markers={markerPositions} zoom={5} width="800" height="500" />
+								</div>
 							</div>
 						</div>
 					) : (

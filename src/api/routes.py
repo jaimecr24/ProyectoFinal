@@ -521,6 +521,20 @@ def listFilmsByCountry(country_id):
             if film not in listFilms: listFilms.append(film)
     return jsonify([film.serialize() for film in listFilms]), 200
 
+@api.route('/places/country/<int:country_id>', methods=['GET'])
+def listPlacesByCountry(country_id):
+    list_places_byCountry = Place.query.filter_by(idCountry=country_id) 
+    return jsonify([place.serialize() for place in list_places_byCountry]), 200
+
+@api.route('/places/film/<int:film_id>', methods=['GET'])
+def listPlacesByFilm(film_id):
+    list_scenes_byFilm= Scene.query.filter_by(idFilm=film_id) 
+    listPlaces = []
+    for scene in list_scenes_byFilm:
+        place = Place.query.get(scene.idPlace)
+        if place not in listPlaces: listPlaces.append(place)
+    return jsonify([place.serialize() for place in listPlaces]), 200
+
 #SINGLE SCENE GET AND DELETE
 @api.route('/scenes/<int:scene_id>', methods=['GET', 'DELETE'])
 def getScene(scene_id):

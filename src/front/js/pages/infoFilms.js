@@ -2,11 +2,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useParams } from "react-router-dom";
 import { Movie } from "../component/movie";
+import Map from "../component/map.js";
 
 export const InfoFilms = () => {
 	const { actions } = useContext(Context);
 	const [infoFilm, setInfoFilm] = useState(null);
 	const [scenesByFilm, setScenesByFilm] = useState([]);
+	const [markerPositions, setMarkerPositions] = useState([]);
 	const params = useParams();
 
 	useEffect(() => {
@@ -31,6 +33,12 @@ export const InfoFilms = () => {
 						setScenesByFilm(filteredData);
 					})
 					.catch(error => alert("Error loading scenes from backend: " + error));
+				// load info of places for markerPositions of map.
+				actions
+					.getPlacesByFilm(params.theid)
+					.then(res => res.json())
+					.then(data => setMarkerPositions(actions.getMarkerPositions(data)))
+					.catch(error => alert("Error loading places from backend: " + error));
 			})
 			.catch(error => alert("Error loading film from backend: " + error));
 	}, []);
@@ -83,6 +91,19 @@ export const InfoFilms = () => {
 							</div>
 						</div>
 					) : null}
+					{markerPositions.length > 0 ? (
+						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
+							<h5>Encuentra todos los sitios en los que se ha rodado {infoFilm.name}:</h5>
+
+							<div className="row">
+								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
+									<Map markers={markerPositions} zoom={2} width="800" height="500" />
+								</div>
+							</div>
+						</div>
+					) : (
+						""
+					)}
 				</div>
 			) : null}
 		</div>

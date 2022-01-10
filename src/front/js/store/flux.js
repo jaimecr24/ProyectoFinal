@@ -117,6 +117,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Get data of a single place.
 			getSinglePlace: id => fetch(process.env.BACKEND_URL + "/api/places/" + id),
 
+			// Get list of places where a film is filmmed.
+			getPlacesByFilm: id => fetch(process.env.BACKEND_URL + "/api/places/film/" + id),
+
+			// Get list of places of a country where a film is filmmed.
+			getPlacesByCountry: id => fetch(process.env.BACKEND_URL + "/api/places/country/" + id),
+
 			// Get the list of scenes filmmed on a single place.
 			getScenesByPlace: id => fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id),
 
