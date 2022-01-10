@@ -6,75 +6,69 @@ import Map from "../component/map.js";
 
 export const InfoFilms = () => {
 	const { actions } = useContext(Context);
-	const [infoFilms, setInfoFilms] = useState({});
-	const [scenesByFilm, setScenesByFilm] = useState({});
-	const [markerPositions, setMarkerPositions] = useState(null);
+	const [infoFilm, setInfoFilm] = useState(null);
+	const [scenesByFilm, setScenesByFilm] = useState([]);
+	const [markerPositions, setMarkerPositions] = useState([]);
 	const params = useParams();
-	const getInfoFilms = id => {
-		fetch(process.env.BACKEND_URL + "/api/films/" + id)
-			.then(res => res.json())
-			.then(data => {
-				setInfoFilms(data);
-			})
-			.then(id => getActions().getScenesByFilm(id))
-			.catch(error => console.log("Error loading place from backend", error));
-	};
-	const getScenesByFilm = id => {
-		fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
-			.then(res => res.json())
-			.then(data => {
-				setScenesByFilm(data);
-			})
-			.catch(error => console.log("Error loading place from backend", error));
-	};
-	const getPlacesByFilm = id => {
-		fetch(process.env.BACKEND_URL + "/api/places/film/" + id)
-			.then(res => res.json())
-			.then(data => {
-				setMarkerPositions(actions.getMarkerPositions(data));
-			})
-			.catch(error => console.log("Error loading place from backend", error));
-	};
 
 	useEffect(() => {
-		getInfoFilms(params.theid);
-		getScenesByFilm(params.theid);
-		getPlacesByFilm(params.theid);
+		// load info of film
+		actions
+			.getInfoFilm(params.theid)
+			.then(res => res.json())
+			.then(data => {
+				setInfoFilm(data);
+				// load info of scenes
+				actions
+					.getScenesByFilm(params.theid)
+					.then(res => res.json())
+					.then(data => {
+						// filter scenes with idPlace repeated.
+						let listIdPlaces = new Set();
+						let filteredData = data.filter(e => {
+							let isRepeated = listIdPlaces.has(e.idPlace);
+							listIdPlaces.add(e.idPlace);
+							return !isRepeated;
+						});
+						setScenesByFilm(filteredData);
+					})
+					.catch(error => alert("Error loading scenes from backend: " + error));
+				// load info of places for markerPositions of map.
+				actions
+					.getPlacesByFilm(params.theid)
+					.then(res => res.json())
+					.then(data => setMarkerPositions(actions.getMarkerPositions(data)))
+					.catch(error => alert("Error loading places from backend: " + error));
+			})
+			.catch(error => alert("Error loading film from backend: " + error));
 	}, []);
-
-	useEffect(
-		() => {
-			markerPositions ? console.log(markerPositions) : null;
-		},
-		[markerPositions]
-	);
 
 	return (
 		<div
 			className="container mt-3 mx-auto bg-dark p-3 card rounded"
 			style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
-			{infoFilms ? (
+			{infoFilm ? (
 				<div>
 					<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
-						{infoFilms.name}
+						{infoFilm.name}
 					</h2>
 					<div className="row mx-3 px-3">
 						<div className="row col-5 me-5">
 							<img
 								className="rounded row"
-								src={infoFilms.urlPhoto}
+								src={infoFilm.urlPhoto}
 								alt="..."
 								style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
 							/>
 						</div>
 						<div className="col-6">
-							<p className="text-white">{infoFilms.description}</p>
+							<p className="text-white">{infoFilm.description}</p>
 						</div>
 					</div>
 					{scenesByFilm.length > 0 ? (
 						<div className="container-fluid content-row">
 							<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
-								·Sitios grabados en esta película:
+								·Sitios donde se ha grabado esta película:
 							</h5>
 							<div className="my-card-content">
 								{scenesByFilm.map((item, index) => {
@@ -97,9 +91,9 @@ export const InfoFilms = () => {
 							</div>
 						</div>
 					) : null}
-					{markerPositions && markerPositions.length > 0 ? (
+					{markerPositions.length > 0 ? (
 						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
-							<h5>Encuentra todos los sitios en los que se ha rodado {infoFilms.name}:</h5>
+							<h5>Encuentra todos los sitios en los que se ha rodado {infoFilm.name}:</h5>
 
 							<div className="row">
 								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>

@@ -1,89 +1,42 @@
 import React, { useContext, useState, useEffect } from "react";
-
 import { useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
-import "../../styles/home.css";
 import { Link } from "react-router-dom";
+import "../../styles/home.css";
 import Map from "../component/map.js";
 
 export const Home = () => {
+	let history = useHistory();
 	const { actions, store } = useContext(Context);
-	const [placesLenght, setPlacesLenght] = useState(null);
-	const [filmsLenght, setFilmsLenght] = useState(null);
-	const [singlePlace, setSinglePlace] = useState({});
-	const [singleFilm, setSingleFilm] = useState({});
-	const [markerPositions, setMarkerPositions] = useState(null);
-	const getPlaces = () => {
-		fetch(process.env.BACKEND_URL + "/api/places")
-			.then(resp => resp.json())
-			.then(data => setMarkerPositions(actions.getMarkerPositions(data)))
-			.catch(error => console.log("Error loading places from backend", error));
-	};
 
-	const getFilmsLenght = () => {
-		fetch(process.env.BACKEND_URL + "/api/films")
-			.then(resp => resp.json())
-			.then(data => setFilmsLenght(data.length))
-			.catch(error => console.log("Error loading places from backend", error));
-	};
-
-	const getSinglePlace = id => {
-		fetch(process.env.BACKEND_URL + "/api/places/" + id)
-			.then(res => res.json())
-			.then(data => {
-				setSinglePlace(data);
-			})
-			.catch(error => console.log("Error loading place from backend", error));
-	};
-
-	const getSingleFilm = id => {
-		fetch(process.env.BACKEND_URL + "/api/films/" + id)
-			.then(res => res.json())
-			.then(data => {
-				setSingleFilm(data);
-			})
-			.catch(error => console.log("Error loading place from backend", error));
-	};
-
-	const getRandom = max => {
-		let rand = Math.floor(Math.random() * max);
-		rand == 0 ? rand++ : null;
-		return rand;
+	const [data, setData] = useState({ film: null, place: null, markerPositions: [] });
+	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
+	const handleLike = idPlace => {
+		isLiked(idPlace) ? actions.delFavPlace(idPlace) : actions.addFavPlace(idPlace);
 	};
 
 	useEffect(() => {
-		getPlaces();
-		getFilmsLenght();
+		// Load all places to mark locations in map
+		actions
+			.getPlaces()
+			.then(res => res.json())
+			.then(places => {
+				// Load data of a single film (random)
+				actions
+					.getRandomFilm()
+					.then(res => res.json())
+					.then(myfilm => {
+						let rnd = Math.floor(Math.random() * places.length);
+						setData({
+							film: myfilm,
+							place: places[rnd],
+							markerPositions: actions.getMarkerPositions(places)
+						});
+					})
+					.catch(error => alert("Error loading film from backend: " + error));
+			})
+			.catch(error => alert("Error loading places from backend: " + error));
 	}, []);
-	useEffect(
-		() => {
-			markerPositions ? setPlacesLenght(markerPositions.length) : "";
-		},
-		[markerPositions]
-	);
-
-	useEffect(
-		() => {
-			placesLenght ? getSinglePlace(getRandom(placesLenght)) : null;
-		},
-		[placesLenght]
-	);
-
-	useEffect(
-		() => {
-			filmsLenght ? getSingleFilm(getRandom(filmsLenght)) : null;
-		},
-		[filmsLenght]
-	);
-
-	let history = useHistory();
-
-	const style = {
-		width: "200px"
-	};
-	const cardStyle = {
-		width: "15rem"
-	};
 
 	let [sug, setSug] = useState([]);
 
@@ -94,7 +47,7 @@ export const Home = () => {
 				.getBrowsePlace(key)
 				.then(res => res.json())
 				.then(data => setSug(data.map(e => e["name"])))
-				.catch(error => console.log("Error in getBrowsePlace", error));
+				.catch(error => alert("Error in getBrowsePlace: " + error));
 		}
 	};
 
@@ -109,9 +62,9 @@ export const Home = () => {
 					if (data.length > 0) {
 						let path = "/place/" + data[0]["id"]; // Go to the first place. To do: present a list of results to user.
 						history.push({ pathname: path }); // Equivalent in js to <Link ... >
-					} else console.log("data is []");
+					} else alert("data is []");
 				})
-				.catch(error => console.log("Error in getBrowsePlace", error));
+				.catch(error => alert("Error in getBrowsePlace: " + error));
 		}
 	};
 
@@ -141,7 +94,7 @@ export const Home = () => {
 				</datalist>
 			</form>
 
-			{singlePlace ? (
+			{data.place ? (
 				<div className="row mt-0">
 					<div
 						className="card design-card bg-dark w-75 mx-auto d-flex flex-row mt-0"
@@ -151,9 +104,9 @@ export const Home = () => {
 								<h3 className="text-light">Sitio de rodaje recomendado:</h3>
 							</div>
 							<img
-								src={singlePlace.urlPhoto}
+								src={data.place.urlPhoto}
 								className="characters card-img-top mx-auto"
-								alt={singlePlace.name}
+								alt={data.place.name}
 								style={{ objectFit: "cover" }}
 							/>
 							<div className="card-body bg-dark">
@@ -164,19 +117,25 @@ export const Home = () => {
 										paddingBottom: "25px",
 										color: "#fa9f42"
 									}}>
-									{singlePlace.name}
+									{data.place.name}
 								</h5>
 
-								<Link to={"/place/" + singlePlace.id}>
+								<Link to={"/place/" + data.place.id}>
 									<span className="btn btn-outline">Aprender más</span>
 								</Link>
 								{store.activeUser.id ? (
 									<span
 										className="btn btn-outline-danger ms-1"
-										onClick={() => actions.addFavPlace(singlePlace.id)}>
-										<i className="fas fa-heart" />
+										onClick={() => handleLike(data.place.id)}>
+										{isLiked(data.place.id) ? (
+											<i className="fas fa-heart" />
+										) : (
+											<i className="far fa-heart" />
+										)}
 									</span>
-								) : null}
+								) : (
+									""
+								)}
 							</div>
 						</div>
 
@@ -185,9 +144,9 @@ export const Home = () => {
 								<h3 className="text-light">Película recomendada:</h3>
 							</div>
 							<img
-								src={singleFilm.urlPhoto}
+								src={data.film.urlPhoto}
 								className="characters card-img-top mx-auto"
-								alt={singleFilm.name}
+								alt={data.film.name}
 								style={{ objectFit: "cover" }}
 							/>
 							<div className="card-body bg-dark">
@@ -198,19 +157,21 @@ export const Home = () => {
 										paddingBottom: "25px",
 										color: "#fa9f42"
 									}}>
-									{singleFilm.name}
+									{data.film.name}
 								</h5>
 
-								<Link to={"/infofilms/" + singleFilm.id}>
+								<Link to={"/infofilms/" + data.film.id}>
 									<span className="btn btn-outline">Aprender más</span>
 								</Link>
 							</div>
 						</div>
 					</div>
 				</div>
-			) : null}
+			) : (
+				""
+			)}
 			<br />
-			{markerPositions && markerPositions.length > 0 ? (
+			{data.markerPositions.length > 0 ? (
 				<div className="row mt-0">
 					<div>
 						<div className="card design-card bg-dark w-75 mx-auto mt-0" style={{ borderColor: "#fa9f42" }}>
@@ -219,16 +180,14 @@ export const Home = () => {
 							</div>
 
 							<div className="card mx-auto">
-								{markerPositions ? (
-									<Map markers={markerPositions} zoom={2} width="900" height="600" />
-								) : (
-									""
-								)}
+								<Map markers={data.markerPositions} zoom={2} width="900" height="600" />
 							</div>
 						</div>
 					</div>
 				</div>
-			) : null}
+			) : (
+				""
+			)}
 		</div>
 	);
 };

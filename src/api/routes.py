@@ -8,6 +8,7 @@ from api.models import db, User, Customer, Film, Place, Country, FavPlace, Scene
 from api.utils import generate_sitemap, APIException
 from datetime import datetime
 import json
+import random
 
 api = Blueprint('api', __name__)
 
@@ -43,7 +44,7 @@ def backup():
             "customers": [customer.serialize() for customer in customers],
             "countries": [country.serialize() for country in countries],
             "films": [film.serialize() for film in films],
-            "places": [place.serialize() for place in places],
+            "places": [{"id":place.id, "idCountry":place.idCountry, "name":place.name, "latitude":place.latitude, "longitude":place.longitude, "description":place.description, "counterLikes":place.counterLikes, "entryDate":place.entryDate, "urlPhoto":place.urlPhoto} for place in places],
             "scenes": [{"id":scene.id, "idFilm":scene.idFilm, "idPlace":scene.idPlace, "description":scene.description, "urlPhoto":scene.urlPhoto, "spoiler":scene.spoiler } for scene in scenes],
             "favPlaces": [favplace.serialize() for favplace in favPlaces],
             "comments": [{"id":comment.id, "idUser":comment.idUser, "idPlace":comment.idPlace, "body":comment.body, "time":comment.time, "parentId":comment.parentId } for comment in comments]
@@ -112,6 +113,13 @@ def backup():
 def countUsers():
     rows = db.session.query(func.count(User.id)).scalar()
     return { "msg": "ok", "count": rows }, 200
+
+@api.route("films/random", methods=["GET"])
+def randomFilm():
+    numFilms = db.session.query(func.count(Film.id)).scalar()
+    rnd = random.randint(0,numFilms-1)
+    myfilm = Film.query[rnd]
+    return jsonify(myfilm.serialize()), 200
 
 #Get data of all users in db. Token and user category true necessary
 @api.route("/users", methods=["GET"])
@@ -267,34 +275,35 @@ def getFavPlaces():
     return jsonify({"count":favPlaces.count(), "msg":"ok", "items":res}), 200
 
 
-
-#Add/Delete a single place in favorites of user
+#Add/Delete a single place in favorites of user and inc/dec the countLikes of place
 @api.route("/favorite/<int:place_id>", methods=['DELETE','POST'])
 @jwt_required()
 def delFavPlace(place_id):
 
     current_user_id = get_jwt_identity()
+    place = Place.query.get(place_id)
+    if place is None:
+        #Check the place exists
+        return jsonify({"msg": "idPlace not exists"}), 400
+
     if request.method == 'POST':
-        if Place.query.get(place_id):
-            #Check the place exists
-            if FavPlace.query.filter_by(idUser=current_user_id, idPlace=place_id).first():
-                #Check the favorite not exists
-                return jsonify({"msg":"error: favorite already exists"}), 400
-            #Add the favorite
-            favPlace = FavPlace(idUser=current_user_id, idPlace=place_id)
-            db.session.add(favPlace)
-            db.session.commit()
-            return jsonify({"msg":"ok"}), 200
-        else:
-            return jsonify({"msg": "idPlace not exists"}), 400
+        if FavPlace.query.filter_by(idUser=current_user_id, idPlace=place_id).first():
+            #Check the favorite not exists
+            return jsonify({"msg":"error: favorite already exists"}), 400
+        #Add the favorite
+        favPlace = FavPlace(idUser=current_user_id, idPlace=place_id)
+        db.session.add(favPlace)
+        place.countLikes = place.countLikes + 1
+        db.session.commit()
+        return jsonify({"msg":"ok"}), 200
     else:
         #DELETE
         favPlace = FavPlace.query.filter_by( idUser=current_user_id, idPlace=place_id ).first()
         if favPlace is None:
             #Check the favorite exists
             return jsonify({"msg":"error: favorite not exists"}), 400
-        
         db.session.delete(favPlace)
+        place.countLikes = place.countLikes - 1
         db.session.commit()
         return jsonify({"msg":"ok"}), 200
 

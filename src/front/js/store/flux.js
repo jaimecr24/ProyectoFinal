@@ -1,25 +1,11 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
-			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] },
-			singlePlace: null,
-			infoFilms: null,
-			infoCountries: null
+			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] }
 		},
 		actions: {
+			forceRender: () => setStore({}), // force render without change data
+
 			//Add a new user. Category is always false except for administrator.
 			addUser: (name, lastname, username, email, password, category = false) => {
 				return fetch(process.env.BACKEND_URL + "/api/signup", {
@@ -76,26 +62,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 
-			// Protected: add a single place in favorites of user
+			// Protected: add a single place in favorites of user.
+			// Updates listFav of activeUser in store and CountLikes of place in backend.
 			addFavPlace: idPlace => {
-				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
+				fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: "Bearer " + getStore().activeUser.token
 					}
-				});
+				})
+					.then(res => res.json())
+					.then(res => {
+						let aux = getStore().activeUser;
+						if (!aux.listFav.includes(idPlace)) {
+							aux.listFav.push(idPlace);
+							setStore({ activeUser: aux });
+						}
+					})
+					.catch(error => alert("Error adding favorite place: " + error));
 			},
 
 			// Protected: delete a single place in favorites of user
-			delFavPlace: idPlace => {
-				return fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
-					method: "DELETE",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + getStore().activeUser.token
-					}
-				});
+			// Updates listFav of activeUser in store and CountLikes of place in backend
+			delFavPlace: async idPlace => {
+				try {
+					const res = await fetch(process.env.BACKEND_URL + "/api/favorite/" + idPlace.toString(), {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: "Bearer " + getStore().activeUser.token
+						}
+					});
+					const res_1 = await res.json();
+					let aux = getStore().activeUser;
+					aux.listFav = aux.listFav.filter(e => e !== idPlace);
+					setStore({ activeUser: aux });
+					return res_1;
+				} catch (error) {
+					return alert("Error removing favorite place: " + error);
+				}
 			},
 
 			getPlacePhotos: idPlace => {
@@ -105,130 +111,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Get the list of places that match a key (only name and id)
 			getBrowsePlace: key => fetch(process.env.BACKEND_URL + "/api/browse/" + key),
 
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+			// Get the list of all places in db.
+			getPlaces: () => fetch(process.env.BACKEND_URL + "/api/places"),
 
-			getMessage: () => {
-				// fetching data from the backend
-				fetch(process.env.BACKEND_URL + "/api/hello")
-					.then(resp => resp.json())
-					.then(data => setStore({ message: data.message }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
-			getPlaces: () => {
-				// fetching data from the backend
-				console.log(process.env.BACKEND_URL + "/api/places");
-				//fetch(process.env.BACKEND_URL + "api/places")
-				fetch(process.env.BACKEND_URL + "/api/places")
-					.then(resp => resp.json())
-					.then(data => setStore({ places: data }))
-					.catch(error => console.log("Error loading places from backend", error));
-			},
-			getSinglePlace: id => {
-				fetch(process.env.BACKEND_URL + "/api/places/" + id)
-					.then(res => res.json())
-					.then(data => {
-						setStore({
-							singlePlace: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
-			getScenesByPlace: id => {
-				fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id)
-					.then(res => res.json())
-					.then(data => {
-						setStore({
-							scenesByPlace: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get data of a single place.
+			getSinglePlace: id => fetch(process.env.BACKEND_URL + "/api/places/" + id),
 
-			getScenesByFilm: id => {
-				fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							scenesByFilm: data
-						});
-					})
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get list of places where a film is filmmed.
+			getPlacesByFilm: id => fetch(process.env.BACKEND_URL + "/api/places/film/" + id),
 
-			fetchFilms: () => {
-				console.log(process.env.BACKEND_URL + "/api/films");
-				fetch(process.env.BACKEND_URL + "/api/films")
-					.then(resp => resp.json())
-					.then(data => setStore({ films: data }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
+			// Get list of places of a country where a film is filmmed.
+			getPlacesByCountry: id => fetch(process.env.BACKEND_URL + "/api/places/country/" + id),
 
-			getInfoFilms: id => {
-				fetch(process.env.BACKEND_URL + "/api/films/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							infoFilms: data
-						});
-						return data.id;
-					})
-					.then(id => getActions().getScenesByFilm(id))
-					.catch(error => console.log("Error loading place from backend", error));
-			},
+			// Get the list of scenes filmmed on a single place.
+			getScenesByPlace: id => fetch(process.env.BACKEND_URL + "/api/scenes/place/" + id),
 
-			resetInfoFilms: () => {
-				setStore({
-					infoFilms: null
-				});
-				localStorage.removeItem("id");
-			},
-			fetchCountries: () => {
-				console.log(process.env.BACKEND_URL + "/api/countries");
-				fetch(process.env.BACKEND_URL + "/api/countries")
-					.then(resp => resp.json())
-					.then(data => setStore({ countries: data }))
-					.catch(error => console.log("Error loading message from backend", error));
-			},
+			// Get the scenes of a single film.
+			getScenesByFilm: id => fetch(process.env.BACKEND_URL + "/api/scenes/film/" + id),
 
-			getInfoCountries: id => {
-				fetch(process.env.BACKEND_URL + "/api/countries/" + id)
-					.then(res => res.json())
-					.then(data => {
-						console.log(data);
-						setStore({
-							infoCountries: data
-						});
-						return data.id;
-					})
-					.then(id => getActions().getScenesByFilm(id))
-					.catch(error => console.log("Error loading place from backend", error));
-			},
-			resetInfoCountries: () => {
-				setStore({
-					infoCountries: null
-				});
-				localStorage.removeItem("id");
-			},
+			// Get all films.
+			fetchFilms: () => fetch(process.env.BACKEND_URL + "/api/films"),
 
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
+			// Get the info of a single film.
+			getInfoFilm: id => fetch(process.env.BACKEND_URL + "/api/films/" + id),
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			// Get a random film.
+			getRandomFilm: () => fetch(process.env.BACKEND_URL + "/api/films/random"),
 
-				//reset the global store
-				setStore({ demo: demo });
-			},
+			// Get all countries.
+			fetchCountries: () => fetch(process.env.BACKEND_URL + "/api/countries"),
+
+			// Get info of a single country.
+			getInfoCountries: id => fetch(process.env.BACKEND_URL + "/api/countries/" + id),
+
+			// Get list of films filmmed on a country
+			getFilmsByCountry: id => fetch(process.env.BACKEND_URL + "/api/films/country/" + id),
 
 			getComments: place => {
 				return fetch(process.env.BACKEND_URL + `/api/comments?place=${place}`, {
@@ -239,6 +156,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}).then(res => res.json());
 			},
+
 			addComment: (body, idPlace, parentId) => {
 				return fetch(process.env.BACKEND_URL + "/api/comments", {
 					method: "POST",
@@ -253,6 +171,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}).then(res => res.json());
 			},
+
 			deleteComment: idComment => {
 				return fetch(process.env.BACKEND_URL + "/api/comments-removed/" + idComment, {
 					method: "POST",
@@ -262,11 +181,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				});
 			},
-			getMarkerPositions: places => {
-				let markerPositions = [];
 
-				places.map(place =>
-					markerPositions.push({
+			getMarkerPositions: places =>
+				places.map(place => {
+					return {
 						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
 						content:
 							"<img class='w-50'  src = '" +
@@ -280,20 +198,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"<a href='/place/" +
 							place.id +
 							"'>Ver más</a>"
-					})
-				);
+					};
+				}),
 
-				return markerPositions;
-			},
 			getSingleMarkerPosition: place => {
-				let markerPositions = [
+				return [
 					{
 						position: { lat: parseFloat(place.latitude), lng: parseFloat(place.longitude) },
 						content: "<p><b>" + place.name + "</b></p><p>" + place.address + "</p>"
 					}
 				];
-
-				return markerPositions;
 			}
 		}
 	};

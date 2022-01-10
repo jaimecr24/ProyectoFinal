@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 export const Scene = props => {
-	const [spoiler, setSpoiler] = useState(props.spoiler ? true : false);
+	const [spoiler, setSpoiler] = useState(props.spoiler);
 	const seeSpoiler = () => {
 		setSpoiler(false);
 	};
@@ -16,7 +16,7 @@ export const Scene = props => {
 				</h5>
 			</Link>
 			{spoiler ? (
-				<div className="btn" onClick={() => seeSpoiler()}>
+				<div className="btn" onClick={seeSpoiler}>
 					<div className="container-spoiler">
 						<img
 							className="card-img-top row m-1 mx-auto spoiler-img"
@@ -28,7 +28,7 @@ export const Scene = props => {
 					</div>
 
 					<div className="card-body mx-auto text-white">
-						<div style={{ fontSize: "10px" }}>
+						<div style={{ fontSize: "16px" }}>
 							<div className="spoiler-text">{props.description}</div>
 						</div>
 					</div>
@@ -43,7 +43,7 @@ export const Scene = props => {
 					/>
 
 					<div className="card-body mx-auto text-white">
-						<div style={{ fontSize: "10px" }}>
+						<div style={{ fontSize: "16px" }}>
 							<div>{props.description}</div>
 						</div>
 					</div>
