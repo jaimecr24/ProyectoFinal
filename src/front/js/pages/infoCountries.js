@@ -5,7 +5,6 @@ import { FilmCountry } from "../component/filmCountry";
 import Map from "../component/map.js";
 
 export const InfoCountries = () => {
-
 	const params = useParams();
 	const { actions } = useContext(Context);
 
@@ -28,7 +27,7 @@ export const InfoCountries = () => {
 				actions
 					.getPlacesByCountry(params.theid)
 					.then(res => res.json())
-					.then(data => setMarkerPositions(actions.getMarkerPostions(data)))
+					.then(data => setMarkerPositions(actions.getMarkerPositions(data)))
 					.catch(error => alert("Error loading places from backend: " + error));
 			})
 			.catch(error => alert("Error loading country from backend: " + error));
