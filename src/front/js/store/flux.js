@@ -1,11 +1,11 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] },
-			singlePlace: null,
-			infoCountries: null
+			activeUser: { token: "", id: null, lastTime: null, category: false, listFav: [] }
 		},
 		actions: {
+			forceRender: () => setStore({}), // force render without change data
+
 			//Add a new user. Category is always false except for administrator.
 			addUser: (name, lastname, username, email, password, category = false) => {
 				return fetch(process.env.BACKEND_URL + "/api/signup", {
@@ -140,13 +140,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// Get list of films filmmed on a country
 			getFilmsByCountry: id => fetch(process.env.BACKEND_URL + "/api/films/country/" + id),
-
-			resetInfoCountries: () => {
-				setStore({
-					infoCountries: null
-				});
-				localStorage.removeItem("id");
-			},
 
 			getComments: place => {
 				return fetch(process.env.BACKEND_URL + `/api/comments?place=${place}`, {

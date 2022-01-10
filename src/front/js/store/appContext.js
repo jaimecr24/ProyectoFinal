@@ -30,7 +30,7 @@ const injectContext = PassedComponent => {
 			 **/
 			if (window.localStorage["store"] !== undefined) {
 				state.store = JSON.parse(localStorage.getItem("store"));
-				// state.actions.forceRender(); ??
+				state.actions.forceRender();
 			} else {
 				//load data from db.
 			}
