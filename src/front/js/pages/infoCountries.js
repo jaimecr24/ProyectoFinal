@@ -85,7 +85,13 @@ export const InfoCountries = () => {
 
 							<div className="row">
 								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-									<Map markers={markerPositions} zoom={5} width="800" height="500" />
+									<Map
+										markers={markerPositions}
+										zoom={5}
+										width="800"
+										height="500"
+										center={markerPositions[0].position}
+									/>
 								</div>
 							</div>
 						</div>

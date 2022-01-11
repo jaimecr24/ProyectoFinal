@@ -185,7 +185,13 @@ export const Home = () => {
 							</div>
 
 							<div className="card mx-auto">
-								<Map markers={data.markerPositions} zoom={2} width="900" height="600" />
+								<Map
+									markers={data.markerPositions}
+									zoom={2}
+									width="900"
+									height="600"
+									center={{ lat: 40.416775, lng: 3.70379 }}
+								/>
 							</div>
 						</div>
 					</div>

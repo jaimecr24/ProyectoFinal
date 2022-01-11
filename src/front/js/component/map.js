@@ -2,6 +2,7 @@ import React, { useEffect, useRef, ReactElement, useState } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import PropTypes from "prop-types";
+import { object } from "prop-types";
 
 const render = status => {
 	if (status === Status.LOADING)
@@ -22,7 +23,7 @@ const Map = props => {
 		map = new google.maps.Map(
 			document.querySelector(".map"),
 			{
-				center: props.markers[0].position,
+				center: props.center,
 				zoom: props.zoom
 			},
 			[]
@@ -59,6 +60,7 @@ const Map = props => {
 Map.propTypes = {
 	width: PropTypes.string,
 	height: PropTypes.string,
+	center: PropTypes.object,
 
 	zoom: PropTypes.number,
 
@@ -70,7 +72,13 @@ const MapComponent = props => {
 	return (
 		<Wrapper apiKey={process.env.REACT_APP_GOOGLE_MAP_API_KEY} render={render}>
 			{props.markers ? (
-				<Map zoom={props.zoom} width={props.width} height={props.height} markers={props.markers} />
+				<Map
+					zoom={props.zoom}
+					width={props.width}
+					height={props.height}
+					markers={props.markers}
+					center={props.center}
+				/>
 			) : null}
 		</Wrapper>
 	);
@@ -78,6 +86,7 @@ const MapComponent = props => {
 MapComponent.propTypes = {
 	width: PropTypes.string,
 	height: PropTypes.string,
+	center: PropTypes.object,
 
 	zoom: PropTypes.number,
 

@@ -101,7 +101,13 @@ export const SinglePlace = () => {
 						<div className="row">
 							<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
 								{data.markerPositions.length > 0 ? (
-									<Map markers={data.markerPositions} zoom={10} width="800" height="350" />
+									<Map
+										markers={data.markerPositions}
+										zoom={10}
+										width="800"
+										height="350"
+										center={data.markerPositions[0].position}
+									/>
 								) : (
 									""
 								)}
