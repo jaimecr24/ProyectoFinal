@@ -4,11 +4,13 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import "../../styles/home.css";
 import Map from "../component/map.js";
+//import ModalMsg from "../component/modalmsg";
 
 export const Home = () => {
 	let history = useHistory();
 	const { actions, store } = useContext(Context);
 
+	//const [onModal, setOnModal] = useState(false);
 	const [data, setData] = useState({ film: null, place: null, markerPositions: [] });
 	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
 	const handleLike = idPlace => {
@@ -53,6 +55,7 @@ export const Home = () => {
 
 	const handleSearch = e => {
 		e.preventDefault();
+		setOnModal(true);
 		let key = document.getElementById("mySearch").value;
 		if (key.length > 0) {
 			actions
@@ -67,6 +70,8 @@ export const Home = () => {
 				.catch(error => alert("Error in getBrowsePlace: " + error));
 		}
 	};
+
+	// const handleCloseModal = e => setOnModal(false);
 
 	return (
 		<div className="text-center mt-4">
@@ -188,6 +193,9 @@ export const Home = () => {
 			) : (
 				""
 			)}
+			{
+				//onModal ? <ModalMsg msg="Mensaje de prueba" closeFunc={handleCloseModal} /> : ""
+			}
 		</div>
 	);
 };

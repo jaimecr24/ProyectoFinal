@@ -44,7 +44,7 @@ def backup():
             "customers": [customer.serialize() for customer in customers],
             "countries": [country.serialize() for country in countries],
             "films": [film.serialize() for film in films],
-            "places": [{"id":place.id, "idCountry":place.idCountry, "name":place.name, "latitude":place.latitude, "longitude":place.longitude, "description":place.description, "countLikes":place.countLikes, "entryDate":place.entryDate, "urlPhoto":place.urlPhoto} for place in places],
+            "places": [{"id":place.id, "idCountry":place.idCountry, "name":place.name, "latitude":place.latitude, "longitude":place.longitude, "address": place.address, "description":place.description, "countLikes":place.countLikes, "entryDate":place.entryDate, "urlPhoto":place.urlPhoto} for place in places],
             "scenes": [{"id":scene.id, "idFilm":scene.idFilm, "idPlace":scene.idPlace, "description":scene.description, "urlPhoto":scene.urlPhoto, "spoiler":scene.spoiler } for scene in scenes],
             "favPlaces": [favplace.serialize() for favplace in favPlaces],
             "comments": [{"id":comment.id, "idUser":comment.idUser, "idPlace":comment.idPlace, "body":comment.body, "time":comment.time, "parentId":comment.parentId } for comment in comments]
@@ -117,6 +117,7 @@ def countUsers():
 @api.route("films/random", methods=["GET"])
 def randomFilm():
     numFilms = db.session.query(func.count(Film.id)).scalar()
+    if numFilms == 0: return { "msg": "No films" }, 400
     rnd = random.randint(0,numFilms-1)
     myfilm = Film.query[rnd]
     return jsonify(myfilm.serialize()), 200
