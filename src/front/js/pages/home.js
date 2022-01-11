@@ -4,15 +4,21 @@ import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import "../../styles/home.css";
 import Map from "../component/map.js";
-//import ModalMsg from "../component/modalmsg";
+import ModalMsg from "../component/modalmsg";
 
 export const Home = () => {
 	let history = useHistory();
 	const { actions, store } = useContext(Context);
 
-	//const [onModal, setOnModal] = useState(false);
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "" });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "" });
+
+	// General data of component
 	const [data, setData] = useState({ film: null, place: null, markerPositions: [] });
 	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
+
+	// Set/unset like
 	const handleLike = idPlace => {
 		isLiked(idPlace) ? actions.delFavPlace(idPlace) : actions.addFavPlace(idPlace);
 	};
@@ -35,9 +41,13 @@ export const Home = () => {
 							markerPositions: actions.getMarkerPositions(places)
 						});
 					})
-					.catch(error => alert("Error loading film from backend: " + error));
+					.catch(error => {
+						setOnModal({ status: true, msg: "Error cargando película del servidor: " + error });
+					});
 			})
-			.catch(error => alert("Error loading places from backend: " + error));
+			.catch(error => {
+				setOnModal({ status: true, msg: "Error cargando sitios del servidor: " + error });
+			});
 	}, []);
 
 	let [sug, setSug] = useState([]);
@@ -49,13 +59,14 @@ export const Home = () => {
 				.getBrowsePlace(key)
 				.then(res => res.json())
 				.then(data => setSug(data.map(e => e["name"])))
-				.catch(error => alert("Error in getBrowsePlace: " + error));
+				.catch(error => {
+					setOnModal({ status: true, msg: "Error al cargar sitio del servidor: " + error });
+				});
 		}
 	};
 
 	const handleSearch = e => {
 		e.preventDefault();
-		setOnModal(true);
 		let key = document.getElementById("mySearch").value;
 		if (key.length > 0) {
 			actions
@@ -65,13 +76,15 @@ export const Home = () => {
 					if (data.length > 0) {
 						let path = "/place/" + data[0]["id"]; // Go to the first place. To do: present a list of results to user.
 						history.push({ pathname: path }); // Equivalent in js to <Link ... >
-					} else alert("data is []");
+					} else {
+						setOnModal({ status: true, msg: "Lista de datos vacía: " + error });
+					}
 				})
-				.catch(error => alert("Error in getBrowsePlace: " + error));
+				.catch(error => {
+					setOnModal({ status: true, msg: "Error al buscar sitio en el servidor: " + error });
+				});
 		}
 	};
-
-	// const handleCloseModal = e => setOnModal(false);
 
 	return (
 		<div className="text-center mt-4">
@@ -199,9 +212,7 @@ export const Home = () => {
 			) : (
 				""
 			)}
-			{
-				//onModal ? <ModalMsg msg="Mensaje de prueba" closeFunc={handleCloseModal} /> : ""
-			}
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={handleCloseModal} /> : ""}
 		</div>
 	);
 };
