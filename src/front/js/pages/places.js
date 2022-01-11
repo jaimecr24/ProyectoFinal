@@ -21,7 +21,7 @@ export const Places = () => {
 
 	return (
 		<div className="container-fluid content-row">
-			<div className="title" style={{ textAlign: "center", paddingBottom: "20px" }}>
+			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
 				<h1 style={{ color: "#fa9f42" }}>Sitios de rodaje</h1>
 				<span style={{ color: "white" }}>Descubre nuestro listado de lugares de rodaje!</span>
 			</div>
@@ -37,11 +37,11 @@ export const Places = () => {
 									src={item.urlPhoto}
 									className="characters card-img-top mx-auto"
 									alt={item.name}
-									style={{ objectFit: "cover" }}
+									style={{ objectFit: "cover", width: "100%" }}
 								/>
 								<div className="card-body">
 									<h5
-										className="card-title"
+										className="card-title card-title-text"
 										style={{
 											textAlign: "center",
 											paddingBottom: "40px",

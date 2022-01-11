@@ -13,7 +13,12 @@ export const Movie = props => {
 
 	return (
 		<div className="design-card border border bg-dark" style={{ borderColor: "#fa9f42" }}>
-			<img src={props.picture} className="characters card-img-top mx-auto" alt="..." />
+			<img
+				src={props.picture}
+				className="characters card-img-top mx-auto"
+				alt="..."
+				style={{ objectFit: "cover", width: "100%" }}
+			/>
 			<div className="card-body">
 				<h5 className="card-title" style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
 					{props.place}, {props.country}

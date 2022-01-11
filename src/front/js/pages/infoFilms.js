@@ -62,6 +62,9 @@ export const InfoFilms = () => {
 							/>
 						</div>
 						<div className="col-6">
+							<p style={{ color: "#fa9f42" }}>
+								{infoFilm.director}, {infoFilm.year}
+							</p>
 							<p className="text-white">{infoFilm.description}</p>
 						</div>
 					</div>
@@ -97,7 +100,13 @@ export const InfoFilms = () => {
 
 							<div className="row">
 								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-									<Map markers={markerPositions} zoom={2} width="800" height="500" />
+									<Map
+										markers={markerPositions}
+										zoom={2}
+										width="800"
+										height="500"
+										center={{ lat: 40.416775, lng: 3.70379 }}
+									/>
 								</div>
 							</div>
 						</div>

@@ -167,7 +167,13 @@ export const Profile = () => {
 					<div className="mt-5">
 						<h3 className="text-light text-center">Encuentra todos tus sitios favoritos:</h3>
 						<div className="mt-5 bg-danger mx-auto" style={{ width: "900px" }}>
-							<Map markers={fav.markerPositions} zoom={2} width="900" height="600" />
+							<Map
+								markers={fav.markerPositions}
+								zoom={2}
+								width="900"
+								height="600"
+								center={{ lat: 40.416775, lng: 3.70379 }}
+							/>
 						</div>
 					</div>
 				) : null}
