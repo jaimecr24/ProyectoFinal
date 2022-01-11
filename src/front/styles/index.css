@@ -10,7 +10,7 @@
     margin-right: 10%;
     display: flex;
     flex-wrap: nowrap;
-    height: 530px;
+    height: 540px;
     overflow-y:hidden;
     overflow-x: auto;
     white-space: nowrap;
@@ -44,6 +44,12 @@
     color: white;
 }
 
+.card-title-text {
+  white-space: initial;
+  max-width: 400px;
+  height: 85px;
+}
+
 .characters{
     align-self: center;
     width: 330px;
@@ -71,7 +77,16 @@
     transition: all 0.25s;
     text-align: center;
     border-color: #fa9f42;
+    width: 400px;
+    height: 520px;
     
+}
+
+.infocards-scene {
+  transition: all 0.25s;
+  text-align: center;
+  border-color: #fa9f42;
+  width: 400px;
 }
 
 .infocards:hover{

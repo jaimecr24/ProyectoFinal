@@ -14,7 +14,7 @@ export const Films = () => {
 	}, []);
 	return (
 		<div className="container-fluid content-row">
-			<div className="title" style={{ textAlign: "center", paddingBottom: "20px" }}>
+			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
 				<h1 style={{ color: "#fa9f42" }}>Películas</h1>
 				<span style={{ color: "white" }}>Descubre nuestro listado de peliculas!</span>
 			</div>
@@ -29,11 +29,11 @@ export const Films = () => {
 								src={item.urlPhoto}
 								className="characters card-img-top mx-auto"
 								alt="..."
-								style={{ objectFit: "cover" }}
+								style={{ objectFit: "cover", width: "100%" }}
 							/>
 							<div className="card-body">
 								<h5
-									className="card-title"
+									className="card-title card-title-text"
 									style={{
 										textAlign: "center",
 										paddingBottom: "40px",
