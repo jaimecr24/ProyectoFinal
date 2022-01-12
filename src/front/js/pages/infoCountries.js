@@ -66,7 +66,12 @@ export const InfoCountries = () => {
 										<div
 											className="infocards row col-auto"
 											key={index}
-											style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
+											style={{
+												margin: "10px",
+												width: "15 rem",
+												borderRadius: "50px",
+												paddingRight: "10px"
+											}}>
 											<FilmCountry
 												id={item.id}
 												movie={item.name}

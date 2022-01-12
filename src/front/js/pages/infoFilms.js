@@ -79,7 +79,12 @@ export const InfoFilms = () => {
 										<div
 											className="infocards row col-auto"
 											key={index}
-											style={{ margin: "10px", width: "15 rem", borderRadius: "50px" }}>
+											style={{
+												margin: "10px",
+												width: "15 rem",
+												borderRadius: "50px",
+												paddingRight: "10px"
+											}}>
 											<Movie
 												id={item.idPlace}
 												place={item.place}

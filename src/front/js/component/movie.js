@@ -20,7 +20,9 @@ export const Movie = props => {
 				style={{ objectFit: "cover", width: "100%" }}
 			/>
 			<div className="card-body">
-				<h5 className="card-title" style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
+				<h5
+					className="card-title-text"
+					style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
 					{props.place}, {props.country}
 				</h5>
 				<Link to={"/place/" + props.id}>
