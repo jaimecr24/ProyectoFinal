@@ -22,7 +22,7 @@ export const Scene = props => {
 							className="card-img-top row m-1 mx-auto spoiler-img"
 							src={props.urlPhoto}
 							alt={props.description}
-							style={{ height: "200px", width: "90%", objectFit: "cover" }}
+							style={{ height: "270px", width: "90%", objectFit: "cover" }}
 						/>
 						<div className="centered-spoiler">Ver Spoiler</div>
 					</div>
@@ -39,7 +39,7 @@ export const Scene = props => {
 						className={"card-img-top row m-1 mx-auto"}
 						src={props.urlPhoto}
 						alt={props.description}
-						style={{ height: "200px", width: "90%", objectFit: "cover" }}
+						style={{ height: "270px", width: "90%", objectFit: "cover" }}
 					/>
 
 					<div className="card-body mx-auto text-white">
