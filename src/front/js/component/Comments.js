@@ -17,9 +17,7 @@ const Comments = ({ commentsUrl, currentUserId, place }) => {
 			.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 	const addComment = (text, parentId) => {
 		actions.addComment(text, place, parentId).then(comment => {
-			console.log(backendComments);
 			setBackendComments([comment, ...(backendComments || [])]);
-			console.log(comment);
 			setActiveComment(null);
 		});
 	};
@@ -82,6 +80,6 @@ export default Comments;
 
 Comments.propTypes = {
 	commentsUrl: PropTypes.string,
-	currentUserId: PropTypes.string,
+	currentUserId: PropTypes.number,
 	place: PropTypes.string
 };

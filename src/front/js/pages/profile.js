@@ -4,9 +4,14 @@ import { Context } from "../store/appContext";
 import "../../styles/modal.css";
 import usericon from "../../img/users.png";
 import Map from "../component/map.js";
+import ModalMsg from "../component/modalmsg";
 
 export const Profile = () => {
 	const { store, actions } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "", fClose: null });
 
 	const [data, setData] = useState({
 		name: "",
@@ -29,53 +34,49 @@ export const Profile = () => {
 	};
 
 	useEffect(() => {
-		let status = 0;
-		//load user data
-		actions
-			.getUser()
-			.then(res => {
-				status = res.status;
-				return res.json();
-			})
-			.then(user => {
-				if (status >= 400) {
-					alert(user["msg"]);
-					actions.logout();
-				} else {
-					// load favorites data
-					actions
-						.getFavPlaces()
-						.then(res => res.json())
-						.then(places => {
-							setData({
-								name: user.name,
-								lastName: user.last_name,
-								username: user.username,
-								email: user.email,
-								lastTime: new Date(store.activeUser.lastTime).toLocaleString()
-							});
-							setFav({
-								places: places.items,
-								markerPositions: actions.getMarkerPositions(places.items)
-							});
-						})
-						.catch(error => alert("Error loading places: " + error));
-				}
-			})
-			.catch(error => console.error("Error loading users: ", error));
+		loadUser();
+		loadPlaces();
 	}, []);
 
-	const loadPlaces = () => {
-		actions
-			.getFavPlaces()
-			.then(res => res.json())
-			.then(places =>
-				setFav({
-					places: places.items,
-					markerPositions: actions.getMarkerPositions(places.items)
-				})
-			)
-			.catch(error => alert("Error loading places: " + error));
+	const loadUser = async () => {
+		try {
+			let res = await actions.getUser(); // Get data of current user
+			let resj = await res.json();
+			if (res.status >= 400) {
+				setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
+			} else {
+				setData({
+					name: resj.name,
+					lastName: resj.last_name,
+					username: resj.username,
+					email: resj.email,
+					lastTime: new Date(store.activeUser.lastTime).toLocaleString()
+				});
+			}
+		} catch (error) {
+			setOnModal({
+				status: true,
+				msg: "Error cargando datos de usuario del servidor: " + error,
+				fClose: () => handleCloseModal(false)
+			});
+		}
+	};
+
+	const loadPlaces = async () => {
+		try {
+			let p = await actions.getFavPlaces();
+			let places = await p.json();
+			setFav({
+				places: places.items,
+				markerPositions: actions.getMarkerPositions(places.items)
+			});
+		} catch (error) {
+			setOnModal({
+				status: true,
+				msg: "Error cargando datos de sitios del servidor: " + error,
+				fClose: () => handleCloseModal(false)
+			});
+		}
 	};
 
 	const handleDelete = async e => {
@@ -178,6 +179,7 @@ export const Profile = () => {
 					</div>
 				) : null}
 			</div>
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={null} /> : ""}
 		</div>
 	);
 };

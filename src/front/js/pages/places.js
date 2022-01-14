@@ -1,9 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import ModalMsg from "../component/modalmsg";
 
 export const Places = () => {
 	const { actions, store } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "", fClose: null });
+
 	const [places, setPlaces] = useState([]);
 
 	useEffect(() => {
@@ -11,7 +17,13 @@ export const Places = () => {
 			.getPlaces()
 			.then(resp => resp.json())
 			.then(data => setPlaces(data))
-			.catch(error => console.log("Error loading places from backend", error));
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error cargando sitios del servidor: " + error,
+					fClose: () => handleCloseModal(false)
+				});
+			});
 	}, []);
 
 	const isLiked = idPlace => store.activeUser.listFav.includes(idPlace);
@@ -70,6 +82,7 @@ export const Places = () => {
 					);
 				})}
 			</div>
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={null} /> : ""}
 		</div>
 	);
 };

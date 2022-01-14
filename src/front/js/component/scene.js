@@ -53,7 +53,7 @@ export const Scene = props => {
 	);
 };
 Scene.propTypes = {
-	id: PropTypes.string,
+	id: PropTypes.number,
 	description: PropTypes.string,
 	title: PropTypes.string,
 	urlPhoto: PropTypes.string,

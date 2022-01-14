@@ -8,13 +8,12 @@ import ModalMsg from "../component/modalmsg";
 
 // COMPONENT -------------------------------------------------------------------
 const Users = () => {
-	const usersPage = 10; // Number of rows per page
 	const { store, actions } = useContext(Context);
 
 	// variable to show modal messages and function to close modal.
-	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
+	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null, fCancel: null });
 	const handleCloseModal = bLogout => {
-		setOnModal({ status: false, msg: "", fClose: null });
+		setOnModal({ status: false, msg: "", fClose: null, fCancel: null });
 		if (bLogout) actions.logout(); // close user session
 	};
 
@@ -27,57 +26,30 @@ const Users = () => {
 		username: "",
 		email: "",
 		isAdmin: false,
-		users: [],
-		limInf: 0,
-		limSup: usersPage,
-		totalPages: 0,
-		currentPage: 0
+		users: []
 	});
 
 	useEffect(() => {
-		// load number of users and first page
-		actions
-			.countUsers()
-			.then(res => res.json())
-			.then(res => {
-				data.totalPages = Math.floor(res.count / usersPage) + 1;
-				data.currentPage = 1;
-				loadData();
-			})
-			.catch(error => {
-				setOnModal({
-					status: true,
-					msg: "Error cargando datos de usuarios del servidor: " + error,
-					fClose: () => handleCloseModal(false)
-				});
-			});
+		loadData();
 	}, []);
 
-	const loadData = () => {
-		// load n rows of data between data.limInf and data.limSup
-		let status = 200;
-		actions
-			.getUsers(data.limInf, data.limSup)
-			.then(res => {
-				status = res.status;
-				return res.json();
-			})
-			.then(users => {
-				if (status >= 400)
-					setOnModal({
-						status: true,
-						msg: users["msg"],
-						fClose: () => handleCloseModal(true)
-					});
-				else setData({ ...data, users: users });
-			})
-			.catch(error => {
-				setOnModal({
-					status: true,
-					msg: "Error cargando datos de usuarios del servidor: " + error,
-					fClose: () => handleCloseModal(false)
-				});
+	const loadData = async () => {
+		// Load data of users
+		try {
+			let res = await actions.getAllUsers();
+			let resj = await res.json();
+			if (res.status >= 400) {
+				setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
+			} else {
+				setData({ ...data, users: resj });
+			}
+		} catch (error) {
+			setOnModal({
+				status: true,
+				msg: "Error cargando datos de usuarios del servidor: " + error,
+				fClose: () => handleCloseModal(false)
 			});
+		}
 	};
 
 	const handleChange = e => {
@@ -134,37 +106,23 @@ const Users = () => {
 			});
 	};
 
-	const handleDelete = item => {
-		let status = 200;
+	const handleDelete = async item => {
 		// delete user
-		if (confirm(`¿Eliminar usuario ${item.username}?`)) {
-			actions
-				.deleteUser(item.id)
-				.then(res => {
-					status = res.status;
-					return res.json();
-				})
-				.then(json => {
-					if (status >= 400)
-						setOnModal({ status: true, msg: json["msg"], fClose: () => handleCloseModal(true) });
-					else loadData();
-				})
-				.catch(error => {
-					setOnModal({
-						status: true,
-						msg: "Error eliminando usuario del servidor: " + error,
-						fClose: () => handleCloseModal(false)
-					});
-				});
+		try {
+			let res = await actions.deleteUser(item.id);
+			let resj = await res;
+			if (res.status >= 400) setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
+			else {
+				loadData();
+				handleCloseModal(false);
+			}
+		} catch (error) {
+			setOnModal({
+				status: true,
+				msg: "Error eliminando usuario del servidor: " + error,
+				fClose: () => handleCloseModal(false)
+			});
 		}
-	};
-
-	const gotoPage = n => {
-		if (inEditMode.status) handleCancel();
-		data.currentPage = n;
-		data.limInf = usersPage * (n - 1);
-		data.limSup = data.limInf + usersPage;
-		loadData();
 	};
 
 	// For show data in each row
@@ -257,7 +215,14 @@ const Users = () => {
 												className={`btn-danger ms-1 ${
 													store.activeUser.id == e.id ? "d-none" : ""
 												}`}
-												onClick={() => handleDelete(e)}>
+												onClick={() => {
+													setOnModal({
+														status: true,
+														msg: `¿Eliminar usuario ${e.username}?`,
+														fClose: () => handleDelete(e),
+														fCancel: () => handleCloseModal(false)
+													});
+												}}>
 												Eliminar
 											</button>
 										</>
@@ -270,31 +235,11 @@ const Users = () => {
 			) : (
 				""
 			)}
-			<button onClick={() => gotoPage(1)} disabled={data.currentPage === 1}>
-				{"<<"}
-			</button>{" "}
-			<button onClick={() => gotoPage(data.currentPage - 1)} disabled={data.currentPage === 1}>
-				{"<"}
-			</button>{" "}
-			<button onClick={() => gotoPage(data.currentPage + 1)} disabled={data.currentPage === data.totalPages}>
-				{">"}
-			</button>{" "}
-			<button onClick={() => gotoPage(data.totalPages)} disabled={data.currentPage === data.totalPages}>
-				{">>"}
-			</button>{" "}
-			<span className="text-warning fw-bold">{`Página ${data.currentPage} de ${data.totalPages}`}</span>
-			<span className="text-warning fw-bold"> | Ir a la página: </span>
-			<input
-				type="number"
-				defaultValue={1}
-				min="1"
-				max={data.totalPages.toString()}
-				onChange={e => {
-					const page = e.target.value ? Number(e.target.value) : 1;
-					if (page > 0 && page <= data.totalPages) gotoPage(page);
-				}}
-			/>
-			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={handleCloseModal} cancelFunc={null} /> : ""}
+			{onModal.status ? (
+				<ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={onModal.fCancel} />
+			) : (
+				""
+			)}
 		</>
 	);
 };
@@ -627,7 +572,7 @@ export const Admin = () => {
 
 				<div className="col py-3 offset-md-3 offset-xl-2">
 					{data.opcMenu == 1 ? (
-						<Users params={{ rows: ["id", "name", "lastName"] }} />
+						<Users />
 					) : data.opcMenu == 2 ? (
 						<Films />
 					) : data.opcMenu == 3 ? (
