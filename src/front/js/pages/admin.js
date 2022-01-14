@@ -1,12 +1,26 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
+import PropTypes from "prop-types";
 import "../../styles/modal.css";
 import iconadmin from "../../img/admin-icon.png";
+import ModalMsg from "../component/modalmsg";
 
+// COMPONENT -------------------------------------------------------------------
 const Users = () => {
 	const usersPage = 10; // Number of rows per page
 	const { store, actions } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
+	const handleCloseModal = bLogout => {
+		setOnModal({ status: false, msg: "", fClose: null });
+		if (bLogout) actions.logout(); // close user session
+	};
+
+	// values when a row is in edit mode:
+	const [inEditMode, setInEditMode] = useState({ status: false, rowKey: null });
+
 	const [data, setData] = useState({
 		name: "",
 		last_name: "",
@@ -19,33 +33,51 @@ const Users = () => {
 		totalPages: 0,
 		currentPage: 0
 	});
-	// values when a row is in edit mode:
-	const [inEditMode, setInEditMode] = useState({ status: false, rowKey: null });
 
 	useEffect(() => {
 		// load number of users and first page
-		fetch(process.env.BACKEND_URL + "/api/users/count")
+		actions
+			.countUsers()
 			.then(res => res.json())
 			.then(res => {
 				data.totalPages = Math.floor(res.count / usersPage) + 1;
 				data.currentPage = 1;
 				loadData();
 			})
-			.catch(error => alert(error));
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error cargando datos de usuarios del servidor: " + error,
+					fClose: () => handleCloseModal(false)
+				});
+			});
 	}, []);
 
 	const loadData = () => {
 		// load n rows of data between data.limInf and data.limSup
-		fetch(`${process.env.BACKEND_URL}/api/users/${data.limInf}/${data.limSup}`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + store.activeUser.token
-			}
-		})
-			.then(res => res.json())
-			.then(users => setData({ ...data, users: users }))
-			.catch(error => console.log(error));
+		let status = 200;
+		actions
+			.getUsers(data.limInf, data.limSup)
+			.then(res => {
+				status = res.status;
+				return res.json();
+			})
+			.then(users => {
+				if (status >= 400)
+					setOnModal({
+						status: true,
+						msg: users["msg"],
+						fClose: () => handleCloseModal(true)
+					});
+				else setData({ ...data, users: users });
+			})
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error cargando datos de usuarios del servidor: " + error,
+					fClose: () => handleCloseModal(false)
+				});
+			});
 	};
 
 	const handleChange = e => {
@@ -78,42 +110,52 @@ const Users = () => {
 	};
 
 	const handleSave = () => {
+		let status = 200;
 		// save changes and exit from edit mode
-		fetch(process.env.BACKEND_URL + "/api/user/" + inEditMode.rowKey.toString(), {
-			method: "PUT",
-			body: JSON.stringify({
-				name: data.name,
-				last_name: data.last_name,
-				username: data.username,
-				email: data.email,
-				category: data.isAdmin
-			}),
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + store.activeUser.token
-			}
-		})
-			.then(res => res.json())
-			.then(json => {
-				handleCancel();
-				loadData();
+		actions
+			.updateUser(inEditMode.rowKey, data.name, data.last_name, data.username, data.email, data.isAdmin)
+			.then(res => {
+				status = res.status;
+				return res.json();
 			})
-			.catch(error => alert(error));
+			.then(json => {
+				if (status >= 400) setOnModal({ status: true, msg: json["msg"], fClose: () => handleCloseModal(true) });
+				else {
+					handleCancel();
+					loadData();
+				}
+			})
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error actualizando datos de usuario en el servidor: " + error,
+					fClose: () => handleCloseModal(false)
+				});
+			});
 	};
 
 	const handleDelete = item => {
+		let status = 200;
 		// delete user
 		if (confirm(`¿Eliminar usuario ${item.username}?`)) {
-			fetch(process.env.BACKEND_URL + "/api/user/" + item.id.toString(), {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + store.activeUser.token
-				}
-			})
-				.then(res => res.json())
-				.then(json => loadData())
-				.catch(error => alert(error));
+			actions
+				.deleteUser(item.id)
+				.then(res => {
+					status = res.status;
+					return res.json();
+				})
+				.then(json => {
+					if (status >= 400)
+						setOnModal({ status: true, msg: json["msg"], fClose: () => handleCloseModal(true) });
+					else loadData();
+				})
+				.catch(error => {
+					setOnModal({
+						status: true,
+						msg: "Error eliminando usuario del servidor: " + error,
+						fClose: () => handleCloseModal(false)
+					});
+				});
 		}
 	};
 
@@ -252,20 +294,31 @@ const Users = () => {
 					if (page > 0 && page <= data.totalPages) gotoPage(page);
 				}}
 			/>
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={handleCloseModal} cancelFunc={null} /> : ""}
 		</>
 	);
 };
 
+// COMPONENT -------------------------------------------------------------------
 const Films = () => {
+	const { actions } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "" });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "" });
+
 	const [data, setData] = useState({
 		films: []
 	});
 
 	useEffect(() => {
-		fetch(process.env.BACKEND_URL + "/api/films")
+		actions
+			.fetchFilms()
 			.then(res => res.json())
 			.then(films => setData({ ...data, films: films }))
-			.catch(error => alert(error));
+			.catch(error => {
+				setOnModal({ status: true, msg: "Error cargando películas del servidor: " + error });
+			});
 	}, []);
 
 	const datastyle = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
@@ -301,20 +354,30 @@ const Films = () => {
 			) : (
 				""
 			)}
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={handleCloseModal} cancelFunc={null} /> : ""}
 		</>
 	);
 };
 
+// COMPONENT -----------------------------------------------------------------------
 const Places = () => {
-	const { store, actions } = useContext(Context);
+	const { actions } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "" });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "" });
+
 	const [data, setData] = useState({
 		places: []
 	});
 	useEffect(() => {
-		fetch(process.env.BACKEND_URL + "/api/places")
+		actions
+			.getPlaces()
 			.then(res => res.json())
 			.then(places => setData({ ...data, places: places }))
-			.catch(error => console.log(error));
+			.catch(error => {
+				setOnModal({ status: true, msg: "Error cargando sitios del servidor: " + error });
+			});
 	}, []);
 
 	const datastyle = { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" };
@@ -359,19 +422,40 @@ const Places = () => {
 			) : (
 				""
 			)}
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={handleCloseModal} cancelFunc={null} /> : ""}
 		</>
 	);
 };
 
+// COMPONENT ----------------------------------------------------------------------
 export const Admin = () => {
-	const { store, actions } = useContext(Context);
-	const [data, setData] = useState({
-		tableSelected: 0 // 0 - none, 1 - users, 2 - films, 3 - places, 7 - download, 8 - load file
+	const { actions } = useContext(Context);
+
+	// variable to show modal messages and functions to close and cancel modal.
+	const [onModal, setOnModal] = useState({
+		status: false,
+		msg: "",
+		fClose: null,
+		fCancel: null
 	});
-	let history = useHistory();
+	const handleCloseModal = bLogout => {
+		setOnModal({
+			status: false,
+			msg: "",
+			fClose: null,
+			fCancel: null
+		});
+		if (bLogout) actions.logout();
+	};
+
+	const [data, setData] = useState({ opcMenu: 0 });
+	// 0 - main page, 1 - users, 2 - films, 3 - places, 7 - download, 8 - load file
 
 	useEffect(() => {
-		// test token validity
+		testToken();
+	}, []);
+
+	const testToken = () => {
 		let status = 200;
 		actions
 			.getUser()
@@ -380,43 +464,58 @@ export const Admin = () => {
 				return res.json();
 			})
 			.then(responseUser => {
-				if (status >= 400) {
-					alert(responseUser["msg"]);
-					actions.logout();
-					// history.push({ pathname: "/" });
-				}
+				if (status >= 400)
+					setOnModal({
+						status: true,
+						msg: responseUser["msg"],
+						fClose: () => handleCloseModal(true),
+						fCancel: null
+					});
 			})
 			.catch(error => {
-				alert("Error: " + error);
-				actions.logout();
+				setOnModal({
+					status: true,
+					msg: "Error al cargar datos de usuario: " + error,
+					fClose: () => handleCloseModal(true),
+					fCancel: null
+				});
 			});
-	}, []);
+	};
 
 	const downloadData = () => {
-		if (confirm("¿Descargar datos?")) {
-			fetch(process.env.BACKEND_URL + "/api/backup", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: "Bearer " + store.activeUser.token
-				}
+		let status = 200;
+		actions
+			.getAllData()
+			.then(resp => {
+				status = resp.status;
+				return resp.json();
 			})
-				.then(resp => resp.json())
-				.then(data => {
+			.then(data => {
+				if (status >= 400)
+					setOnModal({ status: true, msg: data["msg"], fClose: () => handleCloseModal(true), fCancel: null });
+				else {
 					const bblob = new Blob([JSON.stringify(data)]);
 					let pp = document.createElement("a");
 					pp.setAttribute("href", URL.createObjectURL(bblob));
 					pp.setAttribute("download", "data.json");
 					pp.click();
-				})
-				.catch(error => console.log("Error loading data from backend", error));
-		}
+					handleCloseModal(false);
+				}
+			})
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error cargando datos del servidor: " + error,
+					fClose: () => handleCloseModal(false),
+					fCancel: null
+				});
+			});
 	};
 
 	return (
 		<div className="container-fluid">
-			<div className="row flex-nowrap">
-				<div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+			<div className="row">
+				<div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" style={{ position: "fixed" }}>
 					<div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100 fs-5">
 						<div className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none text-white">
 							<span className="fs-4 d-none d-sm-inline">Menu</span>
@@ -429,7 +528,10 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 0 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 0 });
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Inicio</span>
 								</a>
@@ -438,7 +540,10 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 1 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 1 });
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Usuarios</span>
 								</a>
@@ -447,7 +552,10 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 2 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 2 });
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Películas</span>
 								</a>
@@ -456,7 +564,10 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 3 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 3 });
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Sitios</span>
 								</a>
@@ -465,7 +576,16 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 7 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 7 });
+										setOnModal({
+											status: true,
+											msg: "¿Descargar datos?",
+											fClose: downloadData,
+											fCancel: () => handleCloseModal(false)
+										});
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Descargar datos</span>
 								</a>
@@ -474,7 +594,10 @@ export const Admin = () => {
 								<a
 									href="#"
 									className="nav-link align-middle px-0 text-white"
-									onClick={() => setData({ tableSelected: 8 })}>
+									onClick={() => {
+										testToken();
+										setData({ opcMenu: 8 });
+									}}>
 									<i className="fs-4 bi-house" />{" "}
 									<span className="ms-1 d-none d-sm-inline">Cargar datos</span>
 								</a>
@@ -502,55 +625,99 @@ export const Admin = () => {
 					</div>
 				</div>
 
-				<div className="col py-3">
-					{data.tableSelected == 1 ? (
+				<div className="col py-3 offset-md-3 offset-xl-2">
+					{data.opcMenu == 1 ? (
 						<Users params={{ rows: ["id", "name", "lastName"] }} />
-					) : data.tableSelected == 2 ? (
+					) : data.opcMenu == 2 ? (
 						<Films />
-					) : data.tableSelected == 3 ? (
+					) : data.opcMenu == 3 ? (
 						<Places />
-					) : data.tableSelected == 7 ? (
-						downloadData()
-					) : data.tableSelected == 8 ? (
-						<LoadFile />
+					) : data.opcMenu == 8 ? (
+						<LoadFile fExit={() => setData({ opcMenu: 0 })} />
 					) : (
 						""
 					)}
 				</div>
 			</div>
+			{onModal.status ? (
+				<ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={onModal.fCancel} />
+			) : (
+				""
+			)}
 		</div>
 	);
 };
 
-const LoadFile = () => {
-	const { store, actions } = useContext(Context);
+// COMPONENT ---------------------------------------------------------------------
+const LoadFile = props => {
+	const { actions } = useContext(Context);
+
+	const [onModal, setOnModal] = useState({
+		status: false,
+		msg: "",
+		fClose: null,
+		fCancel: null
+	});
+	const handleCloseModal = (bLogout, bExit) => {
+		setOnModal({
+			status: false,
+			msg: "",
+			fClose: null,
+			fCancel: null
+		});
+		if (bLogout) actions.logout();
+		if (bExit) props.fExit();
+	};
 
 	const readFile = async e => {
 		let file = e.target.files[0];
+		setOnModal({
+			status: true,
+			msg: "Todos los datos anteriores serán eliminados. ¿Cargar nuevos datos?",
+			fClose: loadJsonFile, // load the file
+			fCancel: () => handleCloseModal(false, true)
+		});
 
-		if (confirm("Todos los datos anteriores serán eliminados. ¿Cargar nuevos datos?")) {
-			// Load json file
+		function loadJsonFile() {
 			let myfile = new FileReader();
 			myfile.onload = function(e) {
 				let content = e.target.result;
-				fetch(process.env.BACKEND_URL + "/api/backup", {
-					method: "POST",
-					body: content,
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + store.activeUser.token
-					}
-				})
+				actions
+					.setAllData(content)
 					.then(resp => resp.json())
-					.then(data => {
-						alert(data["msg"]);
-						actions.logout();
-					})
-					.catch(error => console.log("Error writing data on backend", error));
+					.then(data =>
+						setOnModal({
+							status: true,
+							msg: data["msg"],
+							fClose: () => handleCloseModal(true, false),
+							fCancel: null
+						})
+					)
+					.catch(error =>
+						setOnModal({
+							status: true,
+							msg: "Error escribiendo datos en el servidor: " + error,
+							fClose: () => handleCloseModal(true, false),
+							fCancel: null
+						})
+					);
 			};
 			myfile.readAsText(file);
 		}
 	};
 
-	return <input type="file" id="file-input" onChange={readFile} />;
+	return (
+		<>
+			<input type="file" id="file-input" onChange={readFile} />
+			{onModal.status ? (
+				<ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={onModal.fCancel} />
+			) : (
+				""
+			)}
+		</>
+	);
+};
+
+LoadFile.protoTypes = {
+	fExit: PropTypes.func
 };
