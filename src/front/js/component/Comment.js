@@ -1,12 +1,12 @@
-import CommentForm from "./CommentForm";
 import React from "react";
-import ReactDOM from "react-dom";
+import CommentForm from "./CommentForm";
 import PropTypes from "prop-types";
 import profileImgUrl from "../../img/profile.png";
 
 const Comment = ({
 	comment,
 	replies,
+	getReplies,
 	setActiveComment,
 	activeComment,
 	updateComment,
@@ -44,9 +44,7 @@ const Comment = ({
 						hasCancelButton
 						initialText={comment.body}
 						handleSubmit={text => updateComment(text, comment.id)}
-						handleCancel={() => {
-							setActiveComment(null);
-						}}
+						handleCancel={() => setActiveComment(null)}
 					/>
 				)}
 				<div className="comment-actions">
@@ -75,7 +73,9 @@ const Comment = ({
 						</div>
 					)}
 				</div>
-				{isReplying && <CommentForm submitLabel="Responder" handleSubmit={text => addComment(text, replyId)} />}
+				{isReplying && (
+					<CommentForm submitLabel="Responder" handleSubmit={text => addComment(text, comment.id)} />
+				)}
 				{replies.length > 0 && (
 					<div className="replies">
 						{replies.map(reply => (
@@ -88,7 +88,8 @@ const Comment = ({
 								deleteComment={deleteComment}
 								addComment={addComment}
 								parentId={comment.id}
-								replies={[]}
+								replies={getReplies(reply.id)}
+								getReplies={getReplies}
 								currentUserId={currentUserId}
 							/>
 						))}
@@ -102,13 +103,14 @@ const Comment = ({
 export default Comment;
 
 Comment.propTypes = {
-	comment: PropTypes.string,
-	replies: PropTypes.string,
-	setActiveComment: PropTypes.string,
-	updateComment: PropTypes.string,
-	deleteComment: PropTypes.string,
-	addComment: PropTypes.string,
-	parentId: PropTypes.string,
-	currentUserId: PropTypes.string,
-	activeComment: PropTypes.string
+	comment: PropTypes.object,
+	replies: PropTypes.array,
+	getReplies: PropTypes.func,
+	setActiveComment: PropTypes.func,
+	updateComment: PropTypes.func,
+	deleteComment: PropTypes.func,
+	addComment: PropTypes.func,
+	parentId: PropTypes.number,
+	currentUserId: PropTypes.number,
+	activeComment: PropTypes.object
 };

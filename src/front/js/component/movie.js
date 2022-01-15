@@ -39,7 +39,7 @@ export const Movie = props => {
 };
 
 Movie.propTypes = {
-	id: PropTypes.string,
+	id: PropTypes.number,
 	place: PropTypes.string,
 	country: PropTypes.string,
 	urlPhoto: PropTypes.string,

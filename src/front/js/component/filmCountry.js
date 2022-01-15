@@ -1,11 +1,8 @@
-import React, { useContext } from "react";
-import { Context } from "../store/appContext";
+import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 export const FilmCountry = props => {
-	const { store, actions } = useContext(Context);
-
 	return (
 		<div className="design-card border border bg-dark">
 			<img
@@ -30,7 +27,7 @@ export const FilmCountry = props => {
 };
 
 FilmCountry.propTypes = {
-	id: PropTypes.string,
+	id: PropTypes.number,
 	filmPhoto: PropTypes.string,
 	movie: PropTypes.string
 };

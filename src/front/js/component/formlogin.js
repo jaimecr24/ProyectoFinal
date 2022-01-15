@@ -69,7 +69,7 @@ export const FormLogin = () => {
 										category: json.category,
 										listFav: myfav.items.map(e => e.id) // only the id of the favorite place.
 									});
-									history.goBack();
+									history.push({ pathname: "/" }); // Go to home.
 								});
 						}
 					})
