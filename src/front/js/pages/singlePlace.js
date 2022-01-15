@@ -153,17 +153,7 @@ export const SinglePlace = () => {
 						) : (
 							""
 						)}
-						{store.activeUser.id ? (
-							<div>
-								<Comments
-									commentsUrl="http://localhost:3000/comments"
-									currentUserId={store.activeUser.id}
-									place={params.theid}
-								/>
-							</div>
-						) : (
-							""
-						)}
+						{store.activeUser.id ? <Comments idPlace={parseInt(params.theid)} /> : ""}
 					</div>
 				) : (
 					""

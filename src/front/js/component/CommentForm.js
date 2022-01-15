@@ -1,6 +1,4 @@
-import { useState } from "react";
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 const CommentForm = ({ handleSubmit, submitLabel, hasCancelButton = false, handleCancel, initialText = "" }) => {
@@ -32,9 +30,9 @@ const CommentForm = ({ handleSubmit, submitLabel, hasCancelButton = false, handl
 export default CommentForm;
 
 CommentForm.propTypes = {
-	handleSubmit: PropTypes.string,
+	handleSubmit: PropTypes.func,
 	submitLabel: PropTypes.string,
-	hasCancelButton: PropTypes.string,
-	handleCancel: PropTypes.string,
+	hasCancelButton: PropTypes.bool,
+	handleCancel: PropTypes.func,
 	initialText: PropTypes.string
 };
