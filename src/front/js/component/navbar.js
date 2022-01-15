@@ -23,7 +23,6 @@ export const Navbar = () => {
 								<img src={cameraImgUrl} className="navbar-brand mx-5" style={{ width: "75px" }} />
 							</Link>
 						</li>
-
 						<li className="nav-item mx-5">
 							<Link to="/films" style={linkStyle}>
 								Películas
@@ -55,40 +54,40 @@ export const Navbar = () => {
 								aria-labelledby="dropdownMenuLink">
 								{store.activeUser.id ? (
 									<>
-										<a className="dropdown-item" href="#">
+										<div className="dropdown-item">
 											<Link to="/profile" style={linkStyle}>
 												Mi perfil
 											</Link>
-										</a>
+										</div>
 										{store.activeUser.category ? (
-											<a className="dropdown-item" href="#">
+											<div className="dropdown-item">
 												<Link to="/admin" style={linkStyle}>
 													Panel administración
 												</Link>
-											</a>
+											</div>
 										) : (
 											""
 										)}
 										<a
 											className="dropdown-item"
-											href="#"
 											style={linkStyle}
+											href="#"
 											onClick={() => actions.logout()}>
 											Cerrar sesión
 										</a>
 									</>
 								) : (
 									<>
-										<a className="dropdown-item" href="#">
+										<div className="dropdown-item">
 											<Link to="/signup" style={linkStyle}>
 												Registrarme
 											</Link>
-										</a>
-										<a className="dropdown-item" href="#">
+										</div>
+										<div className="dropdown-item">
 											<Link to="/login" style={linkStyle}>
 												Iniciar sesión
 											</Link>
-										</a>
+										</div>
 									</>
 								)}
 							</ul>

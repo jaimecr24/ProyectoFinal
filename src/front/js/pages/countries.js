@@ -1,16 +1,28 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
+import ModalMsg from "../component/modalmsg";
 
 export const Countries = () => {
-	const { store, actions } = useContext(Context);
+	const { actions } = useContext(Context);
+
+	// variable to show modal messages and function to close modal.
+	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
+	const handleCloseModal = () => setOnModal({ status: false, msg: "", fClose: null });
+
 	const [data, setData] = useState([]);
 	useEffect(() => {
 		actions
 			.fetchCountries()
 			.then(resp => resp.json())
 			.then(countries => setData(countries))
-			.catch(error => alert("Error loading message from backend: " + error));
+			.catch(error => {
+				setOnModal({
+					status: true,
+					msg: "Error cargando datos de países del servidor: " + error,
+					fClose: () => handleCloseModal(false)
+				});
+			});
 	}, []);
 	return (
 		<div className="container-fluid content-row">
@@ -50,6 +62,7 @@ export const Countries = () => {
 					</div>
 				))}
 			</div>
+			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={null} /> : ""}
 		</div>
 	);
 };
