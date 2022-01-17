@@ -218,7 +218,9 @@ const Users = () => {
 												onClick={() => {
 													setOnModal({
 														status: true,
-														msg: `¿Eliminar usuario ${e.username}?`,
+														msg: `Se borrarán todos sus datos y comentarios.\r¿Eliminar usuario ${
+															e.username
+														}?`,
 														fClose: () => handleDelete(e),
 														fCancel: () => handleCloseModal(false)
 													});
@@ -653,7 +655,7 @@ const LoadFile = props => {
 
 	return (
 		<>
-			<input type="file" id="file-input" onChange={readFile} />
+			<input type="file" id="file-input" onChange={readFile} style={{ color: "white", fontSize: "1.4rem" }} />
 			{onModal.status ? (
 				<ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={onModal.fCancel} />
 			) : (
