@@ -15,7 +15,11 @@ export const Films = () => {
 		actions
 			.fetchFilms()
 			.then(resp => resp.json())
-			.then(films => setData(films))
+			.then(films => {
+				// order films by name
+				films.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				setData(films);
+			})
 			.catch(error => {
 				setOnModal({
 					status: true,

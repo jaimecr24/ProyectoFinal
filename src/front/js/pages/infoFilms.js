@@ -36,6 +36,8 @@ export const InfoFilms = () => {
 							listIdPlaces.add(e.idPlace);
 							return !isRepeated;
 						});
+						// order by place
+						filteredData.sort((a, b) => (a.place > b.place ? 1 : b.place > a.place ? -1 : 0));
 						setScenesByFilm(filteredData);
 					})
 					.catch(error => {

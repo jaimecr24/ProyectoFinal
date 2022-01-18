@@ -26,7 +26,11 @@ export const InfoCountries = () => {
 				actions
 					.getFilmsByCountry(params.theid)
 					.then(res => res.json())
-					.then(myfilms => setData({ infoCountry: mycountry, films: myfilms }))
+					.then(myfilms => {
+						// order films by name
+						myfilms.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+						setData({ infoCountry: mycountry, films: myfilms });
+					})
 					.catch(error => {
 						setOnModal({
 							status: true,
