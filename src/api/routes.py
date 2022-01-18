@@ -172,7 +172,17 @@ def singleUser(user_id):
         db.session.commit()
         return {"msg":"user updated"}, 200
     else:
+        #Delete user
         customer = Customer.query.filter_by(idUser=user_id).first()
+        listFav = FavPlace.query.filter_by(idUser=user_id)
+        listComments = Comment.query.filter_by(idUser=user_id)
+        #First we must delete all his favorites and comments
+        #and update the countLikes of every place in favorites
+        for item in listFav:
+            place = Place.query.get(item.idPlace)
+            if place.countLikes>0: place.countLikes -= 1
+            db.session.delete(item)
+        for item in listComments: db.session.delete(item)
         db.session.delete(customer)
         db.session.delete(user)
         db.session.commit()
