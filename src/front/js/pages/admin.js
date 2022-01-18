@@ -37,11 +37,13 @@ const Users = () => {
 		// Load data of users
 		try {
 			let res = await actions.getAllUsers();
-			let resj = await res.json();
+			let users = await res.json();
 			if (res.status >= 400) {
-				setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
+				setOnModal({ status: true, msg: users["msg"], fClose: () => handleCloseModal(true) });
 			} else {
-				setData({ ...data, users: resj });
+				// order users by name
+				users.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				setData({ ...data, users: users });
 			}
 		} catch (error) {
 			setOnModal({
@@ -142,13 +144,13 @@ const Users = () => {
 							<th scope="col" width="15%">
 								email
 							</th>
-							<th scope="col" width="15%">
+							<th scope="col" width="10%">
 								username
 							</th>
 							<th scope="col" width="5%">
 								admin
 							</th>
-							<th scope="col" width="12%" />
+							<th scope="col" width="14%" />
 						</tr>
 					</thead>
 					<tbody>
@@ -218,7 +220,9 @@ const Users = () => {
 												onClick={() => {
 													setOnModal({
 														status: true,
-														msg: `¿Eliminar usuario ${e.username}?`,
+														msg: `Se borrarán todos sus datos y comentarios.\r¿Eliminar usuario ${
+															e.username
+														}?`,
 														fClose: () => handleDelete(e),
 														fCancel: () => handleCloseModal(false)
 													});
@@ -260,7 +264,11 @@ const Films = () => {
 		actions
 			.fetchFilms()
 			.then(res => res.json())
-			.then(films => setData({ ...data, films: films }))
+			.then(films => {
+				// order films by name
+				films.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				setData({ ...data, films: films });
+			})
 			.catch(error => {
 				setOnModal({ status: true, msg: "Error cargando películas del servidor: " + error });
 			});
@@ -319,7 +327,11 @@ const Places = () => {
 		actions
 			.getPlaces()
 			.then(res => res.json())
-			.then(places => setData({ ...data, places: places }))
+			.then(places => {
+				// order places by name
+				places.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				setData({ ...data, places: places });
+			})
 			.catch(error => {
 				setOnModal({ status: true, msg: "Error cargando sitios del servidor: " + error });
 			});
@@ -653,7 +665,7 @@ const LoadFile = props => {
 
 	return (
 		<>
-			<input type="file" id="file-input" onChange={readFile} />
+			<input type="file" id="file-input" onChange={readFile} style={{ color: "white", fontSize: "1.4rem" }} />
 			{onModal.status ? (
 				<ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={onModal.fCancel} />
 			) : (

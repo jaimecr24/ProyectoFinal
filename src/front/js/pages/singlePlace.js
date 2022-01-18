@@ -32,15 +32,17 @@ export const SinglePlace = () => {
 				actions
 					.getScenesByPlace(params.theid)
 					.then(res => res.json())
-					.then(myscenes =>
+					.then(myscenes => {
+						// order scenes by title of film
+						myscenes.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0));
 						// Now we set all data in variable of state.
 						setData({
 							place: myplace,
 							scenes: myscenes,
 							markerPositions: actions.getSingleMarkerPosition(myplace),
 							liked: store.activeUser.id ? store.activeUser.listFav.includes(myplace.id) : false
-						})
-					)
+						});
+					})
 					.catch(error => {
 						setOnModal({
 							status: true,

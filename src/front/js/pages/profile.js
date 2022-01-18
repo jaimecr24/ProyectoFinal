@@ -66,6 +66,8 @@ export const Profile = () => {
 		try {
 			let p = await actions.getFavPlaces();
 			let places = await p.json();
+			// order places by name
+			places.items.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 			setFav({
 				places: places.items,
 				markerPositions: actions.getMarkerPositions(places.items)

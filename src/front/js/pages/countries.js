@@ -15,7 +15,11 @@ export const Countries = () => {
 		actions
 			.fetchCountries()
 			.then(resp => resp.json())
-			.then(countries => setData(countries))
+			.then(countries => {
+				// order countries by name
+				countries.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+				setData(countries);
+			})
 			.catch(error => {
 				setOnModal({
 					status: true,
