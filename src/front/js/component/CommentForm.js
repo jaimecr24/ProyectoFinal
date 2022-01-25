@@ -13,9 +13,9 @@ const CommentForm = ({ handleSubmit, submitLabel, hasCancelButton = false, handl
 		<form onSubmit={onSubmit}>
 			<textarea className="comment-form-textarea" value={text} onChange={e => setText(e.target.value)} />
 			<button
-				className="comment-form-button"
+				className="comment-form-button btn btn-outline"
 				disabled={isTextareaDisabled}
-				style={{ backgroundColor: "#fa9f42" }}>
+				style={{ backgroundColor: "#fa9f42", borderRadius: "50px" }}>
 				{submitLabel}
 			</button>
 			{hasCancelButton && (

@@ -21,12 +21,14 @@ export const Movie = props => {
 			/>
 			<div className="card-body">
 				<h5
-					className="card-title-text"
+					className="title card-title-text"
 					style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
 					{props.place}, {props.country}
 				</h5>
 				<Link to={"/place/" + props.id}>
-					<span className="btn btn-outline">Aprender más</span>
+					<span className="btn btn-outline" style={{ borderRadius: "50px", padding: "20px, 48px" }}>
+						Aprender más
+					</span>
 				</Link>
 				{store.activeUser.id ? (
 					<span className="btn btn-outline-danger ms-1" onClick={() => handleLike(props.id)}>

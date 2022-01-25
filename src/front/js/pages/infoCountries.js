@@ -67,7 +67,7 @@ export const InfoCountries = () => {
 				style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 				{data.infoCountry ? (
 					<div>
-						<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
+						<h2 className="title text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
 							{data.infoCountry.name}
 						</h2>
 						<div className="row mx-3 px-3">
@@ -85,8 +85,8 @@ export const InfoCountries = () => {
 						</div>
 						{data.films.length > 0 ? (
 							<div className="container-fluid content-row">
-								<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
-									·Películas grabadas en este país:
+								<h5 style={{ paddingBottom: "10px", paddingTop: "40px", paddingLeft: "30px" }}>
+									Películas grabadas en este país:
 								</h5>
 								<div className="my-card-content">
 									{data.films.map((item, index) => {
