@@ -76,7 +76,7 @@ export const InfoFilms = () => {
 				style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 				{infoFilm ? (
 					<div>
-						<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
+						<h2 className="title text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
 							{infoFilm.name}
 						</h2>
 						<div className="row mx-3 px-3">
@@ -97,8 +97,8 @@ export const InfoFilms = () => {
 						</div>
 						{scenesByFilm.length > 0 ? (
 							<div className="container-fluid content-row">
-								<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
-									·Sitios donde se ha grabado esta película:
+								<h5 style={{ paddingBottom: "10px", paddingTop: "40px", paddingLeft: "30px" }}>
+									Sitios donde se ha grabado esta película:
 								</h5>
 								<div className="my-card-content">
 									{scenesByFilm.map((item, index) => (

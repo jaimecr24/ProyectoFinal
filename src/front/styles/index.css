@@ -2,7 +2,7 @@
     General Styles used on every website (Don't Repeat Yourself)
 */
 .title{
-    text-align: left;
+    font-family: 'Playfair Display SC', serif;
 }
 
 .my-card-content {
@@ -37,7 +37,7 @@
     padding: 10px;
     margin: 15px;
     justify-content: center;
-    border-radius: 15px;
+    border-radius: 5px;
 }
 
 .card-body {
@@ -66,7 +66,7 @@
 }
 
 .btn-outline { 
-    color: white;
+    color: #2b4162;
     background-color: #fa9f42; 
     border-color: #fa9f42; 
   } 
@@ -93,6 +93,7 @@
     transform: translateY(-15px); 
     
 }
+
 
 .spoiler-img {
     filter: blur(5px) saturate(800%) sepia(100%); 
