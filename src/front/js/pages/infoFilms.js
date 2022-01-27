@@ -78,18 +78,20 @@ export const InfoFilms = () => {
 
 	return (
 		<>
-			<div className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded">
+			<div
+				className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded"
+				style={{ minHeight: window.innerHeight - 175 }}>
 				{infoFilm ? (
 					<div>
 						<h2 className="color-one ms-4 ps-2 mt-2 title-one">{infoFilm.name}</h2>
 						<div className="ms-lg-4 row">
 							<img
-								className="col-lg-5 col-sm-12 mt-3 me-lg-4"
+								className="col-lg-5 col-sm-12 mt-2 me-lg-4"
 								src={infoFilm.urlPhoto}
 								style={{ height: "20rem", objectFit: "cover" }}
 							/>
 							<div className="col-lg-6 col-sm-12 mt-3">
-								<p className="color-one">
+								<p className="fs-5 color-one">
 									{infoFilm.director}, {infoFilm.year}
 								</p>
 								<p className="text-light">{infoFilm.description}</p>

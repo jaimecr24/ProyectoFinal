@@ -64,24 +64,21 @@ export const Places = () => {
 											color: "#fa9f42"
 										}}>
 										{item.name}
-										{store.activeUser.id ? (
-											<span
-												className="btn btn-outline-danger btn-sm ms-3"
-												onClick={() => handleLike(item.id)}>
-												{isLiked(item.id) ? (
-													<i className="fas fa-heart" />
-												) : (
-													<i className="far fa-heart" />
-												)}
-											</span>
-										) : null}
 									</h5>
-
 									<Link to={"/place/" + item.id}>
 										<span className="btn btn-outline btn-dark color-two fw-bold rounded-pill">
 											Aprender más
 										</span>
 									</Link>
+									{store.activeUser.id ? (
+										<span className="btn-like" onClick={() => handleLike(item.id)}>
+											{isLiked(item.id) ? (
+												<i className="fas fa-heart" />
+											) : (
+												<i className="far fa-heart" />
+											)}
+										</span>
+									) : null}
 								</div>
 							</div>
 						</div>

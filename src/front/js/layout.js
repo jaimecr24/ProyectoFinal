@@ -17,6 +17,7 @@ import { Films } from "./pages/films";
 import { InfoFilms } from "./pages/infoFilms";
 import { Countries } from "./pages/countries";
 import { InfoCountries } from "./pages/infoCountries";
+import { Footer } from "./component/footer";
 
 import { Profile } from "./pages/profile";
 import { Admin } from "./pages/admin";
@@ -81,6 +82,7 @@ const Other = () => {
 						<h1>Not found!</h1>
 					</Route>
 				</Switch>
+				<Footer />
 			</ScrollToTop>
 		</React.Fragment>
 	);

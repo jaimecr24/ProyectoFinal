@@ -90,7 +90,9 @@ export const Profile = () => {
 	window.onresize = () => setData({ ...data, mywidth: window.innerWidth });
 
 	return (
-		<div className="container bg-dark text-light mt-5 mx-auto p-0 rounded border-one">
+		<div
+			className="container bg-dark text-light mt-5 mx-auto p-0 rounded border-one"
+			style={{ minHeight: window.innerHeight - 190 }}>
 			<button
 				type="button"
 				className="btn btn-dark bg-one color-two float-end m-0 rounded"
@@ -131,7 +133,7 @@ export const Profile = () => {
 										className="col-1 my-3 btn btn-dark bg-one rounded color-two p-0"
 										style={{ width: "35px", height: "32px" }}
 										onClick={handleDelete}>
-										<i className="fa fa-trash" aria-hidden="true" />
+										<i className="fa fa-trash" aria-hidden="true" datakey={value.id} />
 									</button>
 									<img className="col-lg-3 col-sm-4" src={value.urlPhoto} />
 									<div className="col-lg-3 col-sm-4 fs-5">
