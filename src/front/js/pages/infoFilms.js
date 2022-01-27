@@ -15,6 +15,7 @@ export const InfoFilms = () => {
 	const [infoFilm, setInfoFilm] = useState(null);
 	const [scenesByFilm, setScenesByFilm] = useState([]);
 	const [markerPositions, setMarkerPositions] = useState([]);
+	const [mywidth, setMywidth] = useState(0);
 	const params = useParams();
 
 	useEffect(() => {
@@ -51,7 +52,10 @@ export const InfoFilms = () => {
 				actions
 					.getPlacesByFilm(params.theid)
 					.then(res => res.json())
-					.then(data => setMarkerPositions(actions.getMarkerPositions(data)))
+					.then(data => {
+						setMarkerPositions(actions.getMarkerPositions(data));
+						setMywidth(window.innerWidth);
+					})
 					.catch(error => {
 						setOnModal({
 							status: true,
@@ -69,37 +73,33 @@ export const InfoFilms = () => {
 			});
 	}, []);
 
+	// Set the atribute mywidth, to adjust size of map.
+	window.onresize = () => setMywidth(window.innerWidth);
+
 	return (
 		<>
 			<div
-				className="container mt-3 mx-auto bg-dark p-3 card rounded"
-				style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
+				className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded"
+				style={{ minHeight: window.innerHeight - 175 }}>
 				{infoFilm ? (
 					<div>
-						<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
-							{infoFilm.name}
-						</h2>
-						<div className="row mx-3 px-3">
-							<div className="row col-5 me-5">
-								<img
-									className="rounded row"
-									src={infoFilm.urlPhoto}
-									alt="..."
-									style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
-								/>
-							</div>
-							<div className="col-6">
-								<p style={{ color: "#fa9f42" }}>
+						<h2 className="color-one ms-4 ps-2 mt-2 title-one">{infoFilm.name}</h2>
+						<div className="ms-lg-4 row">
+							<img
+								className="col-lg-5 col-sm-12 mt-2 me-lg-4"
+								src={infoFilm.urlPhoto}
+								style={{ height: "20rem", objectFit: "cover" }}
+							/>
+							<div className="col-lg-6 col-sm-12 mt-3">
+								<p className="fs-5 color-one">
 									{infoFilm.director}, {infoFilm.year}
 								</p>
-								<p className="text-white">{infoFilm.description}</p>
+								<p className="text-light">{infoFilm.description}</p>
 							</div>
 						</div>
 						{scenesByFilm.length > 0 ? (
-							<div className="container-fluid content-row">
-								<h5 style={{ paddingBottom: "10px", paddingTop: "30px" }}>
-									·Sitios donde se ha grabado esta película:
-								</h5>
+							<div className="container-fluid mt-5">
+								<h5 className="ms-4 title-one">Sitios donde se ha grabado esta película:</h5>
 								<div className="my-card-content">
 									{scenesByFilm.map((item, index) => (
 										<div
@@ -125,21 +125,20 @@ export const InfoFilms = () => {
 							</div>
 						) : null}
 						{markerPositions.length > 0 ? (
-							<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
-								<h5>Encuentra todos los sitios en los que se ha rodado {infoFilm.name}:</h5>
-
-								<div className="row">
-									<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-										<Map
-											markers={markerPositions}
-											zoom={2}
-											width="800"
-											height="500"
-											center={{ lat: 40.416775, lng: 3.70379 }}
-										/>
-									</div>
+							<>
+								<h5 className="mt-5 mb-4 ms-5 title-one">
+									Encuentra todos los sitios en los que se ha rodado {infoFilm.name}:
+								</h5>
+								<div className="my-3 d-flex justify-content-center">
+									<Map
+										markers={markerPositions}
+										zoom={2}
+										width={Math.floor(mywidth * 0.58).toString()}
+										height={Math.floor(mywidth * 0.3).toString()}
+										center={{ lat: 40.416775, lng: 3.70379 }}
+									/>
 								</div>
-							</div>
+							</>
 						) : (
 							""
 						)}

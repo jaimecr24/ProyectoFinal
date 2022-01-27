@@ -5,40 +5,45 @@ import cameraImgUrl from "../../img/camera.png";
 import profileImgUrl from "../../img/profile.png";
 import "../../styles/home.css";
 
-const linkStyle = { textDecoration: "none", color: "#e0e0e2" };
+const linkStyle = { textDecoration: "none", color: "#F6F6F6" };
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<nav className="navbar navbar-expand-lg navbar-dark fs-3 bg-transparent">
-			<div className="container">
-				<div
-					className="collapse navbar-collapse"
-					id="navDropdown"
-					style={{ fontFamily: "Playfair Display SC" }}>
-					<ul className="navbar-nav mx-auto align-items-center">
-						<li className="nav-item me-5">
-							<Link to="/">
-								<img src={cameraImgUrl} className="navbar-brand mx-5" style={{ width: "75px" }} />
-							</Link>
-						</li>
-						<li className="nav-item mx-5">
+		<nav className="navbar navbar-expand-xl navbar-dark fs-3 ms-auto bg-transparent">
+			<div className="container px-5">
+				<Link to="/" className="navbar-brand ms-1">
+					<img src={cameraImgUrl} style={{ width: "75px" }} />
+				</Link>
+				<button
+					className="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navDropDown"
+					aria-controls="navDropDown"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span className="navbar-toggler-icon" />
+				</button>
+				<div className="collapse navbar-collapse" id="navDropDown">
+					<ul className="navbar-nav w-100 me-5 pe-5 align-items-center title-one">
+						<li className="nav-item ms-auto">
 							<Link to="/films" style={linkStyle}>
 								Películas
 							</Link>
 						</li>
-						<li className="nav-item mx-5">
+						<li className="nav-item ms-auto">
 							<Link to="/countries" style={linkStyle}>
 								Países
 							</Link>
 						</li>
-						<li className="nav-item mx-5">
+						<li className="nav-item ms-auto">
 							<Link to="/places" style={linkStyle}>
 								Sitios
 							</Link>
 						</li>
-						<li className="nav-item ms-5 dropdown">
+						<li className="nav-item ms-auto dropdown">
 							<a
 								className="nav-link dropdown-toggle"
 								href="#"

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 export const FilmCountry = props => {
 	return (
-		<div className="design-card border border bg-dark">
+		<div className="design-card border bg-dark">
 			<img
 				src={props.filmPhoto}
 				className="characters card-img-top mx-auto"
@@ -19,7 +19,9 @@ export const FilmCountry = props => {
 				</h5>
 
 				<Link to={"/infofilms/" + props.id}>
-					<span className="btn btn-outline">Aprender más</span>
+					<button type="button" className="btn-link">
+						Aprender más
+					</button>
 				</Link>
 			</div>
 		</div>

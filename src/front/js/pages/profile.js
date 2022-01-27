@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/modal.css";
-import usericon from "../../img/users.png";
 import Map from "../component/map.js";
 import ModalMsg from "../component/modalmsg";
 
@@ -11,9 +10,13 @@ export const Profile = () => {
 
 	// variable to show modal messages and function to close modal.
 	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
-	const handleCloseModal = () => setOnModal({ status: false, msg: "", fClose: null });
+	const handleCloseModal = bLogout => {
+		setOnModal({ status: false, msg: "", fClose: null, fCancel: null });
+		if (bLogout) actions.logout(); // close user session
+	};
 
 	const [data, setData] = useState({
+		mywidth: 0,
 		name: "",
 		lastName: "",
 		username: "",
@@ -25,20 +28,12 @@ export const Profile = () => {
 
 	let history = useHistory();
 	const linkStyle = { color: "white" };
-	const dataStyle = {
-		height: "20px",
-		background: "rgba(255, 255, 255, 0.9)",
-		color: "black",
-		padding: "5px",
-		borderRadius: "5px"
-	};
 
 	useEffect(() => {
-		loadUser();
-		loadPlaces();
+		loadData();
 	}, []);
 
-	const loadUser = async () => {
+	const loadData = async () => {
 		try {
 			let res = await actions.getUser(); // Get data of current user
 			let resj = await res.json();
@@ -46,12 +41,14 @@ export const Profile = () => {
 				setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
 			} else {
 				setData({
+					mywidth: window.innerWidth,
 					name: resj.name,
 					lastName: resj.last_name,
 					username: resj.username,
 					email: resj.email,
 					lastTime: new Date(store.activeUser.lastTime).toLocaleString()
 				});
+				loadPlaces();
 			}
 		} catch (error) {
 			setOnModal({
@@ -67,7 +64,7 @@ export const Profile = () => {
 			let p = await actions.getFavPlaces();
 			let places = await p.json();
 			// order places by name
-			places.items.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+			if (places.items) places.items.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 			setFav({
 				places: places.items,
 				markerPositions: actions.getMarkerPositions(places.items)
@@ -89,98 +86,82 @@ export const Profile = () => {
 		loadPlaces();
 	};
 
+	// Set the atribute mywidth, to adjust size of map.
+	window.onresize = () => setData({ ...data, mywidth: window.innerWidth });
+
 	return (
-		<div className="container bg-dark text-white mt-4 mx-auto p-0" style={{ border: "1px solid #fa9f42" }}>
+		<div
+			className="container bg-dark text-light mt-5 mx-auto p-0 rounded border-one"
+			style={{ minHeight: window.innerHeight - 190 }}>
 			<button
 				type="button"
-				className="btn btn-warning float-end m-0 rounded-0 profile"
+				className="btn btn-dark bg-one color-two float-end m-0 rounded"
 				onClick={() => history.goBack()}>
 				X
 			</button>
-			<div className="fs-2 ps-4 mt-5">
-				<span>{`Bienvenido, ${data.username}`}</span>
-			</div>
-			<div className="row">
-				<div className="col-5 offset-1">
-					<div className="mt-4">
-						<div className="fs-3 border-bottom border-light pb-1">Tus datos</div>
-						<div className="mt-3 fs-5">
-							<span className="me-3">Nombre:</span>
-							<span className="profile ms-5" style={dataStyle}>
-								{data.name}
-							</span>
-						</div>
-						<div className="mt-2 fs-5">
-							<span className="me-3">Apellidos:</span>
-							<span className="profile ms-4" style={dataStyle}>
-								{data.lastName}
-							</span>
-						</div>
-						<div className="mt-2 fs-5">
-							<span className="me-4">E-mail:</span>
-							<span className="profile ms-5" style={dataStyle}>
-								{data.email}
-							</span>
-						</div>
-						<div className="mt-2 fs-5">
-							Última visita:{" "}
-							<span className="profile" style={dataStyle}>
-								{data.lastTime}
-							</span>
-						</div>
-					</div>
+			<div className="fs-2 ps-4 mt-4">{`Bienvenido, ${data.username}`}</div>
+			<div className="fs-5 mt-3 ms-5 ms-xs-3">
+				<div className="row">
+					<div className="mt-2 col-lg-2 col-sm-4">Nombre:</div>
+					<div className="mt-2 col-lg-4 col-sm-auto bg-light p-1 color-two rounded">{data.name}</div>
 				</div>
-				<div className="col-5 mt-5 align-items-center" align="center">
-					<img src={usericon} width="180px" />
+				<div className="row">
+					<div className="mt-2 col-lg-2 col-sm-4">Apellidos:</div>
+					<div className="mt-2 col-lg-4 col-sm-auto bg-light p-1 color-two rounded">{data.lastName}</div>
+				</div>
+				<div className="row">
+					<div className="mt-2 col-lg-2 col-sm-4">E-mail:</div>
+					<div className="mt-2 col-lg-4 col-sm-auto bg-light p-1 color-two rounded">{data.email}</div>
+				</div>
+				<div className="row">
+					<div className="mt-2 col-lg-2 col-sm-4">Última visita:</div>
+					<div className="mt-2 col-lg-4 col-sm-auto bg-light p-1 color-two rounded">{data.lastTime}</div>
 				</div>
 			</div>
-
-			<div className="py-5">
-				<div className="fs-3 col-5 offset-1">Tus lugares favoritos:</div>
-				<div className="row mt-2">
-					<div className="col-10 offset-1" id="favList">
-						{fav.places.length > 0
-							? fav.places.map(value => (
-									<div
-										key={value.id}
+			<div className="fs-3 col-5 pt-5 ms-5">Tus lugares favoritos:</div>
+			<div className="mx-5 mt-2 row">
+				<div className="col-12" id="favList">
+					{fav.places.length > 0
+						? fav.places.map(value => (
+								<div
+									key={value.id}
+									datakey={value.id}
+									className="row border-top border-light py-2 align-items-center">
+									<button
+										type="button"
 										datakey={value.id}
-										className="row border-top border-light py-1 align-items-center">
-										<button
-											datakey={value.id}
-											className="col-1 bg-danger text-white fs-5 p-0"
-											style={{ width: "35px", height: "32px" }}
-											onClick={handleDelete}>
-											X
-										</button>
-										<img className="col-3" src={value.urlPhoto} />
-										<div className="col-3 fs-5">
-											<Link to={"/place/" + value.id} style={linkStyle}>
-												{value.name}
-											</Link>
-											{" (" + value.countryName + ")"}
-										</div>
-										<div className="col profile">{value.description}</div>
+										className="col-1 my-3 btn btn-dark bg-one rounded color-two p-0"
+										style={{ width: "35px", height: "32px" }}
+										onClick={handleDelete}>
+										<i className="fa fa-trash" aria-hidden="true" datakey={value.id} />
+									</button>
+									<img className="col-lg-3 col-sm-4" src={value.urlPhoto} />
+									<div className="col-lg-3 col-sm-4 fs-5">
+										<Link to={"/place/" + value.id} style={linkStyle}>
+											{value.name}
+										</Link>
+										{" (" + value.countryName + ")"}
 									</div>
-							  ))
-							: ""}
+									<div className="col">{value.description}</div>
+								</div>
+						  ))
+						: ""}
+				</div>
+			</div>
+			{fav.markerPositions.length > 0 ? (
+				<div className="mx-auto mt-5 pt-3 mb-5">
+					<h3 className="text-light title-one text-center">Encuentra todos tus sitios favoritos:</h3>
+					<div className="card rounded mb-3 mx-auto" style={{ width: "max-content" }}>
+						<Map
+							markers={fav.markerPositions}
+							zoom={2}
+							width={Math.floor(data.mywidth * 0.58)}
+							height={Math.floor(data.mywidth * 0.3)}
+							center={{ lat: 40.416775, lng: 3.70379 }}
+						/>
 					</div>
 				</div>
-
-				{fav.markerPositions.length > 0 ? (
-					<div className="mt-5">
-						<h3 className="text-light text-center">Encuentra todos tus sitios favoritos:</h3>
-						<div className="mt-5 bg-danger mx-auto" style={{ width: "900px" }}>
-							<Map
-								markers={fav.markerPositions}
-								zoom={2}
-								width="900"
-								height="600"
-								center={{ lat: 40.416775, lng: 3.70379 }}
-							/>
-						</div>
-					</div>
-				) : null}
-			</div>
+			) : null}
 			{onModal.status ? <ModalMsg msg={onModal.msg} closeFunc={onModal.fClose} cancelFunc={null} /> : ""}
 		</div>
 	);

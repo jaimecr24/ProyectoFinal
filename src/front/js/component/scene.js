@@ -9,11 +9,9 @@ export const Scene = props => {
 	};
 
 	return (
-		<div className="infocards-scene design-card border border bg-dark p-3  mb-5 mx-auto" style={{ width: "45%" }}>
+		<div className="infocards-scene design-card border bg-dark p-3  mb-5 mx-auto" style={{ width: "45%" }}>
 			<Link to={"/infofilms/" + props.id} style={{ textDecoration: "none" }}>
-				<h5 className="card-title" style={{ color: "#fa9f42" }}>
-					{props.title}
-				</h5>
+				<h5 className="card-title color-one title-one">{props.title}</h5>
 			</Link>
 			{spoiler ? (
 				<div className="btn" onClick={seeSpoiler}>
@@ -42,7 +40,7 @@ export const Scene = props => {
 						style={{ height: "270px", width: "90%", objectFit: "cover" }}
 					/>
 
-					<div className="card-body mx-auto text-white">
+					<div className="card-body mx-auto text-light">
 						<div style={{ fontSize: "16px" }}>
 							<div>{props.description}</div>
 						</div>
