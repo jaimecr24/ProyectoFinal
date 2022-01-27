@@ -68,7 +68,9 @@ export const InfoCountries = () => {
 
 	return (
 		<>
-			<div className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded">
+			<div
+				className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded"
+				style={{ minHeight: window.innerHeight - 175 }}>
 				{data.infoCountry ? (
 					<div>
 						<h2 className="color-one ms-4 ps-2 mt-2 title-one">{data.infoCountry.name}</h2>

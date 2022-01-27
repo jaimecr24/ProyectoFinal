@@ -104,15 +104,12 @@ export const SinglePlace = () => {
 
 	return (
 		<>
-			<div className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded">
+			<div
+				className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded"
+				style={{ minHeight: window.innerHeight - 175 }}>
 				{data.place ? (
 					<div>
-						<h2 className="color-one ms-4 ps-2 mt-2 title-one">
-							{data.place.name}
-							<Link to={"/infocountries/" + data.place.idCountry} style={{ textDecoration: "none" }}>
-								<p className="color-one fs-4">{data.place.countryName}</p>
-							</Link>
-						</h2>
+						<h2 className="color-one ms-4 ps-2 mt-2 title-one">{data.place.name}</h2>
 						<div className="mx-auto ms-lg-4 row">
 							<div className="col-lg-5 col-sm-12 mt-2 me-lg-4">
 								<img
@@ -136,6 +133,9 @@ export const SinglePlace = () => {
 								</div>
 							</div>
 							<div className="col-lg-6 col-sm-12 mt-3">
+								<Link to={"/infocountries/" + data.place.idCountry} style={{ textDecoration: "none" }}>
+									<p className="color-one fs-4">{data.place.countryName}</p>
+								</Link>
 								<p className="text-light">{data.place.description}</p>
 							</div>
 						</div>
