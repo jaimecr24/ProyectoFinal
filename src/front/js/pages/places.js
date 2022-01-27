@@ -36,10 +36,10 @@ export const Places = () => {
 	};
 
 	return (
-		<div className="container-fluid content-row">
+		<div className="container-fluid content-row title-one">
 			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
 				<h1 style={{ color: "#fa9f42" }}>Sitios de rodaje</h1>
-				<span style={{ color: "white" }}>Descubre nuestro listado de lugares de rodaje!</span>
+				<h5 style={{ color: "white" }}>Descubre nuestro listado de lugares de rodaje!</h5>
 			</div>
 			<div className="my-card-content">
 				{places.map((item, index) => {
@@ -64,22 +64,24 @@ export const Places = () => {
 											color: "#fa9f42"
 										}}>
 										{item.name}
+										{store.activeUser.id ? (
+											<span
+												className="btn btn-outline-danger btn-sm ms-3"
+												onClick={() => handleLike(item.id)}>
+												{isLiked(item.id) ? (
+													<i className="fas fa-heart" />
+												) : (
+													<i className="far fa-heart" />
+												)}
+											</span>
+										) : null}
 									</h5>
 
 									<Link to={"/place/" + item.id}>
-										<span className="btn btn-outline">Aprender más</span>
-									</Link>
-									{store.activeUser.id ? (
-										<span
-											className="btn btn-outline-danger ms-1"
-											onClick={() => handleLike(item.id)}>
-											{isLiked(item.id) ? (
-												<i className="fas fa-heart" />
-											) : (
-												<i className="far fa-heart" />
-											)}
+										<span className="btn btn-outline btn-dark color-two fw-bold rounded-pill">
+											Aprender más
 										</span>
-									) : null}
+									</Link>
 								</div>
 							</div>
 						</div>
