@@ -84,7 +84,7 @@ export const SinglePlace = () => {
 				style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
 				{data.place ? (
 					<div>
-						<h2 className="title text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
+						<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
 							{data.place.name}
 						</h2>
 						<div className="row mx-3 px-3">

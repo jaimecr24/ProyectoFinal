@@ -30,10 +30,8 @@ export const Countries = () => {
 	}, []);
 	return (
 		<div className="container-fluid content-row">
-			<div style={{ textAlign: "center", paddingBottom: "5px" }}>
-				<h1 className="title" style={{ color: "#fa9f42" }}>
-					Países
-				</h1>
+			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
+				<h1 style={{ color: "#fa9f42" }}>Países</h1>
 				<span style={{ color: "white" }}>Descubre nuestro listado de países!</span>
 			</div>
 			<div className="my-card-content">
@@ -51,7 +49,7 @@ export const Countries = () => {
 							/>
 							<div className="card-body">
 								<h5
-									className="title card-title card-title-text"
+									className="card-title card-title-text"
 									style={{
 										textAlign: "center",
 										paddingBottom: "40px",
@@ -61,9 +59,7 @@ export const Countries = () => {
 								</h5>
 
 								<Link to={"/infocountries/" + item.id}>
-									<span className="btn btn-outline" style={{ borderRadius: "50px" }}>
-										Aprender más
-									</span>
+									<span className="btn btn-outline">Aprender más</span>
 								</Link>
 							</div>
 						</div>
