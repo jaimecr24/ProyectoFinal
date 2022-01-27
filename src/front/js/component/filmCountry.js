@@ -13,15 +13,13 @@ export const FilmCountry = props => {
 			/>
 			<div className="card-body">
 				<h5
-					className="title card-title-text"
+					className="card-title-text"
 					style={{ textAlign: "center", paddingBottom: "40px", color: "#fa9f42" }}>
 					{props.movie}
 				</h5>
 
 				<Link to={"/infofilms/" + props.id}>
-					<span className="btn btn-outline" style={{ borderRadius: "50px", padding: "20px, 48px" }}>
-						Aprender más
-					</span>
+					<span className="btn btn-outline">Aprender más</span>
 				</Link>
 			</div>
 		</div>

@@ -87,44 +87,24 @@ export const Home = () => {
 	};
 
 	return (
-		<div className="text-center mt-4 ">
-			<h1
-				className=""
-				style={{
-					fontFamily: "IM Fell Great Primer SC",
-					fontSize: "100px",
-					color: "#fa9f42",
-					paddingTop: "100px"
-				}}>
+		<div className="text-center mt-4">
+			<h1 className="" style={{ fontFamily: "IM Fell Great Primer SC", fontSize: "55px", color: "#fa9f42" }}>
 				MovTour
 			</h1>
-			<h5 className="text-white" style={{ fontFamily: "Playfair Display SC" }}>
+			<h4 className="text-white" style={{ fontFamily: "IM Fell Great Primer SC" }}>
 				“The world isnt in your books and maps, it is out there.” ― The Hobbit, J.R.R. Tolkien
-			</h5>
-			<form
-				className="d-flex justify-content-center my-4"
-				onSubmit={handleSearch}
-				style={{ paddingTop: "70px", borderRadius: "50px", paddingBottom: "40px" }}>
+			</h4>
+			<form className="d-flex justify-content-center my-4" onSubmit={handleSearch}>
 				<input
 					id="mySearch"
 					type="search"
 					list="suggestions"
-					className="form-control fs-4"
+					className="form-control rounded fs-4"
 					placeholder="Buscar un lugar"
 					onChange={handleChange}
-					style={{ padding: "20px, 48px", width: "60rem", borderRadius: "50px" }}
+					style={{ width: "40rem" }}
 				/>
-				<button
-					type="submit"
-					className="btn btn-outline"
-					onSubmit={handleSearch}
-					style={{
-						width: "10rem",
-						padding: "20px, 48px",
-						borderRadius: "50px",
-						background: "#fa9f42",
-						marginLeft: "5px"
-					}}>
+				<button type="submit" className="btn btn-dark" onSubmit={handleSearch} style={{ width: "10rem" }}>
 					Buscar
 				</button>
 				<datalist id="suggestions">
@@ -149,7 +129,7 @@ export const Home = () => {
 							/>
 							<div className="card-body bg-dark">
 								<h5
-									className="title card-title"
+									className="card-title"
 									style={{
 										textAlign: "center",
 										paddingBottom: "25px",
@@ -159,11 +139,7 @@ export const Home = () => {
 								</h5>
 
 								<Link to={"/place/" + data.place.id}>
-									<span
-										className="btn btn-outline"
-										style={{ borderRadius: "50px", padding: "20px, 48px" }}>
-										Aprender más
-									</span>
+									<span className="btn btn-outline">Aprender más</span>
 								</Link>
 								{store.activeUser.id ? (
 									<span
@@ -193,7 +169,7 @@ export const Home = () => {
 							/>
 							<div className="card-body bg-dark">
 								<h5
-									className="title card-title"
+									className="card-title"
 									style={{
 										textAlign: "center",
 										paddingBottom: "25px",
@@ -203,11 +179,7 @@ export const Home = () => {
 								</h5>
 
 								<Link to={"/infofilms/" + data.film.id}>
-									<span
-										className="btn btn-outline"
-										style={{ borderRadius: "50px", padding: "20px, 48px" }}>
-										Aprender más
-									</span>
+									<span className="btn btn-outline">Aprender más</span>
 								</Link>
 							</div>
 						</div>
