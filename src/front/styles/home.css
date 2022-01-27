@@ -9,7 +9,7 @@ body {
     background: #2b4162;
     background-size: cover;
     background-attachment: fixed;
-    font-family: 'Playfair Display SC', serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 .profile {
@@ -19,3 +19,60 @@ body {
 .dropdown-item:hover{
     background: #fa9f42;
               }
+
+.border-one {
+    border: 1px solid #fa9f42;
+}
+
+.color-one {
+    color:#fa9f42;
+}
+.color-two {
+    color: #2b4162;
+}
+
+.bg-one {
+    background-color: #fa9f42;
+}
+
+.shadow-one {
+    box-shadow: 0 4px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.title-one {
+    font-family: "Playfair Display SC";
+}
+
+.btn-like {
+    border: 1px solid #f44336;
+    background-color: transparent;
+    color: red;
+    padding: 8px 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-left: 12px;
+    position: relative;
+    top: 1px;
+}
+.btn-like:hover {
+    background: #f44336;
+    color: white;
+}
+
+.btn-link {
+    border: 1px solid #fa9f42;
+    background-color: #fa9f42;
+    color: #2b4162;
+    padding: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 20px;
+    text-decoration: none;
+}
+.btn-link:hover {
+    border: 1px solid #1e1e1e;
+    background-color: #1e1e1e;
+    color: white;
+}

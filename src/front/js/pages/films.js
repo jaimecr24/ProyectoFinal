@@ -29,11 +29,9 @@ export const Films = () => {
 			});
 	}, []);
 	return (
-		<div className="container-fluid content-row">
-			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
-				<h1 style={{ color: "#fa9f42" }}>Películas</h1>
-				<span style={{ color: "white" }}>Descubre nuestro listado de peliculas!</span>
-			</div>
+		<div className="container-fluid title-one text-center mb-4">
+			<h1 className="color-one">Películas</h1>
+			<h5 className="text-light">Descubre nuestro listado de peliculas!</h5>
 			<div className="my-card-content">
 				{data.map((item, index) => (
 					<div
@@ -59,7 +57,9 @@ export const Films = () => {
 								</h5>
 
 								<Link to={"/infofilms/" + item.id}>
-									<span className="btn btn-outline">Aprender más</span>
+									<button type="button" className="btn-link">
+										Aprender más
+									</button>
 								</Link>
 							</div>
 						</div>

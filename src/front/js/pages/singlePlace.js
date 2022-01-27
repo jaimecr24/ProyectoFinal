@@ -13,9 +13,12 @@ export const SinglePlace = () => {
 
 	// variable to show modal messages and function to close modal.
 	const [onModal, setOnModal] = useState({ status: false, msg: "", fClose: null });
-	const handleCloseModal = () => setOnModal({ status: false, msg: "", fClose: null });
-
+	const handleCloseModal = bLogout => {
+		setOnModal({ status: false, msg: "", fClose: null });
+		if (bLogout) actions.logout();
+	};
 	const [data, setData] = useState({
+		mywidth: 0,
 		place: null,
 		scenes: [],
 		markerPositions: [],
@@ -23,6 +26,7 @@ export const SinglePlace = () => {
 	});
 
 	useEffect(() => {
+		if (store.activeUser.id) testToken();
 		// Get data of a single place
 		actions
 			.getSinglePlace(params.theid)
@@ -37,6 +41,7 @@ export const SinglePlace = () => {
 						myscenes.sort((a, b) => (a.title > b.title ? 1 : b.title > a.title ? -1 : 0));
 						// Now we set all data in variable of state.
 						setData({
+							mywidth: window.innerWidth,
 							place: myplace,
 							scenes: myscenes,
 							markerPositions: actions.getSingleMarkerPosition(myplace),
@@ -60,6 +65,23 @@ export const SinglePlace = () => {
 			});
 	}, []);
 
+	const testToken = async () => {
+		try {
+			// test token validity
+			let res = await actions.getUser();
+			let resj = await res.json();
+			if (res.status >= 400) {
+				setOnModal({ status: true, msg: resj["msg"], fClose: () => handleCloseModal(true) });
+			}
+		} catch (error) {
+			setOnModal({
+				status: true,
+				msg: "Error en la conexión con el servidor: " + error,
+				fClose: () => handleCloseModal(false)
+			});
+		}
+	};
+
 	const handleLike = () => {
 		let prevCount = data.place.countLikes;
 		let sum = 0;
@@ -77,27 +99,30 @@ export const SinglePlace = () => {
 		});
 	};
 
+	// Set the atribute mywidth, to adjust size of map.
+	window.onresize = () => setData({ ...data, mywidth: window.innerWidth });
+
 	return (
 		<>
-			<div
-				className="container mt-3 mx-auto bg-dark p-3 card rounded"
-				style={{ width: "75%", color: "white", borderColor: "#fa9f42" }}>
+			<div className="container mt-3 p-3 mx-auto bg-dark text-light border-one rounded">
 				{data.place ? (
 					<div>
-						<h2 className="text" style={{ color: "#fa9f42", marginLeft: "30px" }}>
+						<h2 className="color-one ms-4 ps-2 mt-2 title-one">
 							{data.place.name}
+							<Link to={"/infocountries/" + data.place.idCountry} style={{ textDecoration: "none" }}>
+								<p className="color-one fs-4">{data.place.countryName}</p>
+							</Link>
 						</h2>
-						<div className="row mx-3 px-3">
-							<div className="row col-5 me-5">
+						<div className="mx-auto ms-lg-4 row">
+							<div className="col-lg-5 col-sm-12 mt-2 me-lg-4">
 								<img
-									className="rounded row"
+									className="col-12"
 									src={data.place.urlPhoto}
-									alt="..."
-									style={{ minHeight: "200px", objectFit: "cover", paddingTop: "10px" }}
+									style={{ height: "20rem", objectFit: "cover" }}
 								/>
-								<div className="text-white mt-1">
+								<div className="text-light mt-3">
 									{store.activeUser.id ? (
-										<span className="btn btn-outline-danger me-2" onClick={handleLike}>
+										<span className="btn-like" onClick={handleLike}>
 											{data.liked ? (
 												<i className="fas fa-heart" />
 											) : (
@@ -107,40 +132,32 @@ export const SinglePlace = () => {
 									) : (
 										""
 									)}
-									<span>Likes: {data.place.countLikes}</span>
+									<span className="ms-2">Likes: {data.place.countLikes}</span>
 								</div>
 							</div>
-							<div className="col-6">
-								<Link to={"/infocountries/" + data.place.idCountry} style={{ textDecoration: "none" }}>
-									<p className="text" style={{ color: "#fa9f42" }}>
-										{data.place.countryName}
-									</p>
-								</Link>
-								<p className="text-white">{data.place.description}</p>
+							<div className="col-lg-6 col-sm-12 mt-3">
+								<p className="text-light">{data.place.description}</p>
 							</div>
 						</div>
-						<div className="row mt-5 mx-3 px-3" style={{ paddingTop: "10px" }}>
-							<h5>¿Dónde encontrar {data.place.name}?</h5>
 
-							<div className="row">
-								<div className="d-flex justify-content-center" style={{ paddingTop: "10px" }}>
-									{data.markerPositions.length > 0 ? (
-										<Map
-											markers={data.markerPositions}
-											zoom={10}
-											width="800"
-											height="350"
-											center={data.markerPositions[0].position}
-										/>
-									) : (
-										""
-									)}
-								</div>
-							</div>
+						<h5 className="mt-5 mb-4 ms-5 title-one">¿Dónde encontrar {data.place.name}?</h5>
+						<div className="my-3 d-flex justify-content-center">
+							{data.markerPositions.length > 0 ? (
+								<Map
+									markers={data.markerPositions}
+									zoom={10}
+									width={Math.floor(data.mywidth * 0.5).toString()}
+									height={Math.floor(data.mywidth * 0.2).toString()}
+									center={data.markerPositions[0].position}
+								/>
+							) : (
+								""
+							)}
 						</div>
+
 						{data.scenes.length > 0 ? (
 							<div className="row mt-5 px-5">
-								<h5 style={{ paddingBottom: "10px" }}>Escenas rodadas en {data.place.name}:</h5>
+								<h5 className="ms-4 title-one">Escenas rodadas en {data.place.name}:</h5>
 								{data.scenes.map(value => (
 									<Scene
 										id={value.idFilm}

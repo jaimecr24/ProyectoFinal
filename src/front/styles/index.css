@@ -40,10 +40,6 @@
     border-radius: 15px;
 }
 
-.card-body {
-    color: white;
-}
-
 .card-title-text {
   white-space: initial;
   max-width: 400px;

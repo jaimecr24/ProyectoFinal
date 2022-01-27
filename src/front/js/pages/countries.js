@@ -29,10 +29,10 @@ export const Countries = () => {
 			});
 	}, []);
 	return (
-		<div className="container-fluid content-row">
+		<div className="container-fluid content-row title-one">
 			<div className="title" style={{ textAlign: "center", paddingBottom: "5px" }}>
-				<h1 style={{ color: "#fa9f42" }}>Países</h1>
-				<span style={{ color: "white" }}>Descubre nuestro listado de países!</span>
+				<h1 className="color-one">Países</h1>
+				<h5 className="text-light">Descubre nuestro listado de países!</h5>
 			</div>
 			<div className="my-card-content">
 				{data.map((item, index) => (
@@ -59,7 +59,9 @@ export const Countries = () => {
 								</h5>
 
 								<Link to={"/infocountries/" + item.id}>
-									<span className="btn btn-outline">Aprender más</span>
+									<button type="button" className="btn-link">
+										Aprender más
+									</button>
 								</Link>
 							</div>
 						</div>

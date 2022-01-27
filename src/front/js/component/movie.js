@@ -12,11 +12,10 @@ export const Movie = props => {
 	};
 
 	return (
-		<div className="design-card border border bg-dark" style={{ borderColor: "#fa9f42" }}>
+		<div className="design-card border border bg-dark title-one" style={{ borderColor: "#fa9f42" }}>
 			<img
 				src={props.picture}
 				className="characters card-img-top mx-auto"
-				alt="..."
 				style={{ objectFit: "cover", width: "100%" }}
 			/>
 			<div className="card-body">
@@ -26,10 +25,12 @@ export const Movie = props => {
 					{props.place}, {props.country}
 				</h5>
 				<Link to={"/place/" + props.id}>
-					<span className="btn btn-outline">Aprender más</span>
+					<button type="button" className="btn-link">
+						Aprender más
+					</button>
 				</Link>
 				{store.activeUser.id ? (
-					<span className="btn btn-outline-danger ms-1" onClick={() => handleLike(props.id)}>
+					<span className="btn-like" onClick={() => handleLike(props.id)}>
 						{isLiked(props.id) ? <i className="fas fa-heart" /> : <i className="far fa-heart" />}
 					</span>
 				) : null}
