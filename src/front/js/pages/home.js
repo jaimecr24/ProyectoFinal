@@ -153,7 +153,7 @@ export const Home = () => {
 					/>
 					<button
 						type="submit"
-						className="btn btn-dark rounded-pill bg-one color-two fw-bold fs-5 shadow-one"
+						className="btn btn-dark rounded-pill bg-one color-two fw-bold fs-5 shadow-one ms-2"
 						onSubmit={handleSearch}
 						style={{ width: "10rem" }}>
 						IR
